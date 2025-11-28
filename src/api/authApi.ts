@@ -33,6 +33,21 @@ type AuthResponse = {
   user: User;
   accessToken: string;
   refreshToken?: string;
+  requiresOtp?: boolean; // Add this field for OTP flow
+};
+
+// Add OTP specific types
+type VerifyOtpRequest = {
+  email: string;
+  otp: string;
+};
+
+type ResendOtpRequest = {
+  email: string;
+};
+
+type OtpResponse = {
+  message: string;
 };
 
 export const authApi = baseApi.injectEndpoints({
@@ -62,6 +77,21 @@ export const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+    // Add OTP endpoints
+    verifyOtp: builder.mutation<AuthResponse, VerifyOtpRequest>({
+      query: (credentials) => ({
+        url: '/auth/verify-otp',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+    resendOtp: builder.mutation<OtpResponse, ResendOtpRequest>({
+      query: (credentials) => ({
+        url: '/auth/resend-otp',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
   }),
 });
 
@@ -70,4 +100,6 @@ export const {
   useRegisterMutation,
   useGetProfileQuery,
   useRefreshTokenMutation,
+  useVerifyOtpMutation, // Add this export
+  useResendOtpMutation, // Add this export
 } = authApi;

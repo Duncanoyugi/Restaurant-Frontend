@@ -7,8 +7,12 @@ import Input from '../../components/ui/input';
 import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 import { useNavigate, Link } from 'react-router-dom';
+import OtpVerification from './OtpVerification';
+
+type LoginStep = 'credentials' | 'otp';
 
 const LoginForm: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState<LoginStep>('credentials');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -17,6 +21,7 @@ const LoginForm: React.FC = () => {
     email: '',
     password: '',
   });
+  const [requiresOtp, setRequiresOtp] = useState(false);
 
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
@@ -49,13 +54,34 @@ const LoginForm: React.FC = () => {
 
     try {
       const response = await login(formData).unwrap();
-      dispatch(setCredentials(response));
-      navigate('/dashboard');
+      
+      // Check if OTP is required (first-time login or email not verified)
+      if (response.requiresOtp || !response.user.emailVerified) {
+        // User needs to verify OTP
+        setRequiresOtp(true);
+        setCurrentStep('otp');
+      } else {
+        // Regular login successful
+        dispatch(setCredentials({
+          ...response,
+          user: {
+            ...response.user,
+            role: response.user.role as any,
+          },
+        }));
+        navigate('/dashboard');
+      }
     } catch (error: any) {
-      setErrors({
-        email: error?.data?.message || 'Login failed',
-        password: '',
-      });
+      // Handle different error scenarios
+      if (error?.data?.requiresOtp) {
+        setRequiresOtp(true);
+        setCurrentStep('otp');
+      } else {
+        setErrors({
+          email: error?.data?.message || 'Login failed',
+          password: '',
+        });
+      }
     }
   };
 
@@ -74,6 +100,22 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  const handleBackToLogin = () => {
+    setCurrentStep('credentials');
+    setRequiresOtp(false);
+  };
+
+  // Render OTP verification step
+  if (currentStep === 'otp' && requiresOtp) {
+    return (
+      <OtpVerification 
+        email={formData.email} 
+        onBackToLogin={handleBackToLogin}
+      />
+    );
+  }
+
+  // Render credentials step
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <Input

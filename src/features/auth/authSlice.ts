@@ -1,13 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+
+export const UserRoleEnum = {
+  ADMIN: 'Admin',
+  RESTAURANT_OWNER: 'Restaurant Owner',
+  RESTAURANT_STAFF: 'Restaurant Staff',
+  CUSTOMER: 'Customer',
+  DRIVER: 'Driver',
+} as const;
+
+export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
+
 // Define types locally
 type User = {
   id: string;
   name: string;
   email: string;
   phone: string;
-  role: string;
+  role: UserRoleEnum;
   profileImage?: string;
   emailVerified: boolean;
   status: string;

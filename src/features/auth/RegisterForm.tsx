@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useRegisterMutation } from '../../api/authApi';
-import { useAppDispatch } from '../../app/hooks';
-import { setCredentials } from './authSlice';
 import { validateEmail, validatePassword, validatePhone } from '../../utils/validators';
 import Input from '../../components/ui/input';
 import PasswordInput from '../../components/ui/PasswordInput';
@@ -14,7 +12,7 @@ const RegisterForm: React.FC = () => {
     email: '',
     phone: '',
     password: '',
-    role: 'Customer', // Default role as string
+    role: 'Customer',
   });
   const [errors, setErrors] = useState({
     name: '',
@@ -23,9 +21,9 @@ const RegisterForm: React.FC = () => {
     password: '',
     role: '',
   });
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const [register, { isLoading }] = useRegisterMutation();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -69,9 +67,19 @@ const RegisterForm: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await register(formData).unwrap();
-      dispatch(setCredentials(response));
-      navigate('/dashboard');
+      await register(formData).unwrap();
+      setIsSuccess(true);
+      
+      // Redirect to login after 2 seconds with success message
+      setTimeout(() => {
+        navigate('/login', { 
+          state: { 
+            message: 'Registration successful! Please check your email for the OTP code to verify your account.',
+            email: formData.email 
+          } 
+        });
+      }, 2000);
+      
     } catch (error: any) {
       setErrors(prev => ({
         ...prev,
@@ -94,6 +102,23 @@ const RegisterForm: React.FC = () => {
       }));
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900">Registration Successful!</h3>
+        <p className="text-sm text-gray-600">
+          We've sent a verification code to your email.<br />
+          Redirecting to login...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
