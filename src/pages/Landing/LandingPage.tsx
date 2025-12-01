@@ -9,28 +9,28 @@ import { Link } from 'react-router-dom';
 const LandingPage: React.FC = () => {
   const sliderSlides = [
     {
-      image: '/src/assets/images/restaurant-hall.jpg',
+      image: 'https://i.postimg.cc/qgF6Hc7F/restaurant-hall.jpg',
       title: 'Elegant Dining Experience',
       description: 'Step into our beautifully designed restaurant hall where every detail is crafted for your comfort and enjoyment. Perfect for romantic dinners, family gatherings, and business meetings.',
       ctaText: 'View Gallery',
       ctaLink: '/gallery'
     },
     {
-      image: '/src/assets/images/meals.jpg',
+      image: 'https://i.postimg.cc/w3mDwb6P/meals.jpg',
       title: 'Culinary Masterpieces',
       description: 'Our chefs create unforgettable dishes using the finest ingredients sourced locally and internationally. Each plate is a work of art that delights all senses.',
       ctaText: 'Explore Menu',
       ctaLink: '/menu'
     },
     {
-      image: '/src/assets/images/dinner-table.jpg',
+      image: 'https://i.postimg.cc/8f7Gb6QV/dinner-table.jpg',
       title: 'Perfect Table Settings',
       description: 'From intimate candlelit dinners to grand celebrations, our table arrangements set the stage for memorable moments and exceptional dining experiences.',
       ctaText: 'Book a Table',
       ctaLink: '/reservations'
     },
     {
-      image: '/src/assets/images/bedroom.jpg',
+      image: 'https://i.postimg.cc/mtpp758t/bedroom.jpg',
       title: 'Luxury Accommodations',
       description: 'Retreat to our elegantly appointed bedrooms after your dining experience. Enjoy premium amenities and breathtaking views in complete comfort.',
       ctaText: 'View Rooms',
