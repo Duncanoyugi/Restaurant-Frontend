@@ -5,6 +5,7 @@ import Input from '../../components/ui/input';
 import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 import { useNavigate, Link } from 'react-router-dom';
+import { useToast } from '../../contexts/ToastContext';
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ const RegisterForm: React.FC = () => {
 
   const [register, { isLoading }] = useRegisterMutation();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const validateForm = () => {
     const newErrors = {
@@ -69,22 +71,24 @@ const RegisterForm: React.FC = () => {
     try {
       await register(formData).unwrap();
       setIsSuccess(true);
+      showToast('Registration successful! Please check your email for verification.', 'success');
       
-      // Redirect to login after 2 seconds with success message
+      // ✅ CORRECTED: Redirect to OTP verification page instead of login
       setTimeout(() => {
-        navigate('/login', { 
+        navigate('/verify-otp', { 
           state: { 
-            message: 'Registration successful! Please check your email for the OTP code to verify your account.',
             email: formData.email 
           } 
         });
       }, 2000);
       
     } catch (error: any) {
+      const errorMessage = error?.data?.message || 'Registration failed';
       setErrors(prev => ({
         ...prev,
-        email: error?.data?.message || 'Registration failed',
+        email: errorMessage,
       }));
+      showToast(errorMessage, 'error');
     }
   };
 
@@ -111,10 +115,10 @@ const RegisterForm: React.FC = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900">Registration Successful!</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Registration Successful!</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           We've sent a verification code to your email.<br />
-          Redirecting to login...
+          Redirecting to verification...
         </p>
       </div>
     );
@@ -122,80 +126,90 @@ const RegisterForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Input
-        label="Full Name"
-        name="name"
-        type="text"
-        autoComplete="name"
-        value={formData.name}
-        onChange={handleChange}
-        error={errors.name}
-        required
-      />
-
-      <Input
-        label="Email address"
-        name="email"
-        type="email"
-        autoComplete="email"
-        value={formData.email}
-        onChange={handleChange}
-        error={errors.email}
-        required
-      />
-
-      <Input
-        label="Phone Number"
-        name="phone"
-        type="tel"
-        autoComplete="tel"
-        value={formData.phone}
-        onChange={handleChange}
-        error={errors.phone}
-        required
-      />
-
-      <PasswordInput
-        label="Password"
-        name="password"
-        autoComplete="new-password"
-        value={formData.password}
-        onChange={handleChange}
-        error={errors.password}
-        required
-      />
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Role
-        </label>
-        <select
-          name="role"
-          value={formData.role}
+      <div className="space-y-4">
+        <Input
+          label="Full Name"
+          name="name"
+          type="text"
+          autoComplete="name"
+          value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-        >
-          <option value="Customer">Customer</option>
-          <option value="Restaurant Owner">Restaurant Owner</option>
-          <option value="Driver">Driver</option>
-        </select>
-        {errors.role && <p className="mt-1 text-sm text-red-600">{errors.role}</p>}
+          error={errors.name}
+          required
+          placeholder="Enter your full name"
+          className="w-full px-4 py-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+        />
+
+        <Input
+          label="Email ID"
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={formData.email}
+          onChange={handleChange}
+          error={errors.email}
+          required
+          placeholder="Enter your email address"
+          className="w-full px-4 py-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+        />
+
+        <Input
+          label="Phone Number"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          value={formData.phone}
+          onChange={handleChange}
+          error={errors.phone}
+          required
+          placeholder="Enter your phone number"
+          className="w-full px-4 py-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+        />
+
+        <PasswordInput
+          label="Password"
+          name="password"
+          autoComplete="new-password"
+          value={formData.password}
+          onChange={handleChange}
+          error={errors.password}
+          required
+          placeholder="Create a password"
+          className="w-full px-4 py-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+        />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Role
+          </label>
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base"
+          >
+            <option value="Customer">Customer</option>
+            <option value="Restaurant Owner">Restaurant Owner</option>
+            <option value="Driver">Driver</option>
+          </select>
+          {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
+        </div>
       </div>
 
       <Button
         type="submit"
         variant="primary"
         loading={isLoading}
-        className="w-full"
+        className="w-full py-3 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
       >
-        Create Account
+        {isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
       </Button>
 
-      <div className="text-center text-sm">
-        <span className="text-gray-600">Already have an account? </span>
+      <div className="text-center text-sm pt-4 border-t border-gray-200 dark:border-gray-600">
+        <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
         <Link
           to="/login"
-          className="font-medium text-blue-600 hover:text-blue-500"
+          className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
         >
           Sign in
         </Link>

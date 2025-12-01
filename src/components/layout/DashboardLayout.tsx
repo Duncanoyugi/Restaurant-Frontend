@@ -1,48 +1,53 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
-import { logout } from '../../features/auth/authSlice';
-import { useAppDispatch } from '../../app/hooks';
+import { UserRoleEnum } from '../../features/auth/authSlice';
+import CustomerLayout from './CustomerLayout';
+import AdminLayout from './AdminLayout';
+import OwnerLayout from './OwnerLayout';
+import StaffLayout from './StaffLayout';
+import DriverLayout from './DriverLayout';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+// Helper to safely extract role name (consistent with authSlice and RoleBasedDashboard)
+const extractRoleName = (role: any): string => {
+  if (typeof role === 'string') {
+    return role;
+  }
+  if (role && typeof role === 'object') {
+    // Try different possible property names
+    return role.name || role.roleName || role.role || role.value || UserRoleEnum.CUSTOMER;
+  }
+  return UserRoleEnum.CUSTOMER;
+};
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
 
-  const handleLogout = () => {
-    dispatch(logout());
+  // Safely extract role name
+  const roleName = user ? extractRoleName(user.role) : UserRoleEnum.CUSTOMER;
+
+  console.log('🏗️ DashboardLayout - Role:', roleName);
+
+  const renderLayout = () => {
+    switch (roleName) {
+      case UserRoleEnum.ADMIN:
+        return <AdminLayout>{children}</AdminLayout>;
+      case UserRoleEnum.RESTAURANT_OWNER:
+        return <OwnerLayout>{children}</OwnerLayout>;
+      case UserRoleEnum.RESTAURANT_STAFF:
+        return <StaffLayout>{children}</StaffLayout>;
+      case UserRoleEnum.DRIVER:
+        return <DriverLayout>{children}</DriverLayout>;
+      case UserRoleEnum.CUSTOMER:
+      default:
+        return <CustomerLayout>{children}</CustomerLayout>;
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold">Restaurant Management</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700">
-                Welcome, {user?.name} ({user?.role})
-              </span>
-              <button
-                onClick={handleLogout}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {children}
-      </main>
-    </div>
-  );
+  return renderLayout();
 };
 
 export default DashboardLayout;

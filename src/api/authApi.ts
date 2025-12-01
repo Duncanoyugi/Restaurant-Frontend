@@ -1,3 +1,4 @@
+// frontend/src/api/authApi.ts
 import { baseApi } from './baseApi';
 
 // Define types locally if imports still fail
@@ -30,16 +31,17 @@ type RegisterRequest = {
 };
 
 type AuthResponse = {
+  token(arg0: string, token: any): unknown;
   user: User;
   accessToken: string;
   refreshToken?: string;
   requiresOtp?: boolean; // Add this field for OTP flow
 };
 
-// Add OTP specific types
+// Update OTP specific types to match backend DTO
 type VerifyOtpRequest = {
   email: string;
-  otp: string;
+  otpCode: string; // Changed from 'otp' to 'otpCode'
 };
 
 type ResendOtpRequest = {
@@ -77,17 +79,17 @@ export const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
-    // Add OTP endpoints
+    // Update OTP endpoints to match backend routes
     verifyOtp: builder.mutation<AuthResponse, VerifyOtpRequest>({
       query: (credentials) => ({
-        url: '/auth/verify-otp',
+        url: '/auth/verify-email', // Changed from '/auth/verify-otp'
         method: 'POST',
         body: credentials,
       }),
     }),
     resendOtp: builder.mutation<OtpResponse, ResendOtpRequest>({
       query: (credentials) => ({
-        url: '/auth/resend-otp',
+        url: '/auth/resend-verification', // Changed from '/auth/resend-otp'
         method: 'POST',
         body: credentials,
       }),

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useVerifyOtpMutation, useResendOtpMutation } from '../../api/authApi';
-import { useAppDispatch } from '../../app/hooks';
-import { setCredentials } from './authSlice';
 import Button from '../../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useToast } from '../../contexts/ToastContext';
 
 interface OtpVerificationProps {
   email: string;
-  onBackToLogin: () => void;
+  onBackToLogin?: () => void;
 }
 
 const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin }) => {
@@ -17,11 +16,15 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
   const [countdown, setCountdown] = useState(0);
   
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const location = useLocation();
   
   const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
   const [resendOtp] = useResendOtpMutation();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
+  // Get email from location state if not provided via props
+  const userEmail = email || location.state?.email;
 
   // Countdown timer for resend OTP
   useEffect(() => {
@@ -87,15 +90,19 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
     }
 
     try {
-      const response = await verifyOtp({ email, otp: otpValue }).unwrap();
-      dispatch(setCredentials({
-        ...response,
-        user: {
-          ...response.user,
-          role: response.user.role as any,
-        },
-      }));
-      navigate('/dashboard');
+      // Send otpCode instead of otp to match backend DTO
+      await verifyOtp({ 
+        email: userEmail, 
+        otpCode: otpValue  // Changed from 'otp' to 'otpCode'
+      }).unwrap();
+      
+      showToast('Email verified successfully! Please login to continue.', 'success');
+      navigate('/login', { 
+        state: { 
+          email: userEmail,
+          message: 'Email verified successfully! Please login to continue.'
+        } 
+      });
     } catch (error: any) {
       setError(error?.data?.message || 'Invalid OTP code. Please try again.');
       // Clear OTP on error
@@ -109,11 +116,14 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
 
     setIsResending(true);
     try {
-      await resendOtp({ email }).unwrap();
+      await resendOtp({ email: userEmail }).unwrap();
       setCountdown(60); // 60 seconds countdown
       setError('');
+      showToast('OTP resent successfully!', 'success');
     } catch (error: any) {
-      setError(error?.data?.message || 'Failed to resend OTP. Please try again.');
+      const errorMessage = error?.data?.message || 'Failed to resend OTP. Please try again.';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
     } finally {
       setIsResending(false);
     }
@@ -124,10 +134,10 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-medium text-gray-900">Verify Your Email</h3>
-        <p className="mt-2 text-sm text-gray-600">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Verify Your Email</h3>
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           We've sent a 6-digit verification code to<br />
-          <strong>{email}</strong>
+          <strong>{userEmail}</strong>
         </p>
       </div>
 
@@ -145,14 +155,14 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={index === 0 ? handlePaste : undefined}
-              className="w-12 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-12 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               autoFocus={index === 0}
             />
           ))}
         </div>
 
         {error && (
-          <p className="text-sm text-red-600 text-center">{error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>
         )}
 
         {/* Verify Button */}
@@ -169,10 +179,10 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
 
         {/* Resend OTP */}
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Didn't receive the code?{' '}
             {countdown > 0 ? (
-              <span className="text-gray-500">
+              <span className="text-gray-500 dark:text-gray-400">
                 Resend in {countdown}s
               </span>
             ) : (
@@ -180,7 +190,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
                 type="button"
                 onClick={handleResendOtp}
                 disabled={isResending}
-                className="font-medium text-primary-600 hover:text-primary-500 disabled:opacity-50"
+                className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 disabled:opacity-50"
               >
                 {isResending ? 'Sending...' : 'Resend OTP'}
               </button>
@@ -188,16 +198,18 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ email, onBackToLogin 
           </p>
         </div>
 
-        {/* Back to Login */}
-        <div className="text-center">
-          <button
-            type="button"
-            onClick={onBackToLogin}
-            className="text-sm font-medium text-gray-600 hover:text-gray-500"
-          >
-            ← Back to Login
-          </button>
-        </div>
+        {/* Back to Login - Only show if onBackToLogin prop is provided */}
+        {onBackToLogin && (
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={onBackToLogin}
+              className="text-sm font-medium text-gray-600 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300"
+            >
+              ← Back to Login
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

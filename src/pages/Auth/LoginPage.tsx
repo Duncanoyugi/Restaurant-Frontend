@@ -9,7 +9,6 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (message) {
-      // You can show a toast notification here if you have one
       console.log('Registration message:', message);
     }
   }, [message]);

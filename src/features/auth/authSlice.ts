@@ -12,6 +12,28 @@ export const UserRoleEnum = {
 
 export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
 
+// Helper function to extract role name from object or string
+const extractRoleName = (role: any): UserRoleEnum => {
+  // If role is already a string, return it
+  if (typeof role === 'string') {
+    return role as UserRoleEnum;
+  }
+  
+  // If role is an object, try to extract the name
+  if (role && typeof role === 'object') {
+    // Try different possible property names
+    const roleName = role.name || role.roleName || role.role || role.value;
+    if (roleName && typeof roleName === 'string') {
+      console.log('🔧 Extracted role from object:', roleName);
+      return roleName as UserRoleEnum;
+    }
+  }
+  
+  // Default to CUSTOMER if role is invalid
+  console.warn('⚠️ Invalid role format, defaulting to Customer:', role);
+  return UserRoleEnum.CUSTOMER;
+};
+
 // Define types locally
 type User = {
   id: string;
@@ -46,9 +68,21 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<{ user: User; accessToken: string }>) => {
+    setCredentials: (state, action: PayloadAction<{ user: any; accessToken: string }>) => {
       const { user, accessToken } = action.payload;
-      state.user = user;
+      
+      console.log('🔐 Raw user data from backend:', user);
+      console.log('🔐 Raw role data:', user?.role);
+      
+      // Normalize the user data by extracting role name
+      const normalizedUser = {
+        ...user,
+        role: extractRoleName(user.role)
+      };
+      
+      console.log('🔐 Normalized role:', normalizedUser.role);
+      
+      state.user = normalizedUser as User;
       state.accessToken = accessToken;
       state.isAuthenticated = true;
       localStorage.setItem('accessToken', accessToken);
