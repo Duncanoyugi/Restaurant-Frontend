@@ -17,7 +17,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
       <main 
         className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative min-h-screen"
         style={{
-          backgroundImage: `url('https://i.postimg.cc/xcKfpLN9/restaurant-hall-with-blue-chairs-decors-wall.jpg')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1737116846855-26bfe6387515?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTI2fHxyZXN0YXVyYW50JTIwaW50ZXJpb3J8ZW58MHx8MHx8fDA%3D')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

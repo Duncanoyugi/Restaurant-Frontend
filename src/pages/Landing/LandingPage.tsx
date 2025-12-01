@@ -9,28 +9,28 @@ import { Link } from 'react-router-dom';
 const LandingPage: React.FC = () => {
   const sliderSlides = [
     {
-      image: 'https://i.postimg.cc/qgF6Hc7F/restaurant-hall.jpg',
+      image: 'https://images.unsplash.com/photo-1682778418768-16081e4470a1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudCUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D',
       title: 'Elegant Dining Experience',
       description: 'Step into our beautifully designed restaurant hall where every detail is crafted for your comfort and enjoyment. Perfect for romantic dinners, family gatherings, and business meetings.',
       ctaText: 'View Gallery',
       ctaLink: '/gallery'
     },
     {
-      image: 'https://i.postimg.cc/w3mDwb6P/meals.jpg',
+      image: 'https://images.unsplash.com/photo-1568360987818-833c9383a326?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHJlc3RhdXJhbnQlMjBrZW55YW4lMjBmb29kfGVufDB8fDB8fHww',
       title: 'Culinary Masterpieces',
       description: 'Our chefs create unforgettable dishes using the finest ingredients sourced locally and internationally. Each plate is a work of art that delights all senses.',
       ctaText: 'Explore Menu',
       ctaLink: '/menu'
     },
     {
-      image: 'https://i.postimg.cc/8f7Gb6QV/dinner-table.jpg',
+      image: 'https://plus.unsplash.com/premium_photo-1661434796182-a411d8782d68?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8ODZ8fHJlc3RhdXJhbnR8ZW58MHx8MHx8fDA%3D',
       title: 'Perfect Table Settings',
       description: 'From intimate candlelit dinners to grand celebrations, our table arrangements set the stage for memorable moments and exceptional dining experiences.',
       ctaText: 'Book a Table',
       ctaLink: '/reservations'
     },
     {
-      image: 'https://i.postimg.cc/mtpp758t/bedroom.jpg',
+      image: 'https://images.unsplash.com/photo-1669664880587-b6bb10e8dd64?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTYzfHxyZXN0YXVyYW50JTIwYWNjb21tb2RhdGlvbiUyMHJvb21zfGVufDB8fDB8fHww',
       title: 'Luxury Accommodations',
       description: 'Retreat to our elegantly appointed bedrooms after your dining experience. Enjoy premium amenities and breathtaking views in complete comfort.',
       ctaText: 'View Rooms',
