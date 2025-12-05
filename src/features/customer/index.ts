@@ -1,7 +1,7 @@
-export { WelcomeBanner } from './components/WelcomeBanner';
-export { StatsGrid } from './components/StatsGrid';
-export { QuickActions } from './components/QuickActions';
-export { ActiveOrders } from './components/ActiveOrders';
-export { UpcomingBookings } from './components/UpcomingBookings';
-export { RecentActivity } from './components/RecentActivity';
-export { PersonalizedRecommendations } from './components/PersonalizedRecommendations';
+export { WelcomeBanner } from '../../components/customer/WelcomeBanner';
+export { StatsGrid } from '../../components/customer/StatsGrid';
+export { QuickActions } from '../../components/customer/QuickActions';
+export { ActiveOrders } from '../../components/customer/ActiveOrders';
+export { UpcomingBookings } from '../../components/customer/UpcomingBookings';
+export { RecentActivity } from '../../components/customer/RecentActivity';
+export { PersonalizedRecommendations } from '../../components/customer/PersonalizedRecommendations';

@@ -7,7 +7,7 @@ interface StaffLayoutProps {
   children: React.ReactNode;
 }
 
-const StaffLayout: React.FC<StaffLayoutProps> = ({ }) => {
+const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -19,23 +19,51 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Simple header for now */}
+      {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Staff Dashboard
-              </h1>
+              <div className="flex-shrink-0">
+                <h1 className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                  RESTAURANT STAFF
+                </h1>
+              </div>
+              <div className="hidden md:block ml-10">
+                <div className="flex items-center space-x-4">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="font-semibold">Logged in as:</span> {user?.name}
+                  </div>
+                  <div className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">
+                    {user?.role}
+                  </div>
+                </div>
+              </div>
             </div>
+            
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700 dark:text-gray-300">
-                Welcome, {user?.name}
-              </span>
+              {/* Quick Stats - Only show when user is loaded */}
+              {user && (
+                <div className="hidden md:flex items-center space-x-6 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-gray-900 dark:text-white">Shift</div>
+                    <div className="text-green-600 dark:text-green-400">Active</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-gray-900 dark:text-white">Status</div>
+                    <div className="text-blue-600 dark:text-blue-400">Online</div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
                 Logout
               </button>
             </div>
@@ -43,24 +71,23 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ }) => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              👨‍🍳 Staff Dashboard Under Construction
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              The Staff dashboard is currently being built. This is a placeholder layout.
-            </p>
-            <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 rounded-lg p-4 max-w-md mx-auto">
-              <p className="text-green-800 dark:text-green-200 text-sm">
-                <strong>Note:</strong> Full Staff features including order management, 
-                table management, and kitchen operations will be available soon.
-              </p>
+      {/* Main Content */}
+      <main>{children}</main>
+
+      {/* Footer */}
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+            <div>
+              Restaurant Management System © {new Date().getFullYear()}
+            </div>
+            <div className="flex space-x-6">
+              <span>Version 1.0.0</span>
+              <span>Support: staff@restaurant.com</span>
             </div>
           </div>
         </div>
-      </main>
+      </footer>
     </div>
   );
 };

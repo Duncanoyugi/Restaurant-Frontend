@@ -57,10 +57,23 @@ type AuthState = {
   isLoading: boolean;
 };
 
+// Load user from localStorage on initialization
+const loadUserFromStorage = (): User | null => {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      return JSON.parse(userStr) as User;
+    }
+  } catch (error) {
+    console.error('Error loading user from localStorage:', error);
+  }
+  return null;
+};
+
 const initialState: AuthState = {
-  user: null,
+  user: loadUserFromStorage(),
   accessToken: localStorage.getItem('accessToken'),
-  isAuthenticated: !!localStorage.getItem('accessToken'),
+  isAuthenticated: !!localStorage.getItem('accessToken') && !!loadUserFromStorage(),
   isLoading: false,
 };
 
@@ -85,13 +98,17 @@ const authSlice = createSlice({
       state.user = normalizedUser as User;
       state.accessToken = accessToken;
       state.isAuthenticated = true;
+      
+      // Store in localStorage for persistence
       localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('user', JSON.stringify(normalizedUser));
     },
     logout: (state) => {
       state.user = null;
       state.accessToken = null;
       state.isAuthenticated = false;
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;

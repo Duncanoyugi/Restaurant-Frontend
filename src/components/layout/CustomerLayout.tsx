@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
 import { ThemeToggle } from '../ui/ThemeToggle';
+import { useGetProfileQuery } from '../../features/auth/authApi';
 
 interface CustomerLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
+  const { data: profile } = useGetProfileQuery();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +27,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
     { name: 'Orders', href: '/dashboard/orders', icon: '🍽️' },
     { name: 'Reservations', href: '/dashboard/reservations', icon: '📅' },
     { name: 'Room Bookings', href: '/dashboard/room-bookings', icon: '🏨' },
-    { name: 'Payments', href: '/dashboard/payments', icon: '💳' },
+    { name: 'Reviews', href: '/dashboard/reviews', icon: '⭐' },
     { name: 'Profile', href: '/dashboard/profile', icon: '👤' },
   ];
 
@@ -76,13 +78,13 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                 <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700">
                   <div className="relative h-8 w-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
-                      {user?.name?.charAt(0).toUpperCase()}
+                      {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
-                    <span className="truncate">{user?.name}</span>
+                    <span className="truncate">{user?.name || 'User'}</span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {user?.email}
+                      {user?.email || profile?.email}
                     </span>
                   </div>
                   <ThemeToggle />
@@ -115,7 +117,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               {/* Quick Actions */}
               <Link
-                to="/menu"
+                to="/restaurants"
                 className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 <span>🍽️</span>
@@ -204,7 +206,8 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
         {/* Main Content Area */}
         <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
-            {children}
+            {/* Use Outlet for nested routes or children for direct rendering */}
+            {children ? children : <Outlet />}
           </div>
         </main>
       </div>
