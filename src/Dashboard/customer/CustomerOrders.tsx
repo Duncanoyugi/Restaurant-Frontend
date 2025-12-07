@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useGetOrdersQuery, useCancelOrderMutation } from '../../features/customer/customerApi';
 import { format } from 'date-fns';
 import type { Order, OrderItem } from '../../types/order';
@@ -43,43 +42,40 @@ const OrdersPage: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-KE', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'KES',
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
   if (isLoading) {
     return (
-      <DashboardLayout>
-        <div className="animate-pulse space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-          ))}
-        </div>
-      </DashboardLayout>
+      <div className="animate-pulse space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+        ))}
+      </div>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
-        <div className="text-center py-12">
-          <div className="text-red-500 text-6xl mb-4">❌</div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-            Error Loading Orders
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Failed to load your orders. Please try again.
-          </p>
-          <button
-            onClick={() => refetch()}
-            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </DashboardLayout>
+      <div className="text-center py-12">
+        <div className="text-red-500 text-6xl mb-4">❌</div>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+          Error Loading Orders
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Failed to load your orders. Please try again.
+        </p>
+        <button
+          onClick={() => refetch()}
+          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          Retry
+        </button>
+      </div>
     );
   }
 
@@ -88,8 +84,7 @@ const OrdersPage: React.FC = () => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -263,7 +258,6 @@ const OrdersPage: React.FC = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 };
 

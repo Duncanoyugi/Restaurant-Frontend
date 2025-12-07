@@ -1,160 +1,64 @@
 import React, { useState } from 'react';
-
-interface RestaurantTable {
-  id: string;
-  tableNumber: string;
-  capacity: number;
-  location: string;
-  status: 'available' | 'occupied' | 'reserved' | 'cleaning';
-  currentOrder?: {
-    id: string;
-    orderNumber: string;
-    customerName: string;
-    startedAt: string;
-    elapsedTime: number;
-  };
-  reservation?: {
-    id: string;
-    customerName: string;
-    time: string;
-    guestCount: number;
-  };
-}
+import { useGetMyRestaurantTablesQuery } from '../../features/reservations/reservationsApi';
+import { useAppSelector } from '../../app/hooks';
+import { TableStatusEnum } from '../../types/reservation';
+import type { Table } from '../../types/reservation';
 
 interface TableManagementProps {
   restaurantId: string;
 }
 
 const TableManagement: React.FC<TableManagementProps> = ({ }) => {
-  const [filter, setFilter] = useState<'all' | 'available' | 'occupied' | 'reserved'>('all');
+  const [filter, setFilter] = useState<'all' | 'available' | 'occupied' | 'reserved' | 'cleaning'>('all');
   const [floorView, setFloorView] = useState<'grid' | 'floorplan'>('floorplan');
 
-  // Mock data
-  const mockTables: RestaurantTable[] = [
-    {
-      id: '1',
-      tableNumber: '1',
-      capacity: 2,
-      location: 'Window',
-      status: 'available',
-      currentOrder: undefined,
-      reservation: undefined
-    },
-    {
-      id: '2',
-      tableNumber: '2',
-      capacity: 4,
-      location: 'Center',
-      status: 'occupied',
-      currentOrder: {
-        id: 'ORD-001',
-        orderNumber: 'ORD-001',
-        customerName: 'John Smith',
-        startedAt: '2024-01-15T18:30:00Z',
-        elapsedTime: 45
-      },
-      reservation: undefined
-    },
-    {
-      id: '3',
-      tableNumber: '3',
-      capacity: 6,
-      location: 'Patio',
-      status: 'reserved',
-      currentOrder: undefined,
-      reservation: {
-        id: 'RES-001',
-        customerName: 'Sarah Johnson',
-        time: '19:30',
-        guestCount: 4
-      }
-    },
-    {
-      id: '4',
-      tableNumber: '4',
-      capacity: 2,
-      location: 'Corner',
-      status: 'cleaning',
-      currentOrder: undefined,
-      reservation: undefined
-    },
-    {
-      id: '5',
-      tableNumber: '5',
-      capacity: 4,
-      location: 'Window',
-      status: 'available',
-      currentOrder: undefined,
-      reservation: undefined
-    },
-    {
-      id: '6',
-      tableNumber: '6',
-      capacity: 8,
-      location: 'Private Room',
-      status: 'occupied',
-      currentOrder: {
-        id: 'ORD-002',
-        orderNumber: 'ORD-002',
-        customerName: 'Mike Wilson',
-        startedAt: '2024-01-15T19:00:00Z',
-        elapsedTime: 30
-      },
-      reservation: undefined
-    },
-    {
-      id: '7',
-      tableNumber: '7',
-      capacity: 4,
-      location: 'Center',
-      status: 'available',
-      currentOrder: undefined,
-      reservation: undefined
-    },
-    {
-      id: '8',
-      tableNumber: '8',
-      capacity: 2,
-      location: 'Bar',
-      status: 'occupied',
-      currentOrder: {
-        id: 'ORD-003',
-        orderNumber: 'ORD-003',
-        customerName: 'Emily Brown',
-        startedAt: '2024-01-15T19:15:00Z',
-        elapsedTime: 15
-      },
-      reservation: undefined
-    }
-  ];
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
 
-  const tables = mockTables;
+  // Debug logs for authentication state
+  console.log('TableManagement - isAuthenticated:', isAuthenticated, 'user:', user);
+  console.log('Query condition (should run when true):', isAuthenticated && !!user);
+
+  const { data: tablesData } = useGetMyRestaurantTablesQuery(undefined, {
+    skip: !(isAuthenticated && !!user),
+  });
+
+  const tables = tablesData || [];
 
   const updateTableStatus = async (tableId: string, status: string, notes?: string) => {
     console.log('Updating table status:', tableId, status, notes);
-    // Mock implementation
+    // TODO: Implement table status update
   };
 
-  const filteredTables = tables.filter(table => 
-    filter === 'all' || table.status === filter
+  const getStatusFilter = (filterValue: string): string => {
+    switch (filterValue) {
+      case 'available': return TableStatusEnum.AVAILABLE;
+      case 'occupied': return TableStatusEnum.OCCUPIED;
+      case 'reserved': return TableStatusEnum.RESERVED;
+      case 'cleaning': return TableStatusEnum.OUT_OF_SERVICE;
+      default: return '';
+    }
+  };
+
+  const filteredTables = tables.filter(table =>
+    filter === 'all' || table.status === getStatusFilter(filter)
   );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800 border-green-300';
-      case 'occupied': return 'bg-red-100 text-red-800 border-red-300';
-      case 'reserved': return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'cleaning': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case TableStatusEnum.AVAILABLE: return 'bg-green-100 text-green-800 border-green-300';
+      case TableStatusEnum.OCCUPIED: return 'bg-red-100 text-red-800 border-red-300';
+      case TableStatusEnum.RESERVED: return 'bg-blue-100 text-blue-800 border-blue-300';
+      case TableStatusEnum.OUT_OF_SERVICE: return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       default: return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'available': return '✅';
-      case 'occupied': return '👥';
-      case 'reserved': return '📅';
-      case 'cleaning': return '🧹';
+      case TableStatusEnum.AVAILABLE: return '✅';
+      case TableStatusEnum.OCCUPIED: return '👥';
+      case TableStatusEnum.RESERVED: return '📅';
+      case TableStatusEnum.OUT_OF_SERVICE: return '🧹';
       default: return '❓';
     }
   };
@@ -182,27 +86,27 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <div className="text-2xl font-bold text-green-700">
-              {tables.filter(t => t.status === 'available').length}
+              {tables.filter(t => t.status === TableStatusEnum.AVAILABLE).length}
             </div>
             <div className="text-sm text-green-600">Available</div>
           </div>
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="text-2xl font-bold text-red-700">
-              {tables.filter(t => t.status === 'occupied').length}
+              {tables.filter(t => t.status === TableStatusEnum.OCCUPIED).length}
             </div>
             <div className="text-sm text-red-600">Occupied</div>
           </div>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="text-2xl font-bold text-blue-700">
-              {tables.filter(t => t.status === 'reserved').length}
+              {tables.filter(t => t.status === TableStatusEnum.RESERVED).length}
             </div>
             <div className="text-sm text-blue-600">Reserved</div>
           </div>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="text-2xl font-bold text-yellow-700">
-              {tables.filter(t => t.status === 'cleaning').length}
+              {tables.filter(t => t.status === TableStatusEnum.OUT_OF_SERVICE).length}
             </div>
-            <div className="text-sm text-yellow-600">Cleaning</div>
+            <div className="text-sm text-yellow-600">Out of Service</div>
           </div>
         </div>
 
@@ -220,7 +124,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
               <span className="ml-2 px-2 py-1 text-xs rounded-full bg-white/30">
-                {tables.filter(t => status === 'all' || t.status === status).length}
+                {tables.filter(t => status === 'all' || t.status === getStatusFilter(status)).length}
               </span>
             </button>
           ))}
@@ -324,7 +228,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
 };
 
 const TableCard: React.FC<{
-  table: RestaurantTable;
+  table: Table;
   onUpdateStatus: (id: string, status: string, notes?: string) => void;
   getStatusColor: (status: string) => string;
   getStatusIcon: (status: string) => string;
@@ -333,9 +237,9 @@ const TableCard: React.FC<{
 
   return (
     <div className={`relative rounded-lg border-2 p-4 transition-all ${
-      table.status === 'available' ? 'border-green-300 bg-green-50' :
-      table.status === 'occupied' ? 'border-red-300 bg-red-50' :
-      table.status === 'reserved' ? 'border-blue-300 bg-blue-50' :
+      table.status === TableStatusEnum.AVAILABLE ? 'border-green-300 bg-green-50' :
+      table.status === TableStatusEnum.OCCUPIED ? 'border-red-300 bg-red-50' :
+      table.status === TableStatusEnum.RESERVED ? 'border-blue-300 bg-blue-50' :
       'border-yellow-300 bg-yellow-50'
     }`}>
       <div className="flex justify-between items-start mb-3">
@@ -345,27 +249,17 @@ const TableCard: React.FC<{
           <div className="text-sm">Capacity: {table.capacity} seats</div>
         </div>
         <span className={`px-3 py-1 text-xs rounded-full border ${getStatusColor(table.status)}`}>
-          {getStatusIcon(table.status)} {table.status.toUpperCase()}
+          {getStatusIcon(table.status)} {table.status}
         </span>
       </div>
 
-      {/* Current Order Info */}
-      {table.currentOrder && (
-        <div className="mb-3 p-3 bg-white/50 rounded border border-gray-200">
-          <div className="font-medium text-sm">Current Order:</div>
-          <div className="text-sm">#{table.currentOrder.orderNumber}</div>
-          <div className="text-xs text-gray-600">{table.currentOrder.customerName}</div>
-          <div className="text-xs text-gray-600">Time: {table.currentOrder.elapsedTime}m</div>
-        </div>
-      )}
-
       {/* Upcoming Reservation */}
-      {table.reservation && table.status !== 'occupied' && (
+      {table.reservations && table.reservations.length > 0 && table.status !== TableStatusEnum.OCCUPIED && (
         <div className="mb-3 p-3 bg-blue-50 rounded border border-blue-200">
           <div className="font-medium text-sm text-blue-700">Reservation:</div>
-          <div className="text-sm">{table.reservation.customerName}</div>
+          <div className="text-sm">{table.reservations[0].user?.name || 'Customer'}</div>
           <div className="text-xs text-gray-600">
-            {table.reservation.guestCount} guests at {table.reservation.time}
+            {table.reservations[0].guestCount} guests at {table.reservations[0].reservationTime}
           </div>
         </div>
       )}
@@ -381,57 +275,57 @@ const TableCard: React.FC<{
       {/* Action Menu */}
       {showActions && (
         <div className="mt-3 pt-3 border-t border-gray-200 space-y-2">
-          {table.status === 'available' && (
+          {table.status === TableStatusEnum.AVAILABLE && (
             <>
               <button
-                onClick={() => onUpdateStatus(table.id, 'occupied', 'Customer seated')}
+                onClick={() => onUpdateStatus(table.id, TableStatusEnum.OCCUPIED, 'Customer seated')}
                 className="w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm"
               >
                 Mark as Occupied
               </button>
               <button
-                onClick={() => onUpdateStatus(table.id, 'reserved')}
+                onClick={() => onUpdateStatus(table.id, TableStatusEnum.RESERVED)}
                 className="w-full px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm"
               >
                 Mark as Reserved
               </button>
             </>
           )}
-          {table.status === 'occupied' && (
+          {table.status === TableStatusEnum.OCCUPIED && (
             <>
               <button
-                onClick={() => onUpdateStatus(table.id, 'cleaning', 'Customer left')}
+                onClick={() => onUpdateStatus(table.id, TableStatusEnum.OUT_OF_SERVICE, 'Customer left')}
                 className="w-full px-3 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 text-sm"
               >
                 Mark for Cleaning
               </button>
               <button
-                onClick={() => onUpdateStatus(table.id, 'available', 'Cleared manually')}
+                onClick={() => onUpdateStatus(table.id, TableStatusEnum.AVAILABLE, 'Cleared manually')}
                 className="w-full px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
               >
                 Mark as Available
               </button>
             </>
           )}
-          {table.status === 'reserved' && (
+          {table.status === TableStatusEnum.RESERVED && (
             <>
               <button
-                onClick={() => onUpdateStatus(table.id, 'occupied', 'Reservation arrived')}
+                onClick={() => onUpdateStatus(table.id, TableStatusEnum.OCCUPIED, 'Reservation arrived')}
                 className="w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm"
               >
                 Customer Arrived
               </button>
               <button
-                onClick={() => onUpdateStatus(table.id, 'available', 'Reservation cancelled')}
+                onClick={() => onUpdateStatus(table.id, TableStatusEnum.AVAILABLE, 'Reservation cancelled')}
                 className="w-full px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
               >
                 Cancel Reservation
               </button>
             </>
           )}
-          {table.status === 'cleaning' && (
+          {table.status === TableStatusEnum.OUT_OF_SERVICE && (
             <button
-              onClick={() => onUpdateStatus(table.id, 'available', 'Cleaning completed')}
+              onClick={() => onUpdateStatus(table.id, TableStatusEnum.AVAILABLE, 'Cleaning completed')}
               className="w-full px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
             >
               Mark as Clean & Available

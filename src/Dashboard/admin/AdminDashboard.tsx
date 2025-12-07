@@ -1,67 +1,82 @@
 import React from 'react';
-import { useAppSelector } from '../../app/hooks';
+import { Routes, Route } from 'react-router-dom';
+import AdminLayout from '../../components/layout/AdminLayout';
 import KPICards from '../../components/admin/KPICards';
 import RevenueChart from '../../components/admin/RevenueChart';
 import OrderMetrics from '../../components/admin/OrderMetrics';
 import QuickActions from '../../components/admin/QuickActions';
 import RecentActivity from '../../components/admin/RecentActivity';
 import SystemHealth from '../../components/admin/SystemHealth';
+import UserManagement from './UserManagement';
+import RestaurantManagement from './RestaurantManagement';
+import OrderManagement from './OrderManagement';
+import PaymentManagement from './PaymentManagement';
+import Deliverymanagement from './Deliverymanagement';
+import InventoryOverview from './InventoryOverview';
+import ReviewModeration from './ReviewModeration';
+import NotificationCenter from './NotificationCenter';
 
-const AdminDashboard: React.FC = () => {
-  const { user } = useAppSelector((state) => state.auth);
-
+// Main Dashboard Overview Component
+const DashboardOverview: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="space-y-8">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Admin Dashboard
-              </h1>
-              <span className="ml-3 px-2 py-1 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full">
-                Live
-              </span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700 dark:text-gray-300">
-                Welcome, {user?.name}
-              </span>
-            </div>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            System overview and key metrics
+          </p>
         </div>
-      </header>
+        <span className="px-3 py-1 text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full">
+          Live System
+        </span>
+      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* KPI Cards Grid */}
-        <div className="mb-8">
-          <KPICards />
+      {/* KPI Cards Grid */}
+      <div>
+        <KPICards />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RevenueChart />
+        <OrderMetrics />
+      </div>
+
+      {/* Quick Actions & System Health */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <QuickActions />
         </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <RevenueChart />
-          <OrderMetrics />
-        </div>
-
-        {/* Quick Actions & System Health */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <QuickActions />
-          </div>
-          <div>
-            <SystemHealth />
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-6">
-          <RecentActivity />
+        <div>
+          <SystemHealth />
         </div>
       </div>
+
+      {/* Recent Activity */}
+      <div>
+        <RecentActivity />
+      </div>
     </div>
+  );
+};
+
+const AdminDashboard: React.FC = () => {
+  return (
+    <AdminLayout>
+      <Routes>
+        <Route path="/" element={<DashboardOverview />} />
+        <Route path="/users" element={<UserManagement />} />
+        <Route path="/restaurants" element={<RestaurantManagement />} />
+        <Route path="/orders" element={<OrderManagement />} />
+        <Route path="/payments" element={<PaymentManagement />} />
+        <Route path="/delivery" element={<Deliverymanagement />} />
+        <Route path="/inventory" element={<InventoryOverview />} />
+        <Route path="/reviews" element={<ReviewModeration />} />
+        <Route path="/notifications" element={<NotificationCenter />} />
+      </Routes>
+    </AdminLayout>
   );
 };
 

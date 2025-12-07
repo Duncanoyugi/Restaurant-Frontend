@@ -320,7 +320,7 @@ const CheckoutPage: React.FC = () => {
                     <span className="text-gray-700 dark:text-gray-300">
                       {item.name} × {item.quantity}
                     </span>
-                    <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-medium">KSh {(item.price * item.quantity * 100).toFixed(0)}</span>
                   </div>
                 ))}
               </div>
@@ -328,21 +328,21 @@ const CheckoutPage: React.FC = () => {
               <div className="border-t border-gray-300 dark:border-gray-600 mt-4 pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>KSh {(subtotal * 100).toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax (8%)</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>KSh {(tax * 100).toFixed(0)}</span>
                 </div>
                 {orderType === 'DELIVERY' && (
                   <div className="flex justify-between">
                     <span>Delivery Fee</span>
-                    <span>${deliveryFee.toFixed(2)}</span>
+                    <span>KSh {(deliveryFee * 100).toFixed(0)}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300 dark:border-gray-600">
                   <span>Total</span>
-                  <span>${finalTotal.toFixed(2)}</span>
+                  <span>KSh {(finalTotal * 100).toFixed(0)}</span>
                 </div>
               </div>
             </div>

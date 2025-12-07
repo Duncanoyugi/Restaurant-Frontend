@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAppSelector } from '../../app/hooks';
+import { useGetDashboardOverviewQuery } from '../../features/customer/customerApi';
 
 interface StatCard {
   title: string;
@@ -15,12 +17,15 @@ interface StatCard {
 }
 
 export const StatsGrid: React.FC = () => {
-  // Mock data - replace with actual API data
+  const { user } = useAppSelector((state) => state.auth);
+  const { data: dashboardData, isLoading } = useGetDashboardOverviewQuery({});
+
+  // Use real dashboard data from API
   const stats: StatCard[] = [
     {
       title: 'Active Orders',
-      value: 2,
-      subtitle: 'In progress',
+      value: dashboardData?.activeOrders || user?.totalOrders || 0,
+      subtitle: 'Orders in progress',
       icon: '🚀',
       trend: { value: 12, isPositive: true },
       link: '/dashboard/orders',
@@ -28,47 +33,66 @@ export const StatsGrid: React.FC = () => {
     },
     {
       title: 'Upcoming Reservations',
-      value: 3,
-      subtitle: 'Next 7 days',
+      value: dashboardData?.upcomingReservations || 0,
+      subtitle: 'Table reservations',
       icon: '📅',
       trend: { value: 5, isPositive: true },
       link: '/dashboard/reservations',
       color: 'green'
     },
     {
-      title: 'Loyalty Points',
-      value: '1,250',
-      subtitle: 'Silver Tier',
-      icon: '🎯',
+      title: 'Total Spent',
+      value: dashboardData?.totalSpent ? `KSh ${dashboardData.totalSpent.toLocaleString()}` : `KSh ${(user?.totalSpent || 0).toLocaleString()}`,
+      subtitle: 'Lifetime spending',
+      icon: '💰',
       trend: { value: 8, isPositive: true },
-      link: '/dashboard/rewards',
+      link: '/dashboard/orders',
       color: 'purple'
     },
     {
       title: 'Monthly Orders',
-      value: 8,
+      value: dashboardData?.monthlyOrders || 0,
       subtitle: 'This month',
       icon: '📦',
       trend: { value: 15, isPositive: true },
       color: 'orange'
     },
     {
-      title: 'Favorite Restaurants',
-      value: 5,
-      subtitle: 'Saved favorites',
+      title: 'Favorite Cuisines',
+      value: user?.favoriteCuisines?.length || 0,
+      subtitle: 'Saved preferences',
       icon: '❤️',
-      link: '/dashboard/favorites',
+      link: '/dashboard/profile',
       color: 'red'
     },
     {
       title: 'Room Bookings',
-      value: 1,
-      subtitle: 'Upcoming stays',
+      value: dashboardData?.roomBookings || 0,
+      subtitle: 'Accommodation stays',
       icon: '🏨',
       link: '/dashboard/room-bookings',
       color: 'blue'
     }
   ];
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, index) => (
+          <div key={index} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 animate-pulse">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mr-4"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-1"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const getColorClasses = (color: StatCard['color']) => {
     const colors = {

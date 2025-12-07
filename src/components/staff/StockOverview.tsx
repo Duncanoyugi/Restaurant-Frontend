@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
-
-interface InventoryItem {
-  id: string;
-  name: string;
-  category: string;
-  quantity: number;
-  unit: string;
-  threshold: number;
-  unitPrice: number;
-  totalValue: number;
-  supplier: string;
-  lastUpdated: string;
-  status: 'normal' | 'low' | 'critical' | 'out_of_stock';
-}
+import { useGetMyRestaurantInventoryItemsQuery } from '../../features/inventory/inventoryApi';
+import { useAppSelector } from '../../app/hooks';
+import type { InventoryItem } from '../../types/inventory';
 
 interface StockOverviewProps {
   restaurantId: string;
@@ -24,94 +13,23 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showLowStockOnly, setShowLowStockOnly] = useState<boolean>(false);
 
-  // Mock data
-  const mockItems: InventoryItem[] = [
-    {
-      id: '1',
-      name: 'Tomatoes',
-      category: 'Vegetables',
-      quantity: 25,
-      unit: 'kg',
-      threshold: 10,
-      unitPrice: 120,
-      totalValue: 3000,
-      supplier: 'Fresh Farm',
-      lastUpdated: '2024-01-15T10:00:00Z',
-      status: 'normal'
-    },
-    {
-      id: '2',
-      name: 'Chicken Breast',
-      category: 'Meat',
-      quantity: 8,
-      unit: 'kg',
-      threshold: 15,
-      unitPrice: 450,
-      totalValue: 3600,
-      supplier: 'Prime Meats',
-      lastUpdated: '2024-01-15T09:30:00Z',
-      status: 'low'
-    },
-    {
-      id: '3',
-      name: 'Milk',
-      category: 'Dairy',
-      quantity: 5,
-      unit: 'liters',
-      threshold: 20,
-      unitPrice: 80,
-      totalValue: 400,
-      supplier: 'Dairy Fresh',
-      lastUpdated: '2024-01-15T08:45:00Z',
-      status: 'critical'
-    },
-    {
-      id: '4',
-      name: 'Rice',
-      category: 'Grains',
-      quantity: 0,
-      unit: 'kg',
-      threshold: 25,
-      unitPrice: 150,
-      totalValue: 0,
-      supplier: 'Grain Co.',
-      lastUpdated: '2024-01-14T16:20:00Z',
-      status: 'out_of_stock'
-    },
-    {
-      id: '5',
-      name: 'Coca Cola',
-      category: 'Beverages',
-      quantity: 48,
-      unit: 'cans',
-      threshold: 24,
-      unitPrice: 60,
-      totalValue: 2880,
-      supplier: 'Beverage Distributors',
-      lastUpdated: '2024-01-15T11:15:00Z',
-      status: 'normal'
-    },
-    {
-      id: '6',
-      name: 'Beef',
-      category: 'Meat',
-      quantity: 12,
-      unit: 'kg',
-      threshold: 10,
-      unitPrice: 600,
-      totalValue: 7200,
-      supplier: 'Prime Meats',
-      lastUpdated: '2024-01-15T10:30:00Z',
-      status: 'normal'
-    }
-  ];
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
 
-  const items = mockItems;
-  const lowStockItems = items.filter(item => item.status === 'low' || item.status === 'critical' || item.status === 'out_of_stock');
+  const { data: inventoryData } = useGetMyRestaurantInventoryItemsQuery({}, {
+    skip: !isAuthenticated || !user,
+  });
+
+  const items = inventoryData?.data || [];
+  const lowStockItems = items.filter(item => {
+    if (item.quantity === 0) return true;
+    if (item.quantity <= item.threshold * 0.5) return true; // critical
+    if (item.quantity <= item.threshold) return true; // low
+    return false;
+  });
 
   const updateStockQuantity = async (itemId: string, newQuantity: number, reason: string) => {
     console.log('Updating stock:', itemId, newQuantity, reason);
-    // Mock implementation
+    // TODO: Implement stock update using API
   };
 
   const filteredItems = items.filter(item => {
@@ -121,7 +39,7 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
     }
     
     // Filter by low stock only
-    if (showLowStockOnly && item.status === 'normal') {
+    if (showLowStockOnly && item.quantity > item.threshold) {
       return false;
     }
     
@@ -154,20 +72,27 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
   };
 
   const calculateTotalValue = () => {
-    return filteredItems.reduce((total, item) => total + item.totalValue, 0);
+    return filteredItems.reduce((total, item) => total + (item.quantity * item.unitPrice), 0);
+  };
+
+  const getItemStatus = (item: InventoryItem): 'normal' | 'low' | 'critical' | 'out_of_stock' => {
+    if (item.quantity === 0) return 'out_of_stock';
+    if (item.quantity <= item.threshold * 0.5) return 'critical';
+    if (item.quantity <= item.threshold) return 'low';
+    return 'normal';
   };
 
   const calculateCategoryBreakdown = () => {
     const breakdown: Record<string, { count: number, value: number }> = {};
-    
+
     filteredItems.forEach(item => {
       if (!breakdown[item.category]) {
         breakdown[item.category] = { count: 0, value: 0 };
       }
       breakdown[item.category].count++;
-      breakdown[item.category].value += item.totalValue;
+      breakdown[item.category].value += (item.quantity * item.unitPrice);
     });
-    
+
     return Object.entries(breakdown).map(([category, data]) => ({
       category,
       ...data
@@ -199,13 +124,13 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
           </div>
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="text-2xl font-bold text-red-700">
-              {lowStockItems.filter(item => item.status === 'critical' || item.status === 'out_of_stock').length}
+              {lowStockItems.filter(item => item.quantity === 0 || item.quantity <= item.threshold * 0.5).length}
             </div>
             <div className="text-sm text-red-600">Critical</div>
           </div>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="text-2xl font-bold text-yellow-700">
-              {lowStockItems.filter(item => item.status === 'low').length}
+              {lowStockItems.filter(item => item.quantity > 0 && item.quantity <= item.threshold && item.quantity > item.threshold * 0.5).length}
             </div>
             <div className="text-sm text-yellow-600">Low Stock</div>
           </div>
@@ -306,21 +231,24 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {lowStockItems.slice(0, 6).map((item) => (
-              <div key={item.id} className="bg-white p-4 rounded-lg border border-red-300">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-medium">{item.name}</div>
-                  <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(item.status)}`}>
-                    {getStatusIcon(item.status)} {item.status.toUpperCase()}
-                  </span>
+            {lowStockItems.slice(0, 6).map((item) => {
+              const status = getItemStatus(item);
+              return (
+                <div key={item.id} className="bg-white p-4 rounded-lg border border-red-300">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="font-medium">{item.name}</div>
+                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(status)}`}>
+                      {getStatusIcon(status)} {status.toUpperCase().replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600 mb-2">{item.category}</div>
+                  <div className="flex justify-between text-sm">
+                    <span>Current: {item.quantity} {item.unit}</span>
+                    <span className="text-red-600">Threshold: {item.threshold}</span>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600 mb-2">{item.category}</div>
-                <div className="flex justify-between text-sm">
-                  <span>Current: {item.quantity} {item.unit}</span>
-                  <span className="text-red-600">Threshold: {item.threshold}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -345,47 +273,51 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredItems.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-gray-900">{item.name}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
-                      {item.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium">{item.quantity} {item.unit}</div>
-                    <div className="text-xs text-gray-500">Threshold: {item.threshold}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-3 py-1 text-xs rounded-full border ${getStatusColor(item.status)}`}>
-                      {getStatusIcon(item.status)} {item.status.replace('_', ' ').toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    KSh {item.unitPrice.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap font-medium">
-                    KSh {item.totalValue.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {item.supplier}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => updateStockQuantity(item.id, item.quantity + 10, 'Restocked')}
-                      className="text-blue-600 hover:text-blue-900 mr-3"
-                    >
-                      Restock
-                    </button>
-                    <button className="text-gray-600 hover:text-gray-900">
-                      Adjust
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {filteredItems.map((item) => {
+                const status = getItemStatus(item);
+                const totalValue = item.quantity * item.unitPrice;
+                return (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="font-medium text-gray-900">{item.name}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
+                        {item.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="font-medium">{item.quantity} {item.unit}</div>
+                      <div className="text-xs text-gray-500">Threshold: {item.threshold}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-3 py-1 text-xs rounded-full border ${getStatusColor(status)}`}>
+                        {getStatusIcon(status)} {status.replace('_', ' ').toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      KSh {item.unitPrice.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap font-medium">
+                      KSh {totalValue.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {item.supplier?.name || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => updateStockQuantity(item.id, item.quantity + 10, 'Restocked')}
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
+                        Restock
+                      </button>
+                      <button className="text-gray-600 hover:text-gray-900">
+                        Adjust
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

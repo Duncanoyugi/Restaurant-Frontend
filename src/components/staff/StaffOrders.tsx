@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useGetMyRestaurantOrdersQuery, useUpdateOrderStatusMutation } from '../../features/orders/ordersApi';
+import { useAppSelector } from '../../app/hooks';
 import { useToast } from '../../contexts/ToastContext';
 
 interface StaffOrdersProps {
@@ -11,8 +12,12 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
   const [filter, setFilter] = useState<'all' | 'pending' | 'preparing' | 'ready' | 'delivery'>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+
   // Fetch restaurant orders
-  const { data: ordersData, isLoading, refetch } = useGetMyRestaurantOrdersQuery();
+  const { data: ordersData, isLoading, refetch } = useGetMyRestaurantOrdersQuery(undefined, {
+    skip: !isAuthenticated || !user,
+  });
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
 
   const orders = ordersData || [];

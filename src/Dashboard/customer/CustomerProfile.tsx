@@ -1,30 +1,156 @@
-import React, { useState } from 'react';
-import DashboardLayout from '../../components/layout/DashboardLayout';
-import { useGetProfileQuery, useUpdateProfileMutation, useGetLoyaltyInfoQuery } from '../../features/customer/customerApi';
+import React, { useState, useEffect } from 'react';
+import { useUpdateProfileMutation, useGetLoyaltyInfoQuery } from '../../features/customer/customerApi';
 import { useAppSelector } from '../../app/hooks';
 
+// Define types for user profile
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  emailVerified: boolean;
+  status: string;
+  profileImage?: string;
+  phone?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  favoriteCuisines?: string[];
+  dietaryPreferences?: string[];
+  allergies?: string[];
+  totalOrders?: number;
+  totalSpent?: number;
+}
+
 const ProfilePage: React.FC = () => {
-  const { user } = useAppSelector((state) => state.auth);
-  const { data: profile, isLoading: profileLoading } = useGetProfileQuery();
+  const { user: reduxUser } = useAppSelector((state) => state.auth);
+  const [localUser, setLocalUser] = useState<UserProfile | null>(null);
   const { data: loyaltyInfo, isLoading: loyaltyLoading } = useGetLoyaltyInfoQuery();
   const [updateProfile] = useUpdateProfileMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    phone: user?.phone || '',
-    favoriteCuisines: profile?.favoriteCuisines || [],
-    dietaryPreferences: profile?.dietaryPreferences || [],
-    allergies: profile?.allergies || [],
+    name: '',
+    phone: '',
+    favoriteCuisines: [] as string[],
+    dietaryPreferences: [] as string[],
+    allergies: [] as string[],
   });
+
+  // Load user from localStorage on component mount
+  useEffect(() => {
+    const loadUserFromStorage = () => {
+      try {
+        // First try to get from localStorage
+        const storedUser = localStorage.getItem('user');
+        
+        if (storedUser) {
+          const parsedUser: UserProfile = JSON.parse(storedUser);
+          setLocalUser(parsedUser);
+          
+          // Set form data from stored user
+          setFormData({
+            name: parsedUser.name || '',
+            phone: parsedUser.phone || '',
+            favoriteCuisines: parsedUser.favoriteCuisines || [],
+            dietaryPreferences: parsedUser.dietaryPreferences || [],
+            allergies: parsedUser.allergies || [],
+          });
+        } else if (reduxUser) {
+          // Fall back to Redux state - safely handle missing properties
+          const userFromRedux: UserProfile = {
+            id: reduxUser.id || '',
+            name: reduxUser.name || '',
+            email: reduxUser.email || '',
+            role: reduxUser.role || '',
+            emailVerified: reduxUser.emailVerified || false,
+            status: reduxUser.status || 'active',
+            phone: reduxUser.phone || '',
+            // These properties might not exist on the User type, so use optional chaining or default
+            createdAt: (reduxUser as any).createdAt || undefined,
+            updatedAt: (reduxUser as any).updatedAt || undefined,
+          };
+          
+          setLocalUser(userFromRedux);
+          setFormData({
+            name: userFromRedux.name || '',
+            phone: userFromRedux.phone || '',
+            favoriteCuisines: userFromRedux.favoriteCuisines || [],
+            dietaryPreferences: userFromRedux.dietaryPreferences || [],
+            allergies: userFromRedux.allergies || [],
+          });
+        }
+      } catch (error) {
+        console.error('Error loading user from storage:', error);
+      }
+    };
+
+    loadUserFromStorage();
+  }, [reduxUser]);
+
+  // Also ensure we update when reduxUser changes
+  useEffect(() => {
+    if (reduxUser && !localUser) {
+      const userFromRedux: UserProfile = {
+        id: reduxUser.id || '',
+        name: reduxUser.name || '',
+        email: reduxUser.email || '',
+        role: reduxUser.role || '',
+        emailVerified: reduxUser.emailVerified || false,
+        status: reduxUser.status || 'active',
+        phone: reduxUser.phone || '',
+        // Use type assertion or optional chaining for properties that might not exist
+        createdAt: (reduxUser as any).createdAt || undefined,
+        updatedAt: (reduxUser as any).updatedAt || undefined,
+      };
+      
+      setLocalUser(userFromRedux);
+      setFormData(prev => ({
+        ...prev,
+        name: userFromRedux.name || prev.name,
+        phone: userFromRedux.phone || prev.phone,
+      }));
+    }
+  }, [reduxUser, localUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // If you still want to update on backend
       await updateProfile(formData).unwrap();
+      
+      // Update local storage with new data
+      if (localUser) {
+        const updatedUser: UserProfile = {
+          ...localUser,
+          name: formData.name,
+          phone: formData.phone,
+          favoriteCuisines: formData.favoriteCuisines,
+          dietaryPreferences: formData.dietaryPreferences,
+          allergies: formData.allergies,
+        };
+        
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setLocalUser(updatedUser);
+      }
+      
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to update profile:', error);
+      // Even if API fails, update localStorage for better UX
+      if (localUser) {
+        const updatedUser: UserProfile = {
+          ...localUser,
+          name: formData.name,
+          phone: formData.phone,
+          favoriteCuisines: formData.favoriteCuisines,
+          dietaryPreferences: formData.dietaryPreferences,
+          allergies: formData.allergies,
+        };
+        
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setLocalUser(updatedUser);
+        setIsEditing(false);
+      }
     }
   };
 
@@ -45,19 +171,29 @@ const ProfilePage: React.FC = () => {
     });
   };
 
-  if (profileLoading || loyaltyLoading) {
+  if (loyaltyLoading) {
     return (
-      <DashboardLayout>
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+      <div className="animate-pulse space-y-6">
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+      </div>
+    );
+  }
+
+  // Show loading if no user data yet
+  if (!localUser) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading profile...</p>
         </div>
-      </DashboardLayout>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
+    <div className="space-y-8">
       <div className="space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -126,7 +262,7 @@ const ProfilePage: React.FC = () => {
                         required
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white font-medium">{user?.name}</p>
+                      <p className="text-gray-900 dark:text-white font-medium">{localUser.name}</p>
                     )}
                   </div>
 
@@ -134,7 +270,7 @@ const ProfilePage: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Email Address
                     </label>
-                    <p className="text-gray-900 dark:text-white font-medium">{user?.email}</p>
+                    <p className="text-gray-900 dark:text-white font-medium">{localUser.email}</p>
                   </div>
 
                   <div>
@@ -149,7 +285,7 @@ const ProfilePage: React.FC = () => {
                         className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     ) : (
-                      <p className="text-gray-900 dark:text-white font-medium">{user?.phone || 'Not provided'}</p>
+                      <p className="text-gray-900 dark:text-white font-medium">{localUser.phone || 'Not provided'}</p>
                     )}
                   </div>
 
@@ -158,7 +294,7 @@ const ProfilePage: React.FC = () => {
                       Member Since
                     </label>
                     <p className="text-gray-900 dark:text-white font-medium">
-                      {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}
+                      {localUser.createdAt ? new Date(localUser.createdAt).toLocaleDateString() : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -295,13 +431,13 @@ const ProfilePage: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Total Orders</span>
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {profile?.totalOrders || 0}
+                      {localUser.totalOrders || 0}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Total Spent</span>
                     <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                      ${profile?.totalSpent?.toLocaleString() || '0'}
+                      KSh {(localUser.totalSpent || 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -311,9 +447,9 @@ const ProfilePage: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 dark:text-gray-400">Average Rating</span>
-                    <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                      4.8
+                    <span className="text-gray-600 dark:text-gray-400">Account Status</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-white capitalize">
+                      {localUser.status || 'active'}
                     </span>
                   </div>
                 </div>
@@ -343,7 +479,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

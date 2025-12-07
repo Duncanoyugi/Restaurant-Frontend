@@ -138,7 +138,7 @@ export const ActiveOrders: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <span className="font-semibold text-gray-900 dark:text-white">
-                ${order.total.toFixed(2)}
+                KSh {order.total.toFixed(0)}
               </span>
               <div className="flex space-x-2">
                 <button className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">

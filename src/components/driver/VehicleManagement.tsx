@@ -1,33 +1,42 @@
 import React, { useState } from 'react';
-
-// Mock vehicle data
-const mockVehicleData = {
-  vehicleMake: 'Toyota',
-  vehicleModel: 'Corolla',
-  year: 2020,
-  licensePlate: 'KCA 123A',
-  color: 'White',
-  type: 'Sedan',
-  insuranceExpiry: '2024-12-31',
-  registrationExpiry: '2024-06-30',
-  mileage: 45230,
-  lastService: '2024-01-10',
-  nextService: 5000, // km until next service
-  fuelType: 'Petrol',
-  fuelEfficiency: 12.5, // km per liter
-  status: 'active'
-};
+import { useAppSelector } from '../../app/hooks';
+import { useGetVehicleInfoByUserIdQuery, useUpdateVehicleInfoMutation } from '../../features/delivery/deliveryApi';
+import { VehicleType } from '../../types/delivery';
 
 const VehicleManagement: React.FC = () => {
-  const [vehicleInfo, setVehicleInfo] = useState(mockVehicleData);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ ...mockVehicleData });
+  const { user } = useAppSelector((state) => state.auth);
 
-  const handleEdit = () => {
+  const { data: vehicleData } = useGetVehicleInfoByUserIdQuery(user?.id || '', {
+    skip: !user?.id
+  });
+  const [updateVehicle] = useUpdateVehicleInfoMutation();
+
+  const vehicleInfo = vehicleData || {
+    vehicleMake: '',
+    vehicleModel: '',
+    vehicleYear: new Date().getFullYear(),
+    licensePlate: '',
+    vehicleColor: '',
+    vehicleType: VehicleType.CAR,
+    insuranceExpiry: '',
+    registrationExpiry: ''
+  };
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({ ...vehicleInfo });
+
+  const handleEdit = async () => {
     if (isEditing) {
       // Save changes
-      setVehicleInfo(formData);
-      console.log('Updating vehicle info:', formData);
+      try {
+        await updateVehicle({
+          userId: user?.id || '',
+          data: formData
+        }).unwrap();
+        console.log('Vehicle info updated successfully');
+      } catch (error) {
+        console.error('Failed to update vehicle info:', error);
+      }
     } else {
       setFormData({ ...vehicleInfo });
     }
@@ -61,29 +70,26 @@ const VehicleManagement: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-2xl font-bold">{vehicleInfo.vehicleMake} {vehicleInfo.vehicleModel}</h3>
-                <p className="text-gray-300">{vehicleInfo.licensePlate} • {vehicleInfo.year}</p>
+                <p className="text-gray-300">{vehicleInfo.licensePlate} • {vehicleInfo.vehicleYear}</p>
               </div>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <div className="text-sm text-gray-400">Vehicle Type</div>
-                <div className="font-semibold">{vehicleInfo.type}</div>
+                <div className="font-semibold">{vehicleInfo.vehicleType}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-400">Mileage</div>
-                <div className="font-semibold">{vehicleInfo.mileage.toLocaleString()} km</div>
+                <div className="text-sm text-gray-400">Color</div>
+                <div className="font-semibold">{vehicleInfo.vehicleColor || 'Not specified'}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-400">Fuel Efficiency</div>
-                <div className="font-semibold">{vehicleInfo.fuelEfficiency} km/L</div>
+                <div className="text-sm text-gray-400">Insurance</div>
+                <div className="font-semibold">{vehicleInfo.insuranceExpiry ? 'Valid' : 'Not set'}</div>
               </div>
               <div>
-                <div className="text-sm text-gray-400">Status</div>
-                <div className="font-semibold flex items-center">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-                  {vehicleInfo.status.charAt(0).toUpperCase() + vehicleInfo.status.slice(1)}
-                </div>
+                <div className="text-sm text-gray-400">Registration</div>
+                <div className="font-semibold">{vehicleInfo.registrationExpiry ? 'Valid' : 'Not set'}</div>
               </div>
             </div>
           </div>
@@ -142,13 +148,13 @@ const VehicleManagement: React.FC = () => {
                   {isEditing ? (
                     <input
                       type="number"
-                      name="year"
-                      value={formData.year}
+                      name="vehicleYear"
+                      value={formData.vehicleYear}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.year}</div>
+                    <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.vehicleYear}</div>
                   )}
                 </div>
                 
@@ -174,13 +180,13 @@ const VehicleManagement: React.FC = () => {
                   {isEditing ? (
                     <input
                       type="text"
-                      name="color"
-                      value={formData.color}
+                      name="vehicleColor"
+                      value={formData.vehicleColor || ''}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   ) : (
-                    <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.color}</div>
+                    <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.vehicleColor || 'Not specified'}</div>
                   )}
                 </div>
                 
@@ -188,129 +194,30 @@ const VehicleManagement: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Type</label>
                   {isEditing ? (
                     <select
-                      name="type"
-                      value={formData.type}
+                      name="vehicleType"
+                      value={formData.vehicleType}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <option value="Sedan">Sedan</option>
-                      <option value="SUV">SUV</option>
-                      <option value="Truck">Truck</option>
-                      <option value="Motorcycle">Motorcycle</option>
-                      <option value="Van">Van</option>
+                      <option value="motorcycle">Motorcycle</option>
+                      <option value="car">Car</option>
+                      <option value="tricycle">Tricycle</option>
+                      <option value="bicycle">Bicycle</option>
+                      <option value="van">Van</option>
+                      <option value="truck">Truck</option>
                     </select>
                   ) : (
-                    <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.type}</div>
+                    <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.vehicleType}</div>
                   )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Fuel Information */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Fuel Information</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Fuel Type</label>
-                {isEditing ? (
-                  <select
-                    name="fuelType"
-                    value={formData.fuelType}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Petrol">Petrol</option>
-                    <option value="Diesel">Diesel</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Hybrid">Hybrid</option>
-                  </select>
-                ) : (
-                  <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.fuelType}</div>
-                )}
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Fuel Efficiency (km per liter)</label>
-                {isEditing ? (
-                  <input
-                    type="number"
-                    step="0.1"
-                    name="fuelEfficiency"
-                    value={formData.fuelEfficiency}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                ) : (
-                  <div className="px-3 py-2 bg-gray-50 rounded-lg">{vehicleInfo.fuelEfficiency} km/L</div>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Maintenance & Documents */}
         <div className="space-y-6">
-          {/* Maintenance Schedule */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Maintenance Schedule</h3>
-            
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <div>
-                    <div className="font-medium text-gray-900">Last Service</div>
-                    <div className="text-sm text-gray-600">Date of last maintenance</div>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full ${isEditing ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'} text-sm font-medium`}>
-                    {vehicleInfo.lastService}
-                  </div>
-                </div>
-                {isEditing && (
-                  <input
-                    type="date"
-                    name="lastService"
-                    value={formData.lastService}
-                    onChange={handleChange}
-                    className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                )}
-              </div>
-              
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <div>
-                    <div className="font-medium text-gray-900">Next Service Due</div>
-                    <div className="text-sm text-gray-600">Kilometers until next service</div>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full ${vehicleInfo.nextService < 2000 ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'} text-sm font-medium`}>
-                    {vehicleInfo.nextService} km
-                  </div>
-                </div>
-                {isEditing && (
-                  <input
-                    type="number"
-                    name="nextService"
-                    value={formData.nextService}
-                    onChange={handleChange}
-                    className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                )}
-              </div>
-              
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start">
-                  <svg className="w-5 h-5 text-blue-500 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-sm text-blue-800">
-                    Regular maintenance ensures vehicle safety and optimal fuel efficiency. Schedule service every 10,000 km or 6 months.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Document Expiry */}
           <div className="bg-white border border-gray-200 rounded-xl p-6">
@@ -323,8 +230,8 @@ const VehicleManagement: React.FC = () => {
                     <div className="font-medium text-gray-900">Insurance Expiry</div>
                     <div className="text-sm text-gray-600">Third-party insurance</div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full ${vehicleInfo.insuranceExpiry < '2024-02-15' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'} text-sm font-medium`}>
-                    {vehicleInfo.insuranceExpiry}
+                  <div className={`px-3 py-1 rounded-full ${vehicleInfo.insuranceExpiry && new Date(vehicleInfo.insuranceExpiry) < new Date('2024-02-15') ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800'} text-sm font-medium`}>
+                    {vehicleInfo.insuranceExpiry || 'Not set'}
                   </div>
                 </div>
                 {isEditing && (
@@ -344,8 +251,8 @@ const VehicleManagement: React.FC = () => {
                     <div className="font-medium text-gray-900">Registration Expiry</div>
                     <div className="text-sm text-gray-600">Vehicle registration</div>
                   </div>
-                  <div className={`px-3 py-1 rounded-full ${vehicleInfo.registrationExpiry < '2024-03-15' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'} text-sm font-medium`}>
-                    {vehicleInfo.registrationExpiry}
+                  <div className={`px-3 py-1 rounded-full ${vehicleInfo.registrationExpiry && new Date(vehicleInfo.registrationExpiry) < new Date('2024-03-15') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'} text-sm font-medium`}>
+                    {vehicleInfo.registrationExpiry || 'Not set'}
                   </div>
                 </div>
                 {isEditing && (

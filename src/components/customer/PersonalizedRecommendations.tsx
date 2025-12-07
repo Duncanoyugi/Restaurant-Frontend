@@ -31,7 +31,7 @@ export const PersonalizedRecommendations: React.FC = () => {
       description: 'Popular among customers with similar taste',
       image: '🍝',
       rating: 4.9,
-      price: '$24.99'
+      price: 'KSh 2,499'
     },
     {
       id: '3',

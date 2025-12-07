@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import DashboardLayout from '../../components/layout/DashboardLayout';
 import { 
   useGetReservationsQuery, 
   useCancelReservationMutation,
@@ -71,21 +70,18 @@ const ReservationsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
-        <div className="animate-pulse space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-          ))}
-        </div>
-      </DashboardLayout>
+      <div className="animate-pulse space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+        ))}
+      </div>
     );
   }
 
   const reservations = reservationsData?.reservations || [];
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -249,7 +245,6 @@ const ReservationsPage: React.FC = () => {
           )}
         </div>
       </div>
-    </DashboardLayout>
   );
 };
 

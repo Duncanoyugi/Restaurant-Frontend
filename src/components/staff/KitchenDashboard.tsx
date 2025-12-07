@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useGetKitchenOrdersQuery, useUpdateOrderStatusMutation } from '../../features/orders/ordersApi';
+import { useAppSelector } from '../../app/hooks';
 import { useToast } from '../../contexts/ToastContext';
 
 interface KitchenDashboardProps {
@@ -9,10 +10,14 @@ interface KitchenDashboardProps {
 const KitchenDashboard: React.FC<KitchenDashboardProps> = ({ restaurantId }) => {
   const { showToast } = useToast();
   const [filter, setFilter] = useState<'all' | 'pending' | 'preparing' | 'ready'>('all');
-  
+
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+
   // Fetch kitchen orders
   const { data: ordersData, isLoading, refetch } = useGetKitchenOrdersQuery({
     restaurantId,
+  }, {
+    skip: !isAuthenticated || !user,
   });
   
   const [updateOrderStatus] = useUpdateOrderStatusMutation();

@@ -55,7 +55,7 @@ const Rewards: React.FC = () => {
     {
       id: '2',
       title: 'Free Delivery',
-      description: 'Free delivery on orders over $25',
+      description: 'Free delivery on orders over KSh 2,500',
       expiresIn: 'Never',
       points: 100,
       type: 'reward',
@@ -236,7 +236,7 @@ const Rewards: React.FC = () => {
                 Order Food
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Earn 1 point for every $1 spent on orders
+                Earn 1 point for every KSh 100 spent on orders
               </p>
             </div>
             

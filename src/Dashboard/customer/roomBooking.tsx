@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import DashboardLayout from '../../components/layout/DashboardLayout';
-import { 
-  useGetRoomBookingsQuery, 
-  useCancelRoomBookingMutation 
+import {
+  useGetRoomBookingsQuery,
+  useCancelRoomBookingMutation
 } from '../../features/customer/customerApi';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import type { RoomBooking } from '../../types/room';
@@ -44,9 +43,10 @@ const RoomBookingsPage: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-KE', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'KES',
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -66,13 +66,11 @@ const RoomBookingsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout>
-        <div className="animate-pulse space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-          ))}
-        </div>
-      </DashboardLayout>
+      <div className="animate-pulse space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-24 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+        ))}
+      </div>
     );
   }
 
@@ -80,7 +78,6 @@ const RoomBookingsPage: React.FC = () => {
   const total = bookingsData?.total || 0;
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -273,7 +270,6 @@ const RoomBookingsPage: React.FC = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 };
 

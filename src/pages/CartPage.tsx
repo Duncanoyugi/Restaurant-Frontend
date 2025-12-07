@@ -63,7 +63,7 @@ const CartPage: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                        <p className="text-primary-600 font-semibold">${item.price.toFixed(2)}</p>
+                        <p className="text-primary-600 font-semibold">KSh {(item.price * 100).toFixed(0)}</p>
                       </div>
                     </div>
                     
@@ -101,19 +101,19 @@ const CartPage: React.FC = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>KSh {(total * 100).toFixed(0)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tax</span>
-                    <span>${(total * 0.08).toFixed(2)}</span>
+                    <span>KSh {(total * 8).toFixed(0)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Delivery</span>
-                    <span>$2.99</span>
+                    <span>KSh 299</span>
                   </div>
                   <div className="border-t border-gray-200 pt-3 flex justify-between font-semibold text-lg">
                     <span>Total</span>
-                    <span>${(total + total * 0.08 + 2.99).toFixed(2)}</span>
+                    <span>KSh {((total * 100) + (total * 8) + 299).toFixed(0)}</span>
                   </div>
                 </div>
 

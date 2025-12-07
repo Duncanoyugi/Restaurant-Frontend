@@ -1,9 +1,9 @@
+// src/components/layout/CustomerLayout.tsx
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
 import { ThemeToggle } from '../ui/ThemeToggle';
-import { useGetProfileQuery } from '../../features/auth/authApi';
 
 interface CustomerLayoutProps {
   children?: React.ReactNode;
@@ -11,7 +11,6 @@ interface CustomerLayoutProps {
 
 const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
-  const { data: profile } = useGetProfileQuery();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,7 +83,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                   <div className="flex flex-col flex-1 min-w-0">
                     <span className="truncate">{user?.name || 'User'}</span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {user?.email || profile?.email}
+                      {user?.email || 'user@example.com'} {/* Use user email from Redux */}
                     </span>
                   </div>
                   <ThemeToggle />
@@ -117,7 +116,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               {/* Quick Actions */}
               <Link
-                to="/restaurants"
+                to="/menu"
                 className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
                 <span>🍽️</span>
@@ -129,6 +128,13 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
               >
                 <span>📅</span>
                 Book Table
+              </Link>
+              <Link
+                to="/accommodation"
+                className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              >
+                <span>🏨</span>
+                Book Room
               </Link>
               
               {/* Logout */}

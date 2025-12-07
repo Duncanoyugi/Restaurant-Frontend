@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useAppSelector } from '../../app/hooks';
+import { UserRoleEnum } from '../../features/auth/authSlice';
+import { useGetStaffProfileQuery } from '../../features/users/usersApi';
 
 interface Restaurant {
   id: string;
@@ -37,35 +39,38 @@ interface StaffProviderProps {
 }
 
 export const StaffProvider: React.FC<StaffProviderProps> = ({ children }) => {
-  useAppSelector((state) => state.auth);
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const { data: staffProfile, isLoading, refetch } = useGetStaffProfileQuery(user?.id || '', {
+    skip: !isAuthenticated || !user?.id || user?.role !== UserRoleEnum.RESTAURANT_STAFF,
+  });
 
   useEffect(() => {
-    // Mock restaurant data
-    const mockRestaurant: Restaurant = {
-      id: '1',
-      name: 'Fine Dining Restaurant',
-      address: '123 Main Street, Nairobi',
-      phone: '+254 712 345 678',
-      openingTime: '08:00',
-      closingTime: '22:00',
-      totalTables: 15,
-      availableTables: 5,
-      todaysOrders: 24,
-      todaysReservations: 18
-    };
-    
-    setIsLoading(true);
-    setTimeout(() => {
-      setRestaurant(mockRestaurant);
-      setIsLoading(false);
-    }, 500);
-  }, []);
+    if (staffProfile?.restaurant) {
+      const restaurantData: Restaurant = {
+        id: staffProfile.restaurant.id,
+        name: staffProfile.restaurant.name,
+        address: staffProfile.restaurant.address || '',
+        phone: '',
+        openingTime: '',
+        closingTime: '',
+        // These fields might need to be calculated or fetched separately
+        totalTables: 15, // Placeholder
+        availableTables: 5, // Placeholder
+        todaysOrders: 24, // Placeholder
+        todaysReservations: 18, // Placeholder
+      };
+      setRestaurant(restaurantData);
+      setError(null);
+    } else if (!isLoading && user?.role === UserRoleEnum.RESTAURANT_STAFF) {
+      setError('Unable to load restaurant information');
+    }
+  }, [staffProfile, isLoading, user?.role]);
 
   const refreshRestaurant = () => {
-    console.log('Refreshing restaurant data...');
+    refetch();
   };
 
   return (

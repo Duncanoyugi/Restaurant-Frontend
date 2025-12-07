@@ -1,6 +1,6 @@
+// src/features/auth/authSlice.ts
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-
 
 export const UserRoleEnum = {
   ADMIN: 'Admin',
@@ -14,28 +14,22 @@ export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
 
 // Helper function to extract role name from object or string
 const extractRoleName = (role: any): UserRoleEnum => {
-  // If role is already a string, return it
   if (typeof role === 'string') {
     return role as UserRoleEnum;
   }
   
-  // If role is an object, try to extract the name
   if (role && typeof role === 'object') {
-    // Try different possible property names
     const roleName = role.name || role.roleName || role.role || role.value;
     if (roleName && typeof roleName === 'string') {
-      console.log('🔧 Extracted role from object:', roleName);
       return roleName as UserRoleEnum;
     }
   }
   
-  // Default to CUSTOMER if role is invalid
-  console.warn('⚠️ Invalid role format, defaulting to Customer:', role);
   return UserRoleEnum.CUSTOMER;
 };
 
-// Define types locally
-type User = {
+// Define types locally - UPDATED with missing properties
+export type User = {
   id: string;
   name: string;
   email: string;
@@ -48,6 +42,14 @@ type User = {
   totalDeliveries?: number;
   isOnline?: boolean;
   isAvailable?: boolean;
+  // ADD THESE PROPERTIES:
+  createdAt?: string;
+  updatedAt?: string;
+  favoriteCuisines?: string[];
+  dietaryPreferences?: string[];
+  allergies?: string[];
+  totalOrders?: number;
+  totalSpent?: number;
 };
 
 type AuthState = {
@@ -85,12 +87,20 @@ const authSlice = createSlice({
       const { user, accessToken } = action.payload;
       
       console.log('🔐 Raw user data from backend:', user);
-      console.log('🔐 Raw role data:', user?.role);
       
       // Normalize the user data by extracting role name
       const normalizedUser = {
         ...user,
-        role: extractRoleName(user.role)
+        role: extractRoleName(user.role),
+        // Ensure all optional properties are included
+        phone: user.phone || '',
+        createdAt: user.createdAt || user.created_at,
+        updatedAt: user.updatedAt || user.updated_at,
+        favoriteCuisines: user.favoriteCuisines || user.favorite_cuisines || [],
+        dietaryPreferences: user.dietaryPreferences || user.dietary_preferences || [],
+        allergies: user.allergies || [],
+        totalOrders: user.totalOrders || user.total_orders || 0,
+        totalSpent: user.totalSpent || user.total_spent || 0,
       };
       
       console.log('🔐 Normalized role:', normalizedUser.role);
@@ -109,12 +119,25 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
+    // Add this new action to update user profile
+    updateUserProfile: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        const updatedUser = {
+          ...state.user,
+          ...action.payload,
+        };
+        state.user = updatedUser;
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+    },
   },
 });
 
-export const { setCredentials, logout, setLoading } = authSlice.actions;
+export const { setCredentials, logout, setLoading, updateUserProfile } = authSlice.actions;
 export default authSlice.reducer;

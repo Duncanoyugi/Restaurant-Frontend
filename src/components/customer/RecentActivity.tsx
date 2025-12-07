@@ -18,7 +18,7 @@ export const RecentActivity: React.FC = () => {
       id: '1',
       type: 'order',
       title: 'Order Delivered',
-      description: 'Italian Bistro - $42.50',
+      description: 'Italian Bistro - KSh 4,250',
       time: '2 hours ago',
       icon: '📦',
       color: 'text-green-600'
@@ -45,7 +45,7 @@ export const RecentActivity: React.FC = () => {
       id: '4',
       type: 'payment',
       title: 'Payment Processed',
-      description: 'Room booking - $249.00',
+      description: 'Room booking - KSh 24,900',
       time: '2 days ago',
       icon: '💳',
       color: 'text-purple-600'

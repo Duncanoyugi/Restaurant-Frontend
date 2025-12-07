@@ -5,19 +5,32 @@ import type { RootState } from '../app/store';
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://localhost:3000',
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth?.accessToken;
-    
+    // First try to get token from Redux state
+    let token = (getState() as RootState).auth?.accessToken;
+
     // Debug logging
     console.log('🔐 baseApi - Token from Redux:', token);
     console.log('🔐 baseApi - Full auth state:', (getState() as RootState).auth);
-    
+    console.log('🔐 baseApi - isAuthenticated:', (getState() as RootState).auth?.isAuthenticated);
+
+    // If no token in Redux, try localStorage as fallback
+    if (!token) {
+      token = localStorage.getItem('accessToken') || localStorage.getItem('access_token');
+      console.log('🔐 baseApi - Token from localStorage:', token);
+    }
+
+    // Check localStorage directly
+    const lsToken = localStorage.getItem('accessToken');
+    const lsUser = localStorage.getItem('user');
+    console.log('🔐 baseApi - Direct localStorage check - token:', !!lsToken, 'user:', !!lsUser);
+
     if (token) {
-      console.log('🔐 baseApi - Setting Authorization header');
+      console.log('🔐 baseApi - Setting Authorization header with token:', token.substring(0, 20) + '...');
       headers.set('Authorization', `Bearer ${token}`);
     } else {
-      console.log('🔐 baseApi - No token available');
+      console.log('🔐 baseApi - No token available in Redux or localStorage - USER NOT LOGGED IN');
     }
-    
+
     headers.set('Content-Type', 'application/json');
     return headers;
   },
