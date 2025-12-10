@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGetAllUsersQuery, useUpdateUserMutation, useDeleteUserMutation } from '../../features/users/usersApi';
+import { FaUsers } from 'react-icons/fa';
 
 interface User {
   id: string;
@@ -31,7 +32,8 @@ const UserManagement: React.FC = () => {
   const [updateUser] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
 
-  const users = usersResponse?.data || [];
+  // Backend returns User[] directly, not wrapped in { data: User[] }
+  const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || [];
 
   console.log('🔍 Processed users array:', users);
 
@@ -62,10 +64,19 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const getRoleColor = (role: string) => {
-    switch (role.toLowerCase()) {
+  const getRoleColor = (role: string | any) => {
+    // Handle both string and object roles
+    const roleName = typeof role === 'string' 
+      ? role 
+      : role?.name || role?.roleName || role?.role || '';
+    
+    if (!roleName) return 'bg-gray-100 text-gray-800';
+    
+    switch (roleName.toLowerCase()) {
       case 'admin': return 'bg-red-100 text-red-800';
+      case 'restaurant owner': 
       case 'restaurant_owner': return 'bg-green-100 text-green-800';
+      case 'restaurant staff':
       case 'restaurant_staff': return 'bg-blue-100 text-blue-800';
       case 'driver': return 'bg-purple-100 text-purple-800';
       case 'customer': return 'bg-gray-100 text-gray-800';
@@ -76,7 +87,6 @@ const UserManagement: React.FC = () => {
   console.log('🔍 Render condition check:', { isLoading, error: !!error, usersLength: users.length });
 
   if (isLoading) {
-    console.log('🔍 Showing loading state');
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
@@ -88,7 +98,6 @@ const UserManagement: React.FC = () => {
   }
 
   if (error) {
-    console.log('🔍 Showing error state:', error);
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -107,8 +116,6 @@ const UserManagement: React.FC = () => {
       </div>
     );
   }
-
-  console.log('🔍 Rendering main content');
 
   return (
     <div className="space-y-6">
@@ -224,7 +231,9 @@ const UserManagement: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(user.role)}`}>
-                      {user.role.replace('_', ' ')}
+                      {typeof user.role === 'string' 
+                        ? user.role.replace('_', ' ') 
+                        : (user.role as any)?.name || (user.role as any)?.roleName || 'Unknown'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -239,11 +248,10 @@ const UserManagement: React.FC = () => {
                     </select>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      user.emailVerified
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.emailVerified
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }`}>
+                      }`}>
                       {user.emailVerified ? 'Verified' : 'Unverified'}
                     </span>
                   </td>
@@ -266,7 +274,9 @@ const UserManagement: React.FC = () => {
 
         {users.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">👥</div>
+            <div className="text-6xl mb-4 flex justify-center text-gray-400">
+              <FaUsers />
+            </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               No users found
             </h3>

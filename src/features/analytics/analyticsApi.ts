@@ -35,6 +35,7 @@ export type DashboardOverviewResponse = {
     onlineRevenue: number;
     dineInRevenue: number;
     deliveryRevenue: number;
+    previousRevenue?: number;
   };
   orders: {
     totalOrders: number;

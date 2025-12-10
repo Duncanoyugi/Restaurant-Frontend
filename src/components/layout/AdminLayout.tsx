@@ -46,15 +46,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Sidebar for Desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 pb-4">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-gradient-to-b from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-800 dark:via-blue-900/10 dark:to-purple-900/5 px-6 pb-4">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-red-600 to-red-700 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white text-sm font-bold">ADMIN</span>
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Admin<span className="text-red-600">Panel</span>
+                Admin<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Panel</span>
               </span>
             </Link>
           </div>
@@ -68,11 +68,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <li key={item.name}>
                       <Link
                         to={item.href}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
-                          isActive(item.href)
-                            ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400'
-                        }`}
+                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${isActive(item.href)
+                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
+                          }`}
                       >
                         <span className="text-lg">{item.icon}</span>
                         {item.name}
@@ -84,8 +83,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
               {/* User Section */}
               <li className="mt-auto">
-                <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700">
-                  <div className="relative h-8 w-8 bg-gradient-to-r from-red-600 to-red-700 rounded-full flex items-center justify-center">
+                <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800">
+                  <div className="relative h-8 w-8 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-full flex items-center justify-center shadow-md">
                     <span className="text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase() || 'A'}
                     </span>
@@ -132,7 +131,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                className="flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 <span>🚪</span>
                 Logout
@@ -160,14 +159,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   </button>
                 </div>
 
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4">
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-800 dark:via-blue-900/10 dark:to-purple-900/5 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="w-8 h-8 bg-gradient-to-r from-red-600 to-red-700 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
                         <span className="text-white text-sm font-bold">ADMIN</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
-                        Admin<span className="text-red-600">Panel</span>
+                        Admin<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Panel</span>
                       </span>
                     </Link>
                   </div>
@@ -180,11 +179,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                               <Link
                                 to={item.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
-                                  isActive(item.href)
-                                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400'
-                                }`}
+                                className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${isActive(item.href)
+                                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
+                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
+                                  }`}
                               >
                                 <span className="text-lg">{item.icon}</span>
                                 {item.name}

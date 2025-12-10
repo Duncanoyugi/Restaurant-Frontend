@@ -12,8 +12,8 @@ const DeliveryQueue: React.FC = () => {
 
   const deliveries = deliveriesData || [];
 
-  // Helper to get status ID from order and target status name
-  const getStatusId = (order: any, targetStatus: string): string | null => {
+  // Helper to get status ID from order
+  const getStatusId = (order: any): string | null => {
     // If order has statusId, use it
     if (order.statusId) return order.statusId;
     
@@ -21,27 +21,14 @@ const DeliveryQueue: React.FC = () => {
     const status = order.status || order.statusHistory?.[order.statusHistory.length - 1]?.statusCatalog;
     if (status?.id) return status.id;
     
-    // If we have a target status name, try to find matching status
-    if (targetStatus) {
-      // Look for status in status history that matches targetStatus
-      if (order.statusHistory) {
-        const matchingStatus = order.statusHistory.find(
-          (history: any) => history.statusCatalog?.name?.toLowerCase() === targetStatus.toLowerCase() ||
-                         history.status?.toLowerCase() === targetStatus.toLowerCase()
-        );
-        if (matchingStatus?.statusCatalog?.id) {
-          return matchingStatus.statusCatalog.id;
-        }
-      }
-    }
-    
     // For now, return null - backend should handle status name to ID mapping
+    // In production, you'd have a status catalog lookup
     return null;
   };
 
   const handleAcceptDelivery = async (orderId: string, order: any) => {
     try {
-      const statusId = getStatusId(order, 'accepted');
+      const statusId = getStatusId(order);
       if (!statusId) {
         showToast('Unable to determine status. Please try again.', 'error');
         return;
@@ -59,7 +46,7 @@ const DeliveryQueue: React.FC = () => {
 
   const handleCompleteDelivery = async (orderId: string, order: any) => {
     try {
-      const statusId = getStatusId(order, 'delivered');
+      const statusId = getStatusId(order);
       if (!statusId) {
         showToast('Unable to determine status. Please try again.', 'error');
         return;

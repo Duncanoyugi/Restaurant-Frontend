@@ -5,6 +5,7 @@ import { ImageSlider } from '../components/ui/ImageSlider';
 import { AnimatedSection } from '../components/ui/AnimatedSection';
 import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
+import { FaUserTie, FaStar, FaHotel } from 'react-icons/fa';
 
 const LandingPage: React.FC = () => {
   const sliderSlides = [
@@ -41,7 +42,7 @@ const LandingPage: React.FC = () => {
   return (
     <LandingLayout>
       <HeroSection />
-      
+
       {/* Image Slider Section */}
       <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <div className="container mx-auto px-4">
@@ -55,7 +56,7 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
           </AnimatedSection>
-          
+
           <AnimatedSection direction="up" delay={200}>
             <ImageSlider slides={sliderSlides} />
           </AnimatedSection>
@@ -80,11 +81,11 @@ const LandingPage: React.FC = () => {
             <AnimatedSection direction="up" delay={100}>
               <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
                 <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl text-white">👨‍🍳</span>
+                  <span className="text-3xl text-white"><FaUserTie /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Award-Winning Chefs</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Our culinary team brings decades of experience and innovation to every dish, 
+                  Our culinary team brings decades of experience and innovation to every dish,
                   creating memorable flavors that keep guests coming back.
                 </p>
               </div>
@@ -93,11 +94,11 @@ const LandingPage: React.FC = () => {
             <AnimatedSection direction="up" delay={200}>
               <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-secondary-50 to-primary-50 dark:from-gray-600 dark:to-gray-700 hover:shadow-xl transition-all duration-300">
                 <div className="w-20 h-20 bg-gradient-to-r from-secondary-600 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl text-white">⭐</span>
+                  <span className="text-3xl text-white"><FaStar /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">5-Star Service</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  From the moment you arrive until you depart, our dedicated staff ensures 
+                  From the moment you arrive until you depart, our dedicated staff ensures
                   every aspect of your experience exceeds expectations.
                 </p>
               </div>
@@ -106,11 +107,11 @@ const LandingPage: React.FC = () => {
             <AnimatedSection direction="up" delay={300}>
               <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
                 <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl text-white">🏨</span>
+                  <span className="text-3xl text-white"><FaHotel /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Luxury Stay</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Our accommodations feature premium amenities, stunning views, 
+                  Our accommodations feature premium amenities, stunning views,
                   and thoughtful touches for the ultimate comfort and relaxation.
                 </p>
               </div>

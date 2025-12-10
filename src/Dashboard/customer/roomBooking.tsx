@@ -4,18 +4,21 @@ import {
   useGetRoomBookingsQuery,
   useCancelRoomBookingMutation
 } from '../../features/customer/customerApi';
+import { useAppSelector } from '../../app/hooks';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import type { RoomBooking } from '../../types/room';
 
 const RoomBookingsPage: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const limit = 10;
 
   const { data: bookingsData, isLoading, refetch } = useGetRoomBookingsQuery({
+    userId: user?.id, // Filter by current user
     page,
     limit,
-    status: statusFilter !== 'all' ? statusFilter : undefined,
+    ...(statusFilter !== 'all' && { status: statusFilter }),
   });
 
   const [cancelBooking] = useCancelRoomBookingMutation();
@@ -74,7 +77,8 @@ const RoomBookingsPage: React.FC = () => {
     );
   }
 
-  const bookings = bookingsData?.bookings || [];
+  // Handle both response formats: { data: [...], total: ... } and { bookings: [...], total: ... }
+  const bookings = bookingsData?.data || bookingsData?.bookings || [];
   const total = bookingsData?.total || 0;
 
   return (

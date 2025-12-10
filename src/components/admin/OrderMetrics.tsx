@@ -4,19 +4,24 @@ import { useDashboardMetrics } from '../../Dashboard/admin/hooks/useDashboardMet
 const OrderMetrics: React.FC = () => {
   const { metrics } = useDashboardMetrics();
 
+  const totalOrders = metrics.orders.total || 1; // Prevent division by zero
   const orderData = [
-    { status: 'Completed', count: metrics.orders.completed, color: 'bg-green-500', percentage: (metrics.orders.completed / metrics.orders.total) * 100 },
-    { status: 'Pending', count: metrics.orders.pending, color: 'bg-yellow-500', percentage: (metrics.orders.pending / metrics.orders.total) * 100 },
-    { status: 'Failed', count: metrics.orders.failed, color: 'bg-red-500', percentage: (metrics.orders.failed / metrics.orders.total) * 100 },
+    { status: 'Completed', count: metrics.orders.completed || 0, color: 'bg-green-500', percentage: totalOrders > 0 ? (metrics.orders.completed / totalOrders) * 100 : 0 },
+    { status: 'Pending', count: metrics.orders.pending || 0, color: 'bg-yellow-500', percentage: totalOrders > 0 ? (metrics.orders.pending / totalOrders) * 100 : 0 },
+    { status: 'Failed', count: metrics.orders.failed || 0, color: 'bg-red-500', percentage: totalOrders > 0 ? (metrics.orders.failed / totalOrders) * 100 : 0 },
   ];
 
   // Precompute SVG segments to avoid returning non-React types from reduce
   const donutCircumference = 2 * Math.PI * 40; // ~251.2
   let cumulativeOffset = 0;
   const segments = orderData.map((item) => {
-    const segmentLength = (item.percentage / 100) * donutCircumference;
-    const offset = cumulativeOffset;
+    const percentage = isNaN(item.percentage) || !isFinite(item.percentage) ? 0 : Math.max(0, Math.min(100, item.percentage));
+    const segmentLength = (percentage / 100) * donutCircumference;
+    const offset = isNaN(cumulativeOffset) || !isFinite(cumulativeOffset) ? 0 : cumulativeOffset;
     cumulativeOffset += segmentLength;
+    const strokeDashoffset = isNaN(donutCircumference - offset) || !isFinite(donutCircumference - offset) 
+      ? donutCircumference 
+      : Math.max(0, Math.min(donutCircumference, donutCircumference - offset));
     const strokeColor =
       item.color === 'bg-green-500' ? '#10b981' :
       item.color === 'bg-yellow-500' ? '#f59e42' :
@@ -30,8 +35,8 @@ const OrderMetrics: React.FC = () => {
         fill="none"
         stroke={strokeColor}
         strokeWidth="20"
-        strokeDasharray={segmentLength + ' ' + (donutCircumference - segmentLength)}
-        strokeDashoffset={donutCircumference - offset}
+        strokeDasharray={`${segmentLength} ${donutCircumference - segmentLength}`}
+        strokeDashoffset={strokeDashoffset}
         transform="rotate(-90 50 50)"
       />
     );
@@ -81,7 +86,7 @@ const OrderMetrics: React.FC = () => {
       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex justify-between items-center text-sm">
           <span className="text-gray-600 dark:text-gray-400">
-            Success Rate: {((metrics.orders.completed / metrics.orders.total) * 100).toFixed(1)}%
+            Success Rate: {totalOrders > 0 ? ((metrics.orders.completed / totalOrders) * 100).toFixed(1) : 0}%
           </span>
           <span className={`font-medium ${
             metrics.orders.trend >= 0 ? 'text-green-600' : 'text-red-600'

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDashboardMetrics } from '../../Dashboard/admin/hooks/useDashboardMetrics';
+import { FaMoneyBillWave, FaBox, FaUsers, FaStore, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 const KPICards: React.FC = () => {
   const { metrics, loading } = useDashboardMetrics();
@@ -24,7 +25,7 @@ const KPICards: React.FC = () => {
       value: `$${metrics.revenue.current.toLocaleString()}`,
       change: metrics.revenue.growth,
       subtitle: 'vs last week',
-      icon: '💰',
+      icon: <FaMoneyBillWave />,
       color: 'text-green-600'
     },
     {
@@ -32,7 +33,7 @@ const KPICards: React.FC = () => {
       value: metrics.orders.total.toLocaleString(),
       change: metrics.orders.trend,
       subtitle: 'orders this week',
-      icon: '📦',
+      icon: <FaBox />,
       color: 'text-blue-600'
     },
     {
@@ -40,7 +41,7 @@ const KPICards: React.FC = () => {
       value: metrics.users.active.toLocaleString(),
       change: metrics.users.growth,
       subtitle: 'currently online',
-      icon: '👥',
+      icon: <FaUsers />,
       color: 'text-purple-600'
     },
     {
@@ -48,7 +49,7 @@ const KPICards: React.FC = () => {
       value: `${metrics.restaurants.active}/${metrics.restaurants.total}`,
       change: -metrics.restaurants.pendingApproval,
       subtitle: 'active restaurants',
-      icon: '🏪',
+      icon: <FaStore />,
       color: 'text-orange-600'
     }
   ];
@@ -64,10 +65,9 @@ const KPICards: React.FC = () => {
             <div className={`text-2xl ${kpi.color}`}>
               {kpi.icon}
             </div>
-            <span className={`text-sm font-medium ${
-              kpi.change >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {kpi.change >= 0 ? '↗' : '↘'} {Math.abs(kpi.change)}%
+            <span className={`text-sm font-medium flex items-center ${kpi.change >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}>
+              {kpi.change >= 0 ? <FaArrowUp className="mr-1" /> : <FaArrowDown className="mr-1" />} {Math.abs(kpi.change)}%
             </span>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">

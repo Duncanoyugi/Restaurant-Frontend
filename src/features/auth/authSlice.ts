@@ -85,30 +85,17 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action: PayloadAction<{ user: any; accessToken: string }>) => {
       const { user, accessToken } = action.payload;
-      
-      console.log('🔐 Raw user data from backend:', user);
-      
+
       // Normalize the user data by extracting role name
       const normalizedUser = {
         ...user,
         role: extractRoleName(user.role),
-        // Ensure all optional properties are included
-        phone: user.phone || '',
-        createdAt: user.createdAt || user.created_at,
-        updatedAt: user.updatedAt || user.updated_at,
-        favoriteCuisines: user.favoriteCuisines || user.favorite_cuisines || [],
-        dietaryPreferences: user.dietaryPreferences || user.dietary_preferences || [],
-        allergies: user.allergies || [],
-        totalOrders: user.totalOrders || user.total_orders || 0,
-        totalSpent: user.totalSpent || user.total_spent || 0,
       };
-      
-      console.log('🔐 Normalized role:', normalizedUser.role);
-      
+
       state.user = normalizedUser as User;
       state.accessToken = accessToken;
       state.isAuthenticated = true;
-      
+
       // Store in localStorage for persistence
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('user', JSON.stringify(normalizedUser));

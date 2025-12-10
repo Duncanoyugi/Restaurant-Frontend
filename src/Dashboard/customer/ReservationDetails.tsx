@@ -7,21 +7,24 @@ import {
   useCancelReservationMutation,
 } from '../../features/reservations/reservationsApi';
 import { format, parseISO } from 'date-fns';
+import { useToast } from '../../contexts/ToastContext';
 
 const ReservationDetails: React.FC = () => {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
   const { data: reservation, isLoading, error } = useGetReservationByIdQuery(reservationId!);
   const [cancelReservation, { isLoading: cancelling }] = useCancelReservationMutation();
+  const { showToast } = useToast();
 
   const handleCancel = async () => {
     if (window.confirm('Are you sure you want to cancel this reservation?')) {
       try {
         await cancelReservation({ id: reservationId! }).unwrap();
+        showToast('Reservation cancelled successfully', 'success');
         navigate('/dashboard/reservations');
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to cancel reservation:', error);
-        alert('Failed to cancel reservation. Please try again.');
+        showToast(error?.data?.message || 'Failed to cancel reservation. Please try again.', 'error');
       }
     }
   };

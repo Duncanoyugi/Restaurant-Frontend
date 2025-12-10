@@ -1,4 +1,4 @@
-export type RoomBookingStatus = 
+export type RoomBookingStatus =
   | 'PENDING'
   | 'CONFIRMED'
   | 'CHECKED_IN'
@@ -44,7 +44,7 @@ export type Room = {
   view?: string;
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   restaurant?: any;
   bookings?: RoomBooking[];
@@ -66,7 +66,7 @@ export type RoomBooking = {
   checkedOutAt?: string;
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   room?: Room;
   user?: any;
@@ -111,6 +111,7 @@ export type CreateRoomBookingDto = {
   checkInDate: string; // YYYY-MM-DD
   checkOutDate: string; // YYYY-MM-DD
   numberOfGuests: number;
+  totalPrice: number;
   specialRequests?: string;
 };
 

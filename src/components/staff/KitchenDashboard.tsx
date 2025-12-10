@@ -75,7 +75,7 @@ const KitchenDashboard: React.FC<KitchenDashboardProps> = ({ restaurantId }) => 
 
   const handleStatusUpdate = async (orderId: string, order: any, newStatusName: string) => {
     try {
-      const statusId = getStatusId(order, newStatusName);
+      const statusId = getStatusId(order);
       if (!statusId) {
         showToast('Unable to determine status. Please try again.', 'error');
         return;

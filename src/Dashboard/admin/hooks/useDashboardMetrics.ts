@@ -1,4 +1,4 @@
-import { useGetDashboardOverviewQuery } from '../../../features/analytics/analyticsApi';
+import { useGetDashboardOverviewQuery, useGetRevenueAnalyticsQuery } from '../../../features/analytics/analyticsApi';
 import { useGetAllUsersQuery } from '../../../features/users/usersApi';
 import { useGetAllRestaurantsQuery } from '../../../features/restaurant/restaurantApi';
 import { useGetAllOrdersQuery } from '../../../features/orders/ordersApi';
@@ -38,9 +38,14 @@ interface DashboardMetrics {
 }
 
 export const useDashboardMetrics = () => {
-  // Fetch analytics data
+  // Fetch dashboard overview data
   const { data: analyticsData, isLoading: analyticsLoading } = useGetDashboardOverviewQuery({
     period: AnalyticsPeriod.LAST_30_DAYS,
+  });
+
+  // Fetch revenue analytics for chart
+  const { data: revenueData, isLoading: revenueLoading } = useGetRevenueAnalyticsQuery({
+    period: AnalyticsPeriod.LAST_7_DAYS, // Chart usually shows last 7 days
   });
 
   // Fetch users data
@@ -52,7 +57,7 @@ export const useDashboardMetrics = () => {
   // Fetch orders data
   const { data: ordersData, isLoading: ordersLoading } = useGetAllOrdersQuery({});
 
-  const loading = analyticsLoading || usersLoading || restaurantsLoading || ordersLoading;
+  const loading = analyticsLoading || usersLoading || restaurantsLoading || ordersLoading || revenueLoading;
 
   // Calculate metrics from API data
   const calculateMetrics = (): DashboardMetrics => {
@@ -75,21 +80,22 @@ export const useDashboardMetrics = () => {
     const restaurants = restaurantsData?.data || [];
     const allOrders = ordersData?.data || [];
 
-    // Calculate revenue growth (simplified - would need historical data for accurate calculation)
+    // Calculate revenue growth
     const currentRevenue = revenue.totalRevenue || 0;
-    const previousRevenue = currentRevenue * 0.9; // Placeholder - would need actual previous period data
-    const revenueGrowth = previousRevenue > 0 
-      ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 
+    // Use comparison data from backend if available, otherwise estimate
+    const previousRevenue = analyticsData?.revenue?.previousRevenue || currentRevenue * 0.9;
+    const revenueGrowth = previousRevenue > 0
+      ? ((currentRevenue - previousRevenue) / previousRevenue) * 100
       : 0;
 
     // Calculate order metrics
-    const completedOrders = allOrders.filter((o: any) => 
+    const completedOrders = allOrders.filter((o: any) =>
       o.status?.name === 'Completed' || o.status === 'Completed'
     ).length;
-    const pendingOrders = allOrders.filter((o: any) => 
+    const pendingOrders = allOrders.filter((o: any) =>
       o.status?.name === 'Pending' || o.status === 'Pending'
     ).length;
-    const failedOrders = allOrders.filter((o: any) => 
+    const failedOrders = allOrders.filter((o: any) =>
       o.status?.name === 'Cancelled' || o.status === 'Cancelled'
     ).length;
 
@@ -103,26 +109,35 @@ export const useDashboardMetrics = () => {
     }).length;
 
     // Calculate restaurant metrics
-    const activeRestaurants = restaurants.filter((r: any) => 
+    const activeRestaurants = restaurants.filter((r: any) =>
       r.active === true || r.status === 'active'
     ).length;
-    const pendingRestaurants = restaurants.filter((r: any) => 
+    const pendingRestaurants = restaurants.filter((r: any) =>
       r.active === false || r.status === 'pending'
     ).length;
-    const suspendedRestaurants = restaurants.filter((r: any) => 
+    const suspendedRestaurants = restaurants.filter((r: any) =>
       r.status === 'suspended' || r.active === false
     ).length;
 
-    // Generate chart data (simplified - would need actual daily breakdown)
-    const chartData = [
-      { date: 'Mon', revenue: revenue.totalRevenue * 0.15 },
-      { date: 'Tue', revenue: revenue.totalRevenue * 0.18 },
-      { date: 'Wed', revenue: revenue.totalRevenue * 0.15 },
-      { date: 'Thu', revenue: revenue.totalRevenue * 0.20 },
-      { date: 'Fri', revenue: revenue.totalRevenue * 0.17 },
-      { date: 'Sat', revenue: revenue.totalRevenue * 0.22 },
-      { date: 'Sun', revenue: revenue.totalRevenue * 0.09 },
-    ];
+    // Generate chart data from revenueData
+    // Map backend response to chart format
+    // Backend returns revenueData array with date and values
+    const rawChartData = revenueData?.revenueData || [];
+    const chartData = rawChartData.length > 0
+      ? rawChartData.map((item: any) => ({
+        date: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
+        revenue: parseFloat(item.totalRevenue || 0)
+      }))
+      : [
+        // Fallback if no data
+        { date: 'Mon', revenue: 0 },
+        { date: 'Tue', revenue: 0 },
+        { date: 'Wed', revenue: 0 },
+        { date: 'Thu', revenue: 0 },
+        { date: 'Fri', revenue: 0 },
+        { date: 'Sat', revenue: 0 },
+        { date: 'Sun', revenue: 0 },
+      ];
 
     return {
       revenue: {
@@ -151,9 +166,9 @@ export const useDashboardMetrics = () => {
         suspended: suspendedRestaurants,
       },
       systemHealth: {
-        uptime: 99.8, // Would need system monitoring data
-        responseTime: 124, // Would need system monitoring data
-        errorRate: 0.2, // Would need system monitoring data
+        uptime: 99.8,
+        responseTime: 124,
+        errorRate: 0.2,
       },
     };
   };

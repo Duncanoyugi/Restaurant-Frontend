@@ -1,73 +1,69 @@
 // src/utils/baseApi.ts
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../app/store';
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://localhost:3000',
   prepareHeaders: (headers, { getState }) => {
-    // First try to get token from Redux state
-    let token = (getState() as RootState).auth?.accessToken;
+    // Get token from Redux state first, fallback to localStorage
+    const state = getState() as RootState;
+    let token = state.auth?.accessToken;
 
-    // Debug logging
-    console.log('🔐 baseApi - Token from Redux:', token);
-    console.log('🔐 baseApi - Full auth state:', (getState() as RootState).auth);
-    console.log('🔐 baseApi - isAuthenticated:', (getState() as RootState).auth?.isAuthenticated);
-
-    // If no token in Redux, try localStorage as fallback
+    // Fallback to localStorage if not in Redux state
     if (!token) {
-      token = localStorage.getItem('accessToken') || localStorage.getItem('access_token');
-      console.log('🔐 baseApi - Token from localStorage:', token);
+      token = localStorage.getItem('accessToken');
     }
-
-    // Check localStorage directly
-    const lsToken = localStorage.getItem('accessToken');
-    const lsUser = localStorage.getItem('user');
-    console.log('🔐 baseApi - Direct localStorage check - token:', !!lsToken, 'user:', !!lsUser);
 
     if (token) {
-      console.log('🔐 baseApi - Setting Authorization header with token:', token.substring(0, 20) + '...');
       headers.set('Authorization', `Bearer ${token}`);
-    } else {
-      console.log('🔐 baseApi - No token available in Redux or localStorage - USER NOT LOGGED IN');
     }
 
-    headers.set('Content-Type', 'application/json');
+    // Only set Content-Type if not already set (for FormData uploads)
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+
     return headers;
   },
+  credentials: 'include', // Include credentials for cookie-based auth if needed
 });
 
-// Custom base query with debugging
-const customBaseQuery = async (args: any, api: any, extraOptions: any) => {
-  console.log('🌐 API Request Details:');
-  console.log('🌐 URL:', args?.url);
-  console.log('🌐 Method:', args?.method);
-  console.log('🌐 Params:', args?.params);
-  console.log('🌐 Body:', args?.body);
-  
-  const result = await baseQuery(args, api, extraOptions);
-  
-  console.log('🌐 API Response:');
-  console.log('🌐 Status:', result?.meta?.response?.status);
-  console.log('🌐 Headers:', result?.meta?.response?.headers);
-  
-  if (result.error) {
-    console.error('🌐 API Error:', result.error);
-    console.error('🌐 Error Status:', result.error.status);
-    console.error('🌐 Error Data:', result.error.data);
+// Enhanced base query with retry logic for 401 errors
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions);
+
+  // If we get a 401, try to refresh the token or redirect to login
+  if (result.error && result.error.status === 401) {
+    console.warn('Authentication failed - 401 error received');
+
+    // Clear invalid token
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
+
+    // Optionally dispatch logout action
+    // api.dispatch(logout());
+
+    // You could implement token refresh logic here
+    // For now, we'll just let the error propagate
   }
-  
+
   return result;
 };
 
 export const baseApi = createApi({
   reducerPath: 'api',
-  baseQuery: customBaseQuery, // Use custom base query with debugging
+  baseQuery: baseQueryWithReauth,
   tagTypes: [
     'Auth',
     'User',
     'Profile',
     'Cart',
-    
+
     // Menu related tags
     'MenuItems',
     'Categories',
@@ -111,12 +107,12 @@ export const baseApi = createApi({
     'RoomOccupancy',
     'UpcomingCheckIns',
     'UpcomingCheckOuts',
-    
+
     // Payment related tags
     'Payment',
     'MyPayments',
     'PaymentHistory',
-    
+
     // Location related tags
     'Countries',
     'States',
@@ -127,7 +123,7 @@ export const baseApi = createApi({
     'RestaurantCities',
     'KenyanCities',
     'LocationStats',
-    
+
     // Delivery related tags
     'VehicleInfo',
     'DeliveryTracking',
@@ -140,7 +136,7 @@ export const baseApi = createApi({
     'MyActiveDeliveries',
     'DriverDeliveries',
     'ActiveDeliveries',
-    
+
     // Inventory related tags
     'Suppliers',
     'InventoryItems',
@@ -151,7 +147,7 @@ export const baseApi = createApi({
     'MyRestaurantInventory',
     'MyRestaurantLowStock',
     'MyRestaurantAnalytics',
-    
+
     // Notification related tags
     'Notifications',
     'AdminNotifications',
@@ -159,7 +155,7 @@ export const baseApi = createApi({
     'DriverNotifications',
     'NotificationCount',
     'NotificationStats',
-    
+
     // Analytics related tags (NEW)
     'ActivityLogs',
     'DashboardAnalytics',
@@ -169,8 +165,8 @@ export const baseApi = createApi({
     'MenuPerformanceAnalytics',
     'UserBehaviorAnalytics',
     'MyBehaviorAnalytics',
-     
-     // Add Review related tags here (after 'RestaurantStatistics')
+
+    // Add Review related tags here (after 'RestaurantStatistics')
     'Reviews',
     'ReviewResponses',
     'ReviewStats',
@@ -178,34 +174,34 @@ export const baseApi = createApi({
     'MenuItemReviews',
     'MyReviews',
 
-      // User related tags
+    // User related tags
     'Users',
     'User',
     'UserProfile',
     'UserStatistics',
     'UserRoles',
     'OnlineUsers',
-    
+
     // Role-specific tags
     'CustomerOrders',
     'CustomerReviews',
     'CustomerAddresses',
     'CustomerFavorites',
     'CustomerLoyalty',
-    
+
     'DriverDeliveries',
     'ActiveDeliveries',
     'DriverEarnings',
     'DriverPerformance',
     'VehicleInfo',
-    
+
     'StaffShifts',
     'RestaurantStaff',
     'OwnerRestaurants',
 
     'CustomerLoyalty',
     'CustomerFavorites',
-    
+
     // Other tags
     'Favorites',
     'Stats',

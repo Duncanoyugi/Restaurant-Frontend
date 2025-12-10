@@ -148,3 +148,5 @@ export const {
   useInitiateRefundMutation,
   useGetInvoiceQuery,
 } = paymentsApi;
+
+export { default as PaymentCallback } from './PaymentCallback';

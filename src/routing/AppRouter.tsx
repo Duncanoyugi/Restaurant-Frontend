@@ -16,6 +16,9 @@ import ContactPage from '../pages/ContactPage';
 import ProtectedRoute from './ProtectedRoute';
 import CartPage from '../pages/CartPage';
 import CheckoutPage from '../pages/CheckoutPage';
+import PaymentVerificationPage from '../pages/PaymentVerificationPage';
+import PaymentCallbackPage from '../pages/PaymentCallbackPage';
+import RoomDetailsPage from '../pages/RoomDetailsPage';
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -24,44 +27,54 @@ const AppRouter: React.FC = () => {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
-      <Route 
-        path="/login" 
-        element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" replace />} 
+      <Route
+        path="/login"
+        element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" replace />}
       />
-      <Route 
-        path="/register" 
-        element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/dashboard" replace />} 
+      <Route
+        path="/register"
+        element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/dashboard" replace />}
       />
-      <Route 
-        path="/verify-otp" 
-        element={!isAuthenticated ? <VerifyOtpPage /> : <Navigate to="/dashboard" replace />} 
+      <Route
+        path="/verify-otp"
+        element={!isAuthenticated ? <VerifyOtpPage /> : <Navigate to="/dashboard" replace />}
       />
-      <Route 
-        path="/forgot-password" 
-        element={!isAuthenticated ? <ForgotPasswordPage /> : <Navigate to="/dashboard" replace />} 
+      <Route
+        path="/forgot-password"
+        element={!isAuthenticated ? <ForgotPasswordPage /> : <Navigate to="/dashboard" replace />}
       />
-      <Route 
-        path="/reset-password" 
-        element={!isAuthenticated ? <ResetPasswordPage /> : <Navigate to="/dashboard" replace />} 
+      <Route
+        path="/reset-password"
+        element={!isAuthenticated ? <ResetPasswordPage /> : <Navigate to="/dashboard" replace />}
       />
 
       {/* Public content pages */}
       <Route path="/menu" element={<MenuPage />} />
       <Route path="/accommodation" element={<AccommodationPage />} />
+      <Route path="/rooms/:id" element={<RoomDetailsPage />} />
       <Route path="/reservations" element={<ReservationsPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
 
       {/* Cart and Checkout pages */}
       <Route path="/cart" element={<CartPage />} />
-      <Route 
-        path="/checkout" 
+      <Route
+        path="/checkout"
         element={
           <ProtectedRoute>
             <CheckoutPage />
           </ProtectedRoute>
-        } 
+        }
       />
+      <Route
+        path="/payment/verify"
+        element={
+          <ProtectedRoute>
+            <PaymentVerificationPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/payments/callback" element={<PaymentCallbackPage />} />
 
       {/* Protected routes - dashboard */}
       <Route

@@ -9,6 +9,8 @@ import InventoryAlerts from '../../components/owner/InventoryAlerts';
 import StaffOnDuty from '../../components/owner/StaffOnDuty';
 import RevenueChart from '../../components/owner/RevenueChart';
 
+import { FaUtensils, FaUsers, FaHotel, FaChartLine, FaStar, FaCog } from 'react-icons/fa';
+
 // Placeholder components for owner sections
 const MenuManagement: React.FC = () => (
   <div className="space-y-6">
@@ -21,7 +23,7 @@ const MenuManagement: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">🍽️</div>
+      <div className="text-6xl mb-4 flex justify-center text-orange-500"><FaUtensils /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Menu Management System
       </h3>
@@ -43,7 +45,7 @@ const StaffManagement: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">👥</div>
+      <div className="text-6xl mb-4 flex justify-center text-blue-500"><FaUsers /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Staff Management System
       </h3>
@@ -65,7 +67,7 @@ const RoomManagement: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">🏨</div>
+      <div className="text-6xl mb-4 flex justify-center text-indigo-500"><FaHotel /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Room Management System
       </h3>
@@ -87,7 +89,7 @@ const Analytics: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">📊</div>
+      <div className="text-6xl mb-4 flex justify-center text-purple-500"><FaChartLine /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Analytics Dashboard
       </h3>
@@ -109,7 +111,7 @@ const Reviews: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">⭐</div>
+      <div className="text-6xl mb-4 flex justify-center text-yellow-500"><FaStar /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Review Management
       </h3>
@@ -131,7 +133,7 @@ const Settings: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">⚙️</div>
+      <div className="text-6xl mb-4 flex justify-center text-gray-500"><FaCog /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Settings & Configuration
       </h3>

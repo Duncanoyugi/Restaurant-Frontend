@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaStore } from 'react-icons/fa';
 
 const RestaurantManagement: React.FC = () => {
   return (
@@ -13,7 +14,9 @@ const RestaurantManagement: React.FC = () => {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-        <div className="text-6xl mb-4">🏪</div>
+        <div className="text-6xl mb-4 flex justify-center text-orange-500">
+          <FaStore />
+        </div>
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
           Restaurant Management System
         </h3>

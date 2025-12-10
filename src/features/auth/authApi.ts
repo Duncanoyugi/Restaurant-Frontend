@@ -81,11 +81,11 @@ export const authApi = baseApi.injectEndpoints({
       }),
       // Add transformResponse to handle backend response format
       transformResponse: (response: any) => {
-        // If backend returns 'token' instead of 'accessToken', normalize it
+        // If backend returns 'access_token' or 'token' instead of 'accessToken', normalize it
         return {
           ...response,
-          accessToken: response.accessToken || response.token,
-          token: response.token || response.accessToken, // Keep token for backward compatibility
+          accessToken: response.accessToken || response.access_token || response.token,
+          token: response.token || response.accessToken || response.access_token, // Keep token for backward compatibility
         };
       },
       // Add error transformation for better debugging
@@ -120,8 +120,8 @@ export const authApi = baseApi.injectEndpoints({
       transformResponse: (response: any) => {
         return {
           ...response,
-          accessToken: response.accessToken || response.token,
-          token: response.token || response.accessToken,
+          accessToken: response.accessToken || response.access_token || response.token,
+          token: response.token || response.accessToken || response.access_token,
         };
       },
       invalidatesTags: ['Auth'],
@@ -149,8 +149,8 @@ export const authApi = baseApi.injectEndpoints({
       transformResponse: (response: any) => {
         return {
           ...response,
-          accessToken: response.accessToken || response.token,
-          token: response.token || response.accessToken,
+          accessToken: response.accessToken || response.access_token || response.token,
+          token: response.token || response.accessToken || response.access_token,
         };
       },
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {

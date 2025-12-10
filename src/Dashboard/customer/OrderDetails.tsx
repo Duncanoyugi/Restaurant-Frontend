@@ -5,21 +5,24 @@ import { useGetOrderByIdQuery } from '../../features/orders/ordersApi';
 import { useCancelOrderMutation } from '../../features/customer/customerApi';
 import { format } from 'date-fns';
 import type { Order, OrderItem } from '../../types/order';
+import { useToast } from '../../contexts/ToastContext';
 
 const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
   const { data: order, isLoading, error } = useGetOrderByIdQuery(orderId!);
   const [cancelOrder, { isLoading: cancelling }] = useCancelOrderMutation();
+  const { showToast } = useToast();
 
   const handleCancelOrder = async () => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
       try {
         await cancelOrder({ orderId: orderId!, reason: 'Customer requested cancellation' }).unwrap();
+        showToast('Order cancelled successfully', 'success');
         navigate('/dashboard/orders');
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to cancel order:', error);
-        alert('Failed to cancel order. Please try again.');
+        showToast(error?.data?.message || 'Failed to cancel order. Please try again.', 'error');
       }
     }
   };

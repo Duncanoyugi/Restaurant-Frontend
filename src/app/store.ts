@@ -1,11 +1,11 @@
-// src/app/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import { baseApi } from '../utils/baseApi'; // CHANGE: Import baseApi instead of api
+import { baseApi } from '../utils/baseApi';
 import authReducer from '../features/auth/authSlice';
 import cartReducer from '../features/cart/cartSlice';
 import bookingReducer from '../features/booking/bookingSlice';
 import customerReducer from '../features/customer/customerSlice';
 import notificationsReducer from '../features/notifications/notificationsSlice';
+import ordersReducer from '../features/orders/ordersSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,10 +14,11 @@ export const store = configureStore({
     booking: bookingReducer,
     customer: customerReducer,
     notifications: notificationsReducer,
-    [baseApi.reducerPath]: baseApi.reducer, // CHANGE: Use baseApi.reducer
+    orders: ordersReducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware), // CHANGE: Use baseApi.middleware
+    getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

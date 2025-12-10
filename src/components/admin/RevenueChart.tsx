@@ -4,7 +4,9 @@ import { useDashboardMetrics } from '../../Dashboard/admin/hooks/useDashboardMet
 const RevenueChart: React.FC = () => {
   const { metrics } = useDashboardMetrics();
 
-  const maxRevenue = Math.max(...metrics.revenue.chartData.map(d => d.revenue));
+  const maxRevenue = metrics.revenue.chartData.length > 0 
+    ? Math.max(...metrics.revenue.chartData.map(d => d.revenue || 0), 1)
+    : 1; // Prevent division by zero
   
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -23,7 +25,7 @@ const RevenueChart: React.FC = () => {
                 <div 
                   className="h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-l transition-all duration-300"
                   style={{ 
-                    width: `${(day.revenue / maxRevenue) * 100}%`,
+                    width: `${Math.max(0, Math.min(100, ((day.revenue || 0) / maxRevenue) * 100))}%`,
                     maxWidth: 'calc(100% - 80px)'
                   }}
                 ></div>

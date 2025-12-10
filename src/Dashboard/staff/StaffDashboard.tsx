@@ -6,63 +6,94 @@ import StaffOrders from '../../components/staff/StaffOrders';
 import TableManagement from '../../components/staff/TableManagement';
 import DailyReservations from '../../components/staff/DailyReservations';
 import StockOverview from '../../components/staff/StockOverview';
+import { FaBox, FaCalendarAlt, FaChair, FaMoneyBillWave, FaChartLine } from 'react-icons/fa';
+import { useAppSelector } from '../../app/hooks';
+
+// Helper to get restaurant ID from user
+const getRestaurantId = (user: any): string => {
+  return user?.restaurantId || 
+         user?.restaurant?.id || 
+         user?.restaurantStaff?.restaurantId || 
+         (user as any)?.restaurantId || 
+         '';
+};
 
 // Placeholder components for staff sections
-const Orders: React.FC = () => (
-  <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Order Queue</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Manage and process customer orders
-        </p>
+const Orders: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const restaurantId = getRestaurantId(user);
+  
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Order Queue</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Manage and process customer orders
+          </p>
+        </div>
       </div>
+      {restaurantId ? <StaffOrders restaurantId={restaurantId} /> : <div>Loading restaurant information...</div>}
     </div>
-    <StaffOrders restaurantId="1" />
-  </div>
-);
+  );
+};
 
-const Tables: React.FC = () => (
-  <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Table Management</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Assign and manage restaurant tables
-        </p>
+const Tables: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const restaurantId = getRestaurantId(user);
+  
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Table Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Assign and manage restaurant tables
+          </p>
+        </div>
       </div>
+      {restaurantId ? <TableManagement restaurantId={restaurantId} /> : <div>Loading restaurant information...</div>}
     </div>
-    <TableManagement restaurantId="1" />
-  </div>
-);
+  );
+};
 
-const Reservations: React.FC = () => (
-  <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Daily Reservations</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          View and manage today's reservations
-        </p>
+const Reservations: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const restaurantId = getRestaurantId(user);
+  
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Daily Reservations</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            View and manage today's reservations
+          </p>
+        </div>
       </div>
+      {restaurantId ? <DailyReservations restaurantId={restaurantId} /> : <div>Loading restaurant information...</div>}
     </div>
-    <DailyReservations restaurantId="1" />
-  </div>
-);
+  );
+};
 
-const Stock: React.FC = () => (
-  <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Stock Overview</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Monitor inventory levels and stock alerts
-        </p>
+const Stock: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const restaurantId = getRestaurantId(user);
+  
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Stock Overview</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Monitor inventory levels and stock alerts
+          </p>
+        </div>
       </div>
+      {restaurantId ? <StockOverview restaurantId={restaurantId} /> : <div>Loading restaurant information...</div>}
     </div>
-    <StockOverview restaurantId="1" />
-  </div>
-);
+  );
+};
 
 const Reports: React.FC = () => (
   <div className="space-y-6">
@@ -75,7 +106,7 @@ const Reports: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">📊</div>
+      <div className="text-6xl mb-4 flex justify-center text-purple-500"><FaChartLine /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Reports Dashboard
       </h3>
@@ -97,7 +128,7 @@ const Schedule: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">📅</div>
+      <div className="text-6xl mb-4 flex justify-center text-blue-500"><FaCalendarAlt /></div>
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Schedule Management
       </h3>
@@ -110,6 +141,9 @@ const Schedule: React.FC = () => (
 
 // Main Dashboard Overview Component
 const DashboardOverview: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const restaurantId = getRestaurantId(user);
+  
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -133,7 +167,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Orders</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">5</p>
             </div>
-            <div className="text-2xl">📦</div>
+            <div className="text-2xl text-orange-500"><FaBox /></div>
           </div>
         </div>
 
@@ -143,7 +177,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Today's Reservations</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
             </div>
-            <div className="text-2xl">📅</div>
+            <div className="text-2xl text-blue-500"><FaCalendarAlt /></div>
           </div>
         </div>
 
@@ -153,7 +187,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Available Tables</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">8/15</p>
             </div>
-            <div className="text-2xl">🪑</div>
+            <div className="text-2xl text-green-500"><FaChair /></div>
           </div>
         </div>
 
@@ -163,20 +197,23 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Today's Revenue</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">KSh 45,230</p>
             </div>
-            <div className="text-2xl">💰</div>
+            <div className="text-2xl text-green-600"><FaMoneyBillWave /></div>
           </div>
         </div>
       </div>
 
       {/* Kitchen Dashboard */}
       <div>
-        <KitchenDashboard restaurantId="1" />
+        {restaurantId ? <KitchenDashboard restaurantId={restaurantId} /> : <div>Loading restaurant information...</div>}
       </div>
     </div>
   );
 };
 
 const StaffDashboard: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const restaurantId = getRestaurantId(user);
+  
   return (
     <StaffLayout>
       <Routes>
@@ -184,7 +221,7 @@ const StaffDashboard: React.FC = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path="/tables" element={<Tables />} />
         <Route path="/reservations" element={<Reservations />} />
-        <Route path="/kitchen" element={<KitchenDashboard restaurantId="1" />} />
+        <Route path="/kitchen" element={restaurantId ? <KitchenDashboard restaurantId={restaurantId} /> : <div>Loading...</div>} />
         <Route path="/inventory" element={<Stock />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/schedule" element={<Schedule />} />

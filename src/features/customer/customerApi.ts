@@ -237,40 +237,18 @@ export const customerApi = baseApi.injectEndpoints({
       invalidatesTags: ['MyReviews'],
     }),
 
-    // Get room bookings
-    getRoomBookings: builder.query<any, any>({
-      async queryFn(params, _queryApi, _extraOptions, fetchWithBQ) {
-        try {
-          const result = await fetchWithBQ({
-            url: 'rooms/bookings/user/my-bookings',
-            method: 'GET',
-            params,
-          });
-          return result;
-        } catch (error) {
-          // Return mock data if backend not ready
-          console.log('🔄 Backend not ready, using mock data for room bookings');
-          return {
-            data: {
-              bookings: [
-                {
-                  id: '1',
-                  bookingNumber: 'RB-001',
-                  status: 'CONFIRMED',
-                  room: { name: 'Deluxe Suite', type: 'Suite' },
-                  checkInDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
-                  checkOutDate: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0], // 3 days later
-                  totalAmount: 15000, // KSH
-                  paidAmount: 7500, // 50% paid
-                  createdAt: new Date().toISOString()
-                }
-              ],
-              total: 1,
-              page: 1,
-              limit: 10
-            }
-          };
-        }
+    // Get room bookings - use correct endpoint with userId filter
+    getRoomBookings: builder.query<any, { userId?: string; page?: number; limit?: number; status?: string }>({
+      query: (params = {}) => {
+        const queryParams = new URLSearchParams();
+        if (params.userId) queryParams.append('userId', params.userId);
+        if (params.page) queryParams.append('page', params.page.toString());
+        if (params.limit) queryParams.append('limit', params.limit.toString());
+        if (params.status) queryParams.append('status', params.status);
+        const queryString = queryParams.toString();
+        return {
+          url: `rooms/bookings${queryString ? `?${queryString}` : ''}`,
+        };
       },
       providesTags: ['RoomBookings'],
     }),
@@ -283,6 +261,28 @@ export const customerApi = baseApi.injectEndpoints({
         body: { reason },
       }),
       invalidatesTags: ['RoomBookings'],
+    }),
+
+    // Get cities
+    getCities: builder.query<any, void>({
+      query: () => 'location/cities',
+      providesTags: ['Cities'],
+    }),
+
+    // Get states
+    getStates: builder.query<any, void>({
+      query: () => 'location/states',
+      providesTags: ['States'],
+    }),
+
+    // Create address
+    createAddress: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'location/my/addresses',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Addresses'],
     }),
 
     // Create order
@@ -343,6 +343,9 @@ export const {
   useDeleteReviewMutation,
   useGetRoomBookingsQuery,
   useCancelRoomBookingMutation,
+  useGetCitiesQuery,
+  useGetStatesQuery,
+  useCreateAddressMutation,
   useCreateOrderMutation,
   useGetDashboardOverviewQuery,
 } = customerApi;
