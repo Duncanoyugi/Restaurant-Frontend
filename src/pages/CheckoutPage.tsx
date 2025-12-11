@@ -188,7 +188,20 @@ const CheckoutPage: React.FC = () => {
           deliveryAddressId = addressResult.id;
         } catch (addressError: any) {
           console.error('Failed to create address:', addressError);
-          showToast(addressError?.data?.message || 'Failed to create delivery address. Please try again.', 'error');
+          let errorMessage = 'Failed to create delivery address. Please try again.';
+
+          // Handle validation errors from backend
+          if (addressError?.data?.message) {
+            if (Array.isArray(addressError.data.message)) {
+              errorMessage = addressError.data.message.join(', ');
+            } else if (typeof addressError.data.message === 'string') {
+              errorMessage = addressError.data.message;
+            } else if (typeof addressError.data.message === 'object') {
+              errorMessage = Object.values(addressError.data.message).flat().join(', ');
+            }
+          }
+
+          showToast(errorMessage, 'error');
           setIsProcessing(false);
           return;
         }
@@ -215,15 +228,15 @@ const CheckoutPage: React.FC = () => {
       }
 
       const orderData = {
-        restaurantId, // Required by backend
-        userId: user.id, // Required by DTO, backend will validate it matches current user
+        restaurantId: Number(restaurantId), // Ensure it's a number as required by backend
+        userId: Number(user.id), // Ensure it's a number as required by backend
         orderType: normalizedOrderType,
         items: items.map(item => ({
-          menuItemId: (item as any).menuItemId || item.id.toString(),
+          menuItemId: Number((item as any).menuItemId || item.id), // Ensure it's a number
           quantity: item.quantity,
           comment: '',
         })),
-        ...(deliveryAddressId && { deliveryAddressId }),
+        ...(deliveryAddressId && { deliveryAddressId: Number(deliveryAddressId) }),
         comment: '',
       };
 
@@ -252,7 +265,23 @@ const CheckoutPage: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Failed to place order:', error);
-      showToast(error?.data?.message || 'Failed to place order. Please try again.', 'error');
+      let errorMessage = 'Failed to place order. Please try again.';
+
+      // Handle validation errors from backend
+      if (error?.data?.message) {
+        if (Array.isArray(error.data.message)) {
+          // If it's an array of validation errors, join them
+          errorMessage = error.data.message.join(', ');
+        } else if (typeof error.data.message === 'string') {
+          // If it's a single string message
+          errorMessage = error.data.message;
+        } else if (typeof error.data.message === 'object') {
+          // If it's an object with multiple error fields
+          errorMessage = Object.values(error.data.message).flat().join(', ');
+        }
+      }
+
+      showToast(errorMessage, 'error');
       setIsProcessing(false);
     }
   };

@@ -62,6 +62,36 @@ export const customerApi = baseApi.injectEndpoints({
             method: 'GET',
             params,
           });
+
+          // Type guard to check if result has data property
+          if (result && typeof result === 'object' && 'data' in result) {
+            const typedResult = result as { data: any; total?: number };
+
+            // Handle the standard backend response format: { data: Order[], total: number }
+            if (Array.isArray(typedResult.data)) {
+              return {
+                data: {
+                  orders: typedResult.data,
+                  total: typedResult.total || typedResult.data.length,
+                  page: params?.page || 1,
+                  limit: params?.limit || 10
+                }
+              };
+            }
+
+            // Handle nested structure if it exists (for backward compatibility)
+            if (typedResult.data && typedResult.data.data) {
+              return {
+                data: {
+                  orders: typedResult.data.data,
+                  total: typedResult.data.total,
+                  page: typedResult.data.page || 1,
+                  limit: typedResult.data.limit || 10
+                }
+              };
+            }
+          }
+
           return result;
         } catch (error) {
           // Return mock data if backend not ready
@@ -102,7 +132,7 @@ export const customerApi = baseApi.injectEndpoints({
     // Cancel order
     cancelOrder: builder.mutation<any, any>({
       query: ({ orderId, reason }) => ({
-        url: `orders/${orderId}/cancel`,
+        url: `orders/user/my-orders/${orderId}/cancel`,
         method: 'POST',
         body: { reason },
       }),
