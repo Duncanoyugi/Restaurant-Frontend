@@ -18,10 +18,10 @@ export type MenuItem = {
   categoryId: string;
   createdAt: string;
   updatedAt: string;
-  
+
   // Optional relations
   restaurant?: any;
-  category?: Category;
+  category?: string;
   reviews?: any[];
 };
 

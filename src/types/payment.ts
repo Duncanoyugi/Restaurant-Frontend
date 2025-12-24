@@ -49,6 +49,11 @@ export interface Payment {
   invoices: Invoice[];
   createdAt: string;
   updatedAt: string;
+  // Relations (when loaded by backend)
+  order?: any;
+  reservation?: any;
+  roomBooking?: any;
+  user?: any;
 }
 
 export interface Invoice {

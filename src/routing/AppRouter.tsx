@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
+import { UserRoleEnum } from '../features/auth/authSlice';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage';
@@ -19,6 +20,11 @@ import CheckoutPage from '../pages/CheckoutPage';
 import PaymentVerificationPage from '../pages/PaymentVerificationPage';
 import PaymentCallbackPage from '../pages/PaymentCallbackPage';
 import RoomDetailsPage from '../pages/RoomDetailsPage';
+import RestaurantList from '../pages/Restaurants/RestaurantList';
+import RestaurantDetail from '../pages/Restaurants/RestaurantDetail';
+import SelectRestaurant from '../pages/Restaurants/SelectRestaurant';
+import RestaurantSetup from '../pages/Restaurants/RestaurantSetup';
+
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -56,6 +62,19 @@ const AppRouter: React.FC = () => {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
 
+      {/* Restaurant routes */}
+      <Route path="/restaurants" element={<RestaurantList />} />
+      <Route path="/restaurants/:id" element={<RestaurantDetail />} />
+      <Route path="/select-restaurant" element={<SelectRestaurant />} />
+      <Route
+        path="/restaurant-setup"
+        element={
+          <ProtectedRoute requiredRole={UserRoleEnum.RESTAURANT_OWNER}>
+            <RestaurantSetup />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Cart and Checkout pages */}
       <Route path="/cart" element={<CartPage />} />
       <Route
@@ -74,7 +93,14 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/payments/callback" element={<PaymentCallbackPage />} />
+      <Route
+        path="/payments/callback"
+        element={
+          <ProtectedRoute>
+            <PaymentCallbackPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Protected routes - dashboard */}
       <Route
@@ -85,6 +111,9 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       />
+
+
+
 
       {/* 404 fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

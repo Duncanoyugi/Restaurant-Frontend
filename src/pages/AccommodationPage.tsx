@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LandingLayout } from '../components/layout/LandingLayout';
 import { useAppSelector } from '../app/hooks';
 import Button from '../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaBed, FaRulerCombined, FaSpinner, FaExclamationTriangle } from 'react-icons/fa';
 import RoomBookingForm from '../components/booking/RoomBookingForm';
 import { useGetAllRoomsQuery } from '../features/booking/roomsApi';
@@ -12,11 +12,17 @@ import { FaWifi, FaSnowflake, FaTv } from 'react-icons/fa'; // Default icons
 const AccommodationPage: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const restaurantId = searchParams.get('restaurant');
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<any>(null);
 
-  const { data: roomsResponse, isLoading, error } = useGetAllRoomsQuery({ limit: 100 });
+  const { data: roomsResponse, isLoading, error } = useGetAllRoomsQuery({
+    limit: 100,
+    restaurantId: restaurantId || undefined
+  });
   const rooms = roomsResponse?.data || [];
 
   const filteredRooms = selectedCategory === 'all'
@@ -62,6 +68,15 @@ const AccommodationPage: React.FC = () => {
         <div className="relative bg-gradient-to-r from-slate-800 via-slate-900 to-amber-900/30 text-white py-20 overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20"></div>
           <div className="container mx-auto px-4 text-center relative z-10">
+            {restaurantId && (
+              <Button
+                variant="outline"
+                className="absolute left-0 top-0 hidden md:flex border-white text-white hover:bg-white/20 hover:text-white"
+                onClick={() => navigate(`/restaurants/${restaurantId}`)}
+              >
+                ← Back to Restaurant
+              </Button>
+            )}
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent drop-shadow-2xl">
               Luxury Hotel Accommodations
             </h1>

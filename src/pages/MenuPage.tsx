@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { LandingLayout } from '../components/layout/LandingLayout';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import Button from '../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { addToCart } from '../features/cart/cartSlice';
 import { useToast } from '../contexts/ToastContext';
 import { useGetCategoriesQuery, useGetMenuItemsQuery } from '../features/menu/menuApi';
@@ -14,18 +14,25 @@ const MenuPage: React.FC = () => {
   const { showToast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  const [searchParams] = useSearchParams();
+  const restaurantId = searchParams.get('restaurant');
+
   // Fetch data from API
   const {
     data: categories = [],
     isLoading: isCategoriesLoading,
     error: categoriesError
-  } = useGetCategoriesQuery({ active: true });
+  } = useGetCategoriesQuery({ active: true, restaurantId: restaurantId || undefined });
 
   const {
     data: menuItemsData,
     isLoading: isMenuItemsLoading,
     error: menuItemsError
-  } = useGetMenuItemsQuery({ available: true, limit: 100 }); // Fetch enough items
+  } = useGetMenuItemsQuery({
+    available: true,
+    limit: 100,
+    restaurantId: restaurantId || undefined
+  }); // Fetch enough items
 
   const menuItems = menuItemsData?.data || [];
   const isLoading = isCategoriesLoading || isMenuItemsLoading;
@@ -95,7 +102,16 @@ const MenuPage: React.FC = () => {
       <div className="pt-20 min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/20">
         <div className="container mx-auto px-4 py-16">
           {/* Hero Section */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 relative">
+            {restaurantId && (
+              <Button
+                variant="outline"
+                className="absolute left-0 top-0 hidden md:flex"
+                onClick={() => navigate(`/restaurants/${restaurantId}`)}
+              >
+                ← Back to Restaurant
+              </Button>
+            )}
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
               Our Menu
             </h1>

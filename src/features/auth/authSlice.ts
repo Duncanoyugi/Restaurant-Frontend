@@ -12,20 +12,58 @@ export const UserRoleEnum = {
 
 export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
 
-// Helper function to extract role name from object or string
+// Helper function to extract and normalize role name
 const extractRoleName = (role: any): UserRoleEnum => {
+  let roleStr = '';
+
   if (typeof role === 'string') {
-    return role as UserRoleEnum;
+    roleStr = role;
+  } else if (role && typeof role === 'object') {
+    roleStr = role.name || role.roleName || role.role || role.value || '';
   }
-  
-  if (role && typeof role === 'object') {
-    const roleName = role.name || role.roleName || role.role || role.value;
-    if (roleName && typeof roleName === 'string') {
-      return roleName as UserRoleEnum;
-    }
-  }
-  
-  return UserRoleEnum.CUSTOMER;
+
+  if (!roleStr) return UserRoleEnum.CUSTOMER;
+
+  const normalized = roleStr.trim();
+
+  const roleMap: Record<string, UserRoleEnum> = {
+    // Driver variations
+    'Driver': UserRoleEnum.DRIVER,
+    'driver': UserRoleEnum.DRIVER,
+    'DRIVER': UserRoleEnum.DRIVER,
+    'Drvr': UserRoleEnum.DRIVER,
+    'drvr': UserRoleEnum.DRIVER,
+
+    // Admin variations
+    'Admin': UserRoleEnum.ADMIN,
+    'admin': UserRoleEnum.ADMIN,
+    'ADMIN': UserRoleEnum.ADMIN,
+
+    // Restaurant Owner variations
+    'Restaurant Owner': UserRoleEnum.RESTAURANT_OWNER,
+    'Restaurant_Owner': UserRoleEnum.RESTAURANT_OWNER,
+    'RestaurantOwner': UserRoleEnum.RESTAURANT_OWNER,
+    'Restaurant owner': UserRoleEnum.RESTAURANT_OWNER,
+    'restaurant_owner': UserRoleEnum.RESTAURANT_OWNER,
+    'Owner': UserRoleEnum.RESTAURANT_OWNER,
+    'owner': UserRoleEnum.RESTAURANT_OWNER,
+
+    // Restaurant Staff variations
+    'Restaurant Staff': UserRoleEnum.RESTAURANT_STAFF,
+    'Restaurant_Staff': UserRoleEnum.RESTAURANT_STAFF,
+    'RestaurantStaff': UserRoleEnum.RESTAURANT_STAFF,
+    'Restaurant staff': UserRoleEnum.RESTAURANT_STAFF,
+    'restaurant_staff': UserRoleEnum.RESTAURANT_STAFF,
+    'Staff': UserRoleEnum.RESTAURANT_STAFF,
+    'staff': UserRoleEnum.RESTAURANT_STAFF,
+
+    // Customer variations
+    'Customer': UserRoleEnum.CUSTOMER,
+    'customer': UserRoleEnum.CUSTOMER,
+    'CUSTOMER': UserRoleEnum.CUSTOMER,
+  };
+
+  return roleMap[normalized] || UserRoleEnum.CUSTOMER;
 };
 
 // Define types locally - UPDATED with missing properties

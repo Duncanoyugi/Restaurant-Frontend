@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useVerifyPaymentMutation, useGetPaymentByReferenceQuery } from './paymentsApi';
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
 import Button from '../../components/ui/Button';
+import { getPaymentRedirectPath, parsePaymentMetadata } from './paymentRedirect';
 
 interface PaymentCallbackProps {
     reference: string;
@@ -42,27 +43,21 @@ const PaymentCallback: React.FC<PaymentCallbackProps> = ({
 
             if (redirectOnSuccess) {
                 const timer = setTimeout(() => {
-                    // Determine redirect based on payment type
-                    let redirectPath = '/dashboard';
+                    // Determine redirect based on payment type.
+                    // Backend may not populate relations, so we also check IDs + metadata.
+                    let redirectPath = getPaymentRedirectPath(paymentData);
 
-                    if (paymentData.orderId) {
-                        // Food order payment - redirect to orders
-                        redirectPath = '/dashboard/orders';
-                    } else if (paymentData.reservationId) {
-                        // Table reservation payment - redirect to reservations
-                        redirectPath = '/dashboard/reservations';
-                    } else if (paymentData.roomBookingId) {
-                        // Room booking payment - redirect to room bookings
-                        redirectPath = '/dashboard/room-bookings';
-                    } else {
-                        // Check metadata or session storage for payment type
+                    // Backwards compatible fallback: older flows stored pending booking in session storage
+                    if (redirectPath === '/dashboard') {
                         const pendingBooking = sessionStorage.getItem('pendingRoomBooking');
                         if (pendingBooking) {
                             redirectPath = '/dashboard/room-bookings';
                             sessionStorage.removeItem('pendingRoomBooking');
                         } else {
-                            // Default fallback to dashboard
-                            redirectPath = '/dashboard';
+                            const metadata = parsePaymentMetadata(paymentData?.metadata);
+                            if (metadata?.paymentType === 'room_booking') {
+                                redirectPath = '/dashboard/room-bookings';
+                            }
                         }
                     }
 

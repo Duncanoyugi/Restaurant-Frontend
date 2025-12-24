@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useVerifyPaymentMutation, useGetPaymentByReferenceQuery } from '../features/payments/paymentsApi';
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
 import Button from '../components/ui/Button';
+import { getPaymentRedirectPath } from '../features/payments/paymentRedirect';
 
 const PaymentVerificationPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -27,19 +28,7 @@ const PaymentVerificationPage: React.FC = () => {
         if (verifySuccess && paymentData) {
             // Redirect based on payment type after a short delay
             const timer = setTimeout(() => {
-                if (paymentData.orderId) {
-                    // Food order payment - redirect to orders
-                    navigate('/dashboard/orders');
-                } else if (paymentData.reservationId) {
-                    // Table reservation payment - redirect to reservations
-                    navigate('/dashboard/reservations');
-                } else if (paymentData.roomBookingId) {
-                    // Room booking payment - redirect to room bookings
-                    navigate('/dashboard/room-bookings');
-                } else {
-                    // Fallback to orders if payment type is unclear
-                    navigate('/dashboard/orders');
-                }
+                navigate(getPaymentRedirectPath(paymentData));
             }, 3000);
             return () => clearTimeout(timer);
         }

@@ -13,8 +13,8 @@ export * from './orders/ordersApi';
 // Export from reservations
 export * from './reservations/reservationsApi';
 
-// Export from restaurant
-export * from './restaurant/restaurantApi';
+// Export from restaurants (updated to use unified API)
+export * from './restaurants/unifiedRestaurantApi';
 
 // Export from booking
 export * from './booking/roomsApi';

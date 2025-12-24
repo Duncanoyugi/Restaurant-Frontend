@@ -33,6 +33,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: 'User Management', href: '/dashboard/users', icon: '👥' },
     { name: 'Restaurant Management', href: '/dashboard/restaurants', icon: '🏪' },
     { name: 'Order Management', href: '/dashboard/orders', icon: '📦' },
+    { name: 'Reservation Management', href: '/dashboard/reservations', icon: '📅' },
+    { name: 'Room Booking Management', href: '/dashboard/room-bookings', icon: '🏨' },
     { name: 'Payment Management', href: '/dashboard/payments', icon: '💳' },
     { name: 'Delivery Management', href: '/dashboard/delivery', icon: '🚚' },
     { name: 'Inventory Overview', href: '/dashboard/inventory', icon: '📋' },

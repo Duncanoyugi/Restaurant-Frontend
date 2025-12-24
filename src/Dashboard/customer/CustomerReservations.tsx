@@ -78,7 +78,9 @@ const ReservationsPage: React.FC = () => {
     );
   }
 
-  const reservations = reservationsData?.reservations || [];
+  // Backend returns `{ data: Reservation[], total: number }`.
+  // Some mocks/older code paths return `{ reservations: Reservation[] }`.
+  const reservations = reservationsData?.data || reservationsData?.reservations || [];
 
   return (
     <div className="space-y-6">

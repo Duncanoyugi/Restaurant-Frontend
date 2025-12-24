@@ -15,6 +15,8 @@ import Deliverymanagement from './Deliverymanagement';
 import InventoryOverview from './InventoryOverview';
 import ReviewModeration from './ReviewModeration';
 import NotificationCenter from './NotificationCenter';
+import ReservationManagement from './ReservationManagement';
+import RoomBookingManagement from './RoomBookingManagement';
 
 // Main Dashboard Overview Component
 const DashboardOverview: React.FC = () => {
@@ -100,6 +102,8 @@ const AdminDashboard: React.FC = () => {
         <Route path="/users" element={<UserManagement />} />
         <Route path="/restaurants" element={<RestaurantManagement />} />
         <Route path="/orders" element={<OrderManagement />} />
+        <Route path="/reservations" element={<ReservationManagement />} />
+        <Route path="/room-bookings" element={<RoomBookingManagement />} />
         <Route path="/payments" element={<PaymentManagement />} />
         <Route path="/delivery" element={<Deliverymanagement />} />
         <Route path="/inventory" element={<InventoryOverview />} />

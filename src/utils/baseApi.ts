@@ -37,19 +37,80 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  // If we get a 401, try to refresh the token or redirect to login
+  // If we get a 401, try to refresh the token
   if (result.error && result.error.status === 401) {
-    console.warn('Authentication failed - 401 error received');
+    console.warn('Authentication failed - 401 error received, attempting token refresh');
 
-    // Clear invalid token
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
+    // Get refresh token from localStorage
+    const refreshToken = localStorage.getItem('refreshToken');
 
-    // Optionally dispatch logout action
-    // api.dispatch(logout());
+    if (refreshToken) {
+      try {
+        // Attempt to refresh the token
+        const refreshResult = await fetch('http://localhost:3000/auth/refresh', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ refreshToken }),
+        });
 
-    // You could implement token refresh logic here
-    // For now, we'll just let the error propagate
+        if (refreshResult.ok) {
+          const refreshData = await refreshResult.json();
+
+          // Store new tokens
+          localStorage.setItem('accessToken', refreshData.accessToken);
+          localStorage.setItem('refreshToken', refreshData.refreshToken);
+
+          // Update Redux state if available
+          const state = api.getState() as RootState;
+          if (state.auth) {
+            // Dispatch token update action if you have one
+            // api.dispatch(setTokens({ accessToken: refreshData.accessToken, refreshToken: refreshData.refreshToken }));
+          }
+
+          console.log('Token refreshed successfully, retrying original request');
+
+          // Retry the original request with new token
+          result = await baseQuery(args, api, extraOptions);
+        } else {
+          console.warn('Token refresh failed, redirecting to login');
+          // Clear tokens and redirect to login
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+          // Redirect after a short delay to allow the error to be returned
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 100);
+          // Return the original error since refresh failed
+          return result;
+        }
+      } catch (refreshError) {
+        console.error('Token refresh error:', refreshError);
+        // Clear tokens and redirect to login
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        // Redirect after a short delay to allow the error to be returned
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 100);
+        // Return the original error since refresh failed
+        return result;
+      }
+    } else {
+      console.warn('No refresh token available, redirecting to login');
+      // Clear tokens and redirect to login
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      // Redirect after a short delay to allow the error to be returned
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 100);
+      // Return the original error since no refresh token
+      return result;
+    }
   }
 
   return result;
@@ -100,6 +161,8 @@ export const baseApi = createApi({
     'RestaurantStaff',
     'Shifts',
     'RestaurantStatistics',
+    'StaffAssignments',
+    'DriverAssignments',
 
     // Room related tags
     'Rooms',

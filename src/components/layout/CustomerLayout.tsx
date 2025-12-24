@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
+import { useRestaurant } from '../../contexts/RestaurantContext';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
 interface CustomerLayoutProps {
@@ -11,6 +12,7 @@ interface CustomerLayoutProps {
 
 const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
+  const { isRestaurantSelected } = useRestaurant();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -212,6 +214,25 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
         {/* Main Content Area */}
         <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
+            {/* Restaurant Selection Notification for Customers */}
+            {user?.role === 'Customer' && !isRestaurantSelected && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm flex items-center justify-between">
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">📍</span>
+                  <div>
+                    <p className="font-semibold text-amber-800">Please select a restaurant</p>
+                    <p className="text-sm text-amber-700">Choose your preferred restaurant to browse menu, make reservations, and place orders</p>
+                  </div>
+                </div>
+                <Link
+                  to="/restaurants"
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  Browse Restaurants
+                </Link>
+              </div>
+            )}
+            
             {/* Use Outlet for nested routes or children for direct rendering */}
             {children ? children : <Outlet />}
           </div>

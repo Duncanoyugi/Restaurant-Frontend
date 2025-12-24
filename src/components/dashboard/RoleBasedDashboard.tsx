@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useAppSelector } from '../../app/hooks';
 import CustomerDashboard from '../../Dashboard/customer/CustomerDashboard';
-import OwnerDashboard from '../../Dashboard/owner/OwnerDashboard';
 import AdminDashboard from '../../Dashboard/admin/AdminDashboard';
 import DriverDashboard from '../../Dashboard/driver/DriverDashboard';
 import StaffDashboard from '../../Dashboard/staff/StaffDashboard'; // NEW IMPORT
+import OwnerDashboard from '../../Dashboard/owner/OwnerDashboard';
 import { UserRoleEnum } from '../../features/auth/authSlice';
 
 // Helper to safely extract and normalize role name
@@ -101,7 +101,7 @@ const RoleBasedDashboard: React.FC = () => {
   } else if (roleName === UserRoleEnum.ADMIN) {
     console.log('✅ Rendering AdminDashboard');
     return <AdminDashboard />;
-  } else if (roleName === UserRoleEnum.RESTAURANT_OWNER) {
+  } else if (roleName === UserRoleEnum.RESTAURANT_OWNER || roleName === 'Restaurant Owner') {
     console.log('✅ Rendering OwnerDashboard');
     return <OwnerDashboard />;
   } else if (roleName === UserRoleEnum.RESTAURANT_STAFF) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import { useGetProfileQuery } from '../../features/auth/authApi';
-import { useGetAllRestaurantsQuery } from '../../features/restaurant/restaurantApi';
+import { useGetAllRestaurantsQuery } from '../../features/restaurants/unifiedRestaurantApi';
 import type { Restaurant } from '../../types/restaurant';
 
 const Favorites: React.FC = () => {

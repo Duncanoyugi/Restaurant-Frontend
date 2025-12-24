@@ -32,7 +32,7 @@ export type Restaurant = {
   email: string;
   phone: string;
   address: string;
-  cityId: string;
+  cityId: number;
   ownerId: string;
   latitude?: number;
   longitude?: number;
@@ -52,7 +52,7 @@ export type Restaurant = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
-  
+
   // Relations
   city?: any;
   owner?: any;
@@ -98,23 +98,20 @@ export type Shift = {
 // Request DTOs
 export type CreateRestaurantDto = {
   name: string;
-  description: string;
+  description?: string;
   email: string;
   phone: string;
-  address: string;
-  cityId: string;
-  ownerId: string;
+  streetAddress: string;
+  zipCode: string;
   latitude?: number;
   longitude?: number;
   logoUrl?: string;
   coverImageUrl?: string;
-  openingTime: string;
-  closingTime: string;
-  deliveryFee?: number;
-  minimumOrder?: number;
-  estimatedDeliveryTime?: number;
-  cuisineType: string;
-  features?: string[];
+  openingTime?: string;
+  closingTime?: string;
+  active?: boolean;
+  ownerId: number;
+  cityId: number;
 };
 
 export type UpdateRestaurantDto = {
@@ -172,7 +169,7 @@ export type UpdateShiftDto = {
 // Search DTOs
 export type RestaurantSearchDto = {
   name?: string;
-  cityId?: string;
+  cityId?: number;
   minRating?: number;
   active?: boolean;
   page?: number;

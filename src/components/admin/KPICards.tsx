@@ -7,8 +7,8 @@ const KPICards: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[...Array(4)].map((_, i) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        {[...Array(6)].map((_, i) => (
           <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse">
             <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
             <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
@@ -37,6 +37,22 @@ const KPICards: React.FC = () => {
       color: 'text-blue-600'
     },
     {
+      title: 'Table Reservations',
+      value: metrics.reservations.total.toLocaleString(),
+      change: metrics.reservations.trend,
+      subtitle: 'confirmed bookings',
+      icon: <FaUsers />,
+      color: 'text-indigo-600'
+    },
+    {
+      title: 'Room Bookings',
+      value: metrics.roomBookings.total.toLocaleString(),
+      change: metrics.roomBookings.trend,
+      subtitle: 'accommodation stays',
+      icon: <FaStore />,
+      color: 'text-teal-600'
+    },
+    {
       title: 'Active Users',
       value: metrics.users.active.toLocaleString(),
       change: metrics.users.growth,
@@ -55,7 +71,7 @@ const KPICards: React.FC = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
       {kpis.map((kpi, index) => (
         <div
           key={index}

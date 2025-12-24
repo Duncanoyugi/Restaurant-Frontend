@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { LandingLayout } from '../components/layout/LandingLayout';
 import { useAppSelector } from '../app/hooks';
 import Button from '../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FaCalendarAlt, FaClock, FaUsers, FaEnvelope, FaPhone, FaUser, FaWheelchair, FaChild, FaBirthdayCake, FaHeart } from 'react-icons/fa';
 import { IoIosArrowForward } from 'react-icons/io';
 import { useInitializePaymentMutation } from '../features/payments/paymentsApi';
+import { useCreateReservationMutation } from '../features/reservations/reservationsApi';
 import { PaymentMethod } from '../types/payment';
 // import { useToast } from '../contexts/ToastContext'; // Available for future use
 
 const ReservationsPage: React.FC = () => {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [initializePayment] = useInitializePaymentMutation();
+  const [createReservation] = useCreateReservationMutation();
   // showToast is available for future use if needed
   // const { showToast } = useToast();
 
@@ -93,6 +96,23 @@ const ReservationsPage: React.FC = () => {
 
   const USD_TO_KES_RATE = 129.33; // Average 2025 rate as of Dec 8, 2025
 
+  const to24HourTime = (time12h: string): string => {
+    // Converts '7:30 PM' -> '19:30'
+    const trimmed = (time12h || '').trim();
+    const match = trimmed.match(/^\s*(\d{1,2}):(\d{2})\s*(AM|PM)\s*$/i);
+    if (!match) return trimmed; // fallback: already in HH:mm or unknown
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2];
+    const period = match[3].toUpperCase();
+
+    if (period === 'AM') {
+      hours = hours === 12 ? 0 : hours;
+    } else {
+      hours = hours === 12 ? 12 : hours + 12;
+    }
+    return `${hours.toString().padStart(2, '0')}:${minutes}`;
+  };
+
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -108,6 +128,12 @@ const ReservationsPage: React.FC = () => {
       if (step < 5) {
         setStep(step + 1);
       } else {
+        const restaurantParam = searchParams.get('restaurant');
+        if (!restaurantParam) {
+          alert('Please select a restaurant before making a reservation.');
+          return;
+        }
+
         // Calculate reservation cost (base price + add-ons) in KSh
         const basePrice = Math.round(50 * USD_TO_KES_RATE); // KSh 6,467
         const addOnPrice = (formData.welcomeDrinks ? Math.round(12 * USD_TO_KES_RATE) : 0) + // KSh 1,552
@@ -118,9 +144,35 @@ const ReservationsPage: React.FC = () => {
         const depositAmount = Math.round(totalPrice * 0.5); // 50% deposit required
 
         try {
+          // 1) Create the actual reservation first so it appears in "My Reservations"
+          const combinedRequests = [
+            formData.specialRequests,
+            formData.seatingPreference ? `Seating: ${formData.seatingPreference}` : '',
+            formData.specialOccasion ? `Occasion: ${formData.specialOccasion}` : '',
+            formData.dietaryRestrictions ? `Dietary: ${formData.dietaryRestrictions}` : '',
+            formData.allergies ? `Allergies: ${formData.allergies}` : '',
+            formData.accessibilityNeeds ? 'Accessibility needs: Yes' : '',
+            formData.highchair ? 'Highchair: Yes' : '',
+            formData.smoking ? `Smoking: ${formData.smoking}` : '',
+          ].filter(Boolean).join(' | ');
+
+          const createdReservation = await createReservation({
+            // Backend expects numbers, frontend types use string in some places
+            restaurantId: Number(restaurantParam) as any,
+            userId: Number(user?.id) as any,
+            reservationType: 'TABLE' as any,
+            reservationDate: formData.date,
+            reservationTime: to24HourTime(formData.time),
+            guestCount: Number(formData.guests) + Number(formData.children),
+            // Backend DTO uses `specialRequest` (singular). Use `any` to support both.
+            specialRequest: combinedRequests || undefined,
+            depositAmount: depositAmount,
+          } as any).unwrap();
+
           // Initialize payment for 50% deposit
           const paymentResult = await initializePayment({
             userId: user!.id,
+            reservationId: (createdReservation as any)?.id,
             amount: depositAmount,
             currency: 'KES',
             method: formData.paymentMethod,

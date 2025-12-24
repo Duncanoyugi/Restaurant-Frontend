@@ -1,7 +1,9 @@
 import { useGetDashboardOverviewQuery, useGetRevenueAnalyticsQuery } from '../../../features/analytics/analyticsApi';
 import { useGetAllUsersQuery } from '../../../features/users/usersApi';
-import { useGetAllRestaurantsQuery } from '../../../features/restaurant/restaurantApi';
+import { useGetAllRestaurantsQuery } from '../../../features/restaurants/unifiedRestaurantApi';
 import { useGetAllOrdersQuery } from '../../../features/orders/ordersApi';
+import { useGetAllReservationsQuery } from '../../../features/reservations/reservationsApi';
+import { useGetAllRoomBookingsQuery } from '../../../features/booking/roomsApi';
 import { AnalyticsPeriod } from '../../../features/analytics/analyticsApi';
 
 interface DashboardMetrics {
@@ -16,6 +18,20 @@ interface DashboardMetrics {
     completed: number;
     pending: number;
     failed: number;
+    trend: number;
+  };
+  reservations: {
+    total: number;
+    confirmed: number;
+    pending: number;
+    cancelled: number;
+    trend: number;
+  };
+  roomBookings: {
+    total: number;
+    confirmed: number;
+    pending: number;
+    cancelled: number;
     trend: number;
   };
   users: {
@@ -57,7 +73,13 @@ export const useDashboardMetrics = () => {
   // Fetch orders data
   const { data: ordersData, isLoading: ordersLoading } = useGetAllOrdersQuery({});
 
-  const loading = analyticsLoading || usersLoading || restaurantsLoading || ordersLoading || revenueLoading;
+  // Fetch reservations data
+  const { data: reservationsData, isLoading: reservationsLoading } = useGetAllReservationsQuery({});
+
+  // Fetch room bookings data
+  const { data: roomBookingsData, isLoading: roomBookingsLoading } = useGetAllRoomBookingsQuery({});
+
+  const loading = analyticsLoading || usersLoading || restaurantsLoading || ordersLoading || reservationsLoading || roomBookingsLoading || revenueLoading;
 
   // Calculate metrics from API data
   const calculateMetrics = (): DashboardMetrics => {
@@ -79,6 +101,8 @@ export const useDashboardMetrics = () => {
     const users = usersData?.data || [];
     const restaurants = restaurantsData?.data || [];
     const allOrders = ordersData?.data || [];
+    const allReservations = reservationsData?.data || [];
+    const allRoomBookings = roomBookingsData?.data || [];
 
     // Calculate revenue growth
     const currentRevenue = revenue.totalRevenue || 0;
@@ -119,6 +143,28 @@ export const useDashboardMetrics = () => {
       r.status === 'suspended' || r.active === false
     ).length;
 
+    // Calculate reservation metrics
+    const confirmedReservations = allReservations.filter((r: any) =>
+      r.status?.name === 'Confirmed' || r.status === 'Confirmed'
+    ).length;
+    const pendingReservations = allReservations.filter((r: any) =>
+      r.status?.name === 'Pending' || r.status === 'Pending'
+    ).length;
+    const cancelledReservations = allReservations.filter((r: any) =>
+      r.status?.name === 'Cancelled' || r.status === 'Cancelled'
+    ).length;
+
+    // Calculate room booking metrics
+    const confirmedRoomBookings = allRoomBookings.filter((r: any) =>
+      r.status?.name === 'Confirmed' || r.status === 'Confirmed'
+    ).length;
+    const pendingRoomBookings = allRoomBookings.filter((r: any) =>
+      r.status?.name === 'Pending' || r.status === 'Pending'
+    ).length;
+    const cancelledRoomBookings = allRoomBookings.filter((r: any) =>
+      r.status?.name === 'Cancelled' || r.status === 'Cancelled'
+    ).length;
+
     // Generate chart data from revenueData
     // Map backend response to chart format
     // Backend returns revenueData array with date and values
@@ -152,6 +198,20 @@ export const useDashboardMetrics = () => {
         pending: pendingOrders,
         failed: failedOrders,
         trend: orders.totalOrders > 0 ? Math.round((completedOrders / orders.totalOrders) * 100) : 0,
+      },
+      reservations: {
+        total: allReservations.length,
+        confirmed: confirmedReservations,
+        pending: pendingReservations,
+        cancelled: cancelledReservations,
+        trend: allReservations.length > 0 ? Math.round((confirmedReservations / allReservations.length) * 100) : 0,
+      },
+      roomBookings: {
+        total: allRoomBookings.length,
+        confirmed: confirmedRoomBookings,
+        pending: pendingRoomBookings,
+        cancelled: cancelledRoomBookings,
+        trend: allRoomBookings.length > 0 ? Math.round((confirmedRoomBookings / allRoomBookings.length) * 100) : 0,
       },
       users: {
         active: activeUsers,

@@ -6,7 +6,7 @@ import { validateEmail } from '../../utils/validators';
 import Input from '../ui/input';
 import PasswordInput from '../ui/PasswordInput';
 import Button from '../ui/Button';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import OtpVerification from './OtpVerification';
 import { useToast } from '../../contexts/ToastContext';
 
@@ -28,6 +28,7 @@ const LoginForm: React.FC = () => {
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { showToast } = useToast();
 
   const validateForm = () => {
@@ -84,7 +85,17 @@ const LoginForm: React.FC = () => {
         // No need to store separately here
         
         showToast('Login successful! Welcome back.', 'success');
-        navigate('/dashboard');
+        const from = (location.state as any)?.from;
+        // Support both shapes:
+        // - state.from = Location object (ProtectedRoute)
+        // - state.from = string path (some pages)
+        if (typeof from === 'string') {
+          navigate(from);
+        } else if (from?.pathname) {
+          navigate(`${from.pathname}${from.search || ''}${from.hash || ''}`);
+        } else {
+          navigate('/dashboard');
+        }
       }
     } catch (error: any) {
       // Handle different error scenarios
