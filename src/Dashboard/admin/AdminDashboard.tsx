@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import KPICards from '../../components/admin/KPICards';
 import RevenueChart from '../../components/admin/RevenueChart';
