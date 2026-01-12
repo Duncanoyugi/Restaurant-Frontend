@@ -24,15 +24,18 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-    { name: 'Orders', href: '/dashboard/orders', icon: '🍽️' },
-    { name: 'Reservations', href: '/dashboard/reservations', icon: '📅' },
-    { name: 'Room Bookings', href: '/dashboard/room-bookings', icon: '🏨' },
-    { name: 'Reviews', href: '/dashboard/reviews', icon: '⭐' },
-    { name: 'Profile', href: '/dashboard/profile', icon: '👤' },
+    { name: 'Dashboard', href: '', icon: '📊' },
+    { name: 'Orders', href: 'orders', icon: '🍽️' },
+    { name: 'Reservations', href: 'reservations', icon: '📅' },
+    { name: 'Room Bookings', href: 'room-bookings', icon: '🏨' },
+    { name: 'Reviews', href: 'reviews', icon: '⭐' },
+    { name: 'Profile', href: 'profile', icon: '👤' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    // Check if the current path matches the navigation path exactly or starts with it (for nested routes)
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

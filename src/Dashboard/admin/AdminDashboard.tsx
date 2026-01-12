@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import KPICards from '../../components/admin/KPICards';
 import RevenueChart from '../../components/admin/RevenueChart';
@@ -95,20 +95,35 @@ const DashboardOverview: React.FC = () => {
 };
 
 const AdminDashboard: React.FC = () => {
+  console.log('📍 AdminDashboard component rendered');
+
   return (
     <AdminLayout>
       <Routes>
-        <Route path="/" element={<DashboardOverview />} />
-        <Route path="/users" element={<UserManagement />} />
-        <Route path="/restaurants" element={<RestaurantManagement />} />
-        <Route path="/orders" element={<OrderManagement />} />
-        <Route path="/reservations" element={<ReservationManagement />} />
-        <Route path="/room-bookings" element={<RoomBookingManagement />} />
-        <Route path="/payments" element={<PaymentManagement />} />
-        <Route path="/delivery" element={<Deliverymanagement />} />
-        <Route path="/inventory" element={<InventoryOverview />} />
-        <Route path="/reviews" element={<ReviewModeration />} />
-        <Route path="/notifications" element={<NotificationCenter />} />
+        <Route index element={<DashboardOverview />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="restaurants" element={<RestaurantManagement />} />
+        <Route path="orders" element={<OrderManagement />} />
+        <Route path="reservations" element={<ReservationManagement />} />
+        <Route path="room-bookings" element={<RoomBookingManagement />} />
+        <Route path="payments" element={<PaymentManagement />} />
+        <Route path="delivery" element={<Deliverymanagement />} />
+        <Route path="inventory" element={<InventoryOverview />} />
+        <Route path="reviews" element={<ReviewModeration />} />
+        <Route path="notifications" element={<NotificationCenter />} />
+        <Route path="*" element={
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <h3 className="text-lg font-bold text-red-800">Page Not Found (Debug Mode)</h3>
+            <p className="text-red-700">The requested path was not found in the Admin Dashboard routes.</p>
+            <div className="mt-2 p-2 bg-white rounded border border-red-100 font-mono text-sm">
+              Current Location: {window.location.pathname}
+            </div>
+            <p className="mt-2 text-sm text-gray-600">
+              Tried to match path "users" against current URL.
+              If you see this, the router failed to match the nested route.
+            </p>
+          </div>
+        } />
       </Routes>
     </AdminLayout>
   );

@@ -135,7 +135,7 @@ export const usersApi = baseApi.injectEndpoints({
           total: response.total || 0,
           page: response.page || 1,
           limit: response.limit || 10,
-          totalPages: Math.ceil((response.total || 0) / (response.limit || 10)),
+          totalPages: response.totalPages || Math.ceil((response.total || 0) / (response.limit || 10)),
         };
       },
     }),

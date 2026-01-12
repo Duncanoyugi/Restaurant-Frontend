@@ -14,7 +14,7 @@ const RestaurantManagement: React.FC = () => {
     description: '',
     email: '',
     phone: '',
-    address: '',
+    streetAddress: '',
     cityId: 1, // Default to 1 for now
     cuisineType: '',
     openingTime: '09:00',
@@ -65,7 +65,7 @@ const RestaurantManagement: React.FC = () => {
       description: restaurant.description,
       email: restaurant.email,
       phone: restaurant.phone,
-      address: restaurant.address,
+      streetAddress: restaurant.streetAddress,
       cityId: restaurant.cityId,
       cuisineType: restaurant.cuisineType,
       openingTime: restaurant.openingTime,
@@ -101,7 +101,7 @@ const RestaurantManagement: React.FC = () => {
       description: '',
       email: '',
       phone: '',
-      address: '',
+      streetAddress: '',
       cityId: 1,
       cuisineType: '',
       openingTime: '09:00',
@@ -190,7 +190,7 @@ const RestaurantManagement: React.FC = () => {
                   <span className="font-semibold w-24">Cuisine:</span> {restaurant.cuisineType || 'N/A'}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
-                  <span className="font-semibold w-24">Location:</span> {restaurant.address || 'N/A'}
+                  <span className="font-semibold w-24">Location:</span> {restaurant.streetAddress || 'N/A'}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                   <span className="font-semibold w-24">Status:</span>
@@ -305,12 +305,12 @@ const RestaurantManagement: React.FC = () => {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Street Address</label>
                   <input
                     type="text"
-                    name="address"
+                    name="streetAddress"
                     required
-                    value={formData.address}
+                    value={formData.streetAddress}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
                   />

@@ -1,3 +1,4 @@
+// frontend/src/AppRouter.tsx
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
@@ -24,7 +25,6 @@ import RestaurantList from '../pages/Restaurants/RestaurantList';
 import RestaurantDetail from '../pages/Restaurants/RestaurantDetail';
 import SelectRestaurant from '../pages/Restaurants/SelectRestaurant';
 import RestaurantSetup from '../pages/Restaurants/RestaurantSetup';
-
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -102,7 +102,7 @@ const AppRouter: React.FC = () => {
         }
       />
 
-      {/* Protected routes - dashboard */}
+      {/* Dashboard route - handles all /dashboard/* paths */}
       <Route
         path="/dashboard/*"
         element={
@@ -111,9 +111,6 @@ const AppRouter: React.FC = () => {
           </ProtectedRoute>
         }
       />
-
-
-
 
       {/* 404 fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

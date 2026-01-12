@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import CustomerLayout from '../../components/layout/CustomerLayout';
 import { StatsGrid } from '../../components/customer/StatsGrid';
 import { QuickActions } from '../../components/customer/QuickActions';
@@ -58,18 +58,19 @@ const CustomerDashboard: React.FC = () => {
   return (
     <CustomerLayout>
       <Routes>
-        <Route path="/" element={<DashboardOverview />} />
-        <Route path="/orders" element={<CustomerOrders />} />
-        <Route path="/orders/:orderId" element={<OrderDetails />} />
-        <Route path="/orders/:orderId/track" element={<OrderTracking />} />
-        <Route path="/orders/:orderId/success" element={<OrderSuccess />} />
-        <Route path="/reservations" element={<CustomerReservations />} />
-        <Route path="/reservations/:reservationId" element={<ReservationDetails />} />
-        <Route path="/room-bookings" element={<RoomBookingsPage />} />
-        <Route path="/reviews" element={<CustomerReviews />} />
-        <Route path="/profile" element={<CustomerProfile />} />
-        <Route path="/favorites" element={<Favourites />} />
-        <Route path="/rewards" element={<Rewards />} />
+        <Route index element={<DashboardOverview />} />
+        <Route path="orders" element={<CustomerOrders />} />
+        <Route path="orders/:id" element={<OrderDetails />} />
+        <Route path="orders/:id/track" element={<OrderTracking />} />
+        <Route path="orders/:id/success" element={<OrderSuccess />} />
+        <Route path="reservations" element={<CustomerReservations />} />
+        <Route path="reservations/:id" element={<ReservationDetails />} />
+        <Route path="room-bookings" element={<RoomBookingsPage />} />
+        <Route path="reviews" element={<CustomerReviews />} />
+        <Route path="profile" element={<CustomerProfile />} />
+        <Route path="favorites" element={<Favourites />} />
+        <Route path="rewards" element={<Rewards />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </CustomerLayout>
   );

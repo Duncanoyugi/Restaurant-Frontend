@@ -49,7 +49,7 @@ const RestaurantSetup: React.FC = () => {
     try {
       const restaurantData = {
         ...formData,
-        ownerId: user.id,
+        ownerId: typeof user.id === 'string' ? parseInt(user.id, 10) : user.id,
       };
       const result = await createRestaurant(restaurantData).unwrap();
       // Redirect to owner dashboard with the new restaurant ID

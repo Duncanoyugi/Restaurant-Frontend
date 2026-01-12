@@ -63,6 +63,14 @@ export type DashboardOverviewResponse = {
   topMenuItems: any[];
 };
 
+export type RevenueAnalyticsResponse = {
+  date?: string;
+  hour?: string;
+  revenue: number;
+  amount?: number;
+  period?: string;
+};
+
 export const analyticsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getDashboardOverview: builder.query<DashboardOverviewResponse, AnalyticsQueryParams>({
@@ -80,7 +88,7 @@ export const analyticsApi = baseApi.injectEndpoints({
       providesTags: ['DashboardAnalytics'],
     }),
 
-    getRevenueAnalytics: builder.query<any, AnalyticsQueryParams>({
+    getRevenueAnalytics: builder.query<RevenueAnalyticsResponse[], AnalyticsQueryParams>({
       query: (params) => ({
         url: 'analytics/revenue',
         method: 'GET',

@@ -13,7 +13,7 @@ const QuickActions: React.FC = () => {
       icon: '👥',
       count: metrics.users.newToday,
       countLabel: 'new today',
-      action: () => navigate('/admin/users'),
+      action: () => navigate('/dashboard/users'),
       color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
     },
     {
@@ -22,7 +22,7 @@ const QuickActions: React.FC = () => {
       icon: '🏪',
       count: metrics.restaurants.pendingApproval,
       countLabel: 'pending',
-      action: () => navigate('/admin/restaurants'),
+      action: () => navigate('/dashboard/restaurants'),
       color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
     },
     {
@@ -31,7 +31,7 @@ const QuickActions: React.FC = () => {
       icon: '⭐',
       count: 23,
       countLabel: 'awaiting',
-      action: () => navigate('/admin/reviews'),
+      action: () => navigate('/dashboard/reviews'),
       color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
     },
     {
@@ -40,7 +40,7 @@ const QuickActions: React.FC = () => {
       icon: '🔔',
       count: 5,
       countLabel: 'active',
-      action: () => navigate('/admin/notifications'),
+      action: () => navigate('/dashboard/notifications'),
       color: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
     }
   ];

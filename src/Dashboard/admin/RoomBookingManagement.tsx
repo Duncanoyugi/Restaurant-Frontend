@@ -152,7 +152,7 @@ const RoomBookingManagement: React.FC = () => {
 
                   <div className="flex items-center space-x-3">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>
-                      {booking.status?.replace('_', ' ')}
+                      {booking.status}
                     </span>
 
                     <div className="flex space-x-2">

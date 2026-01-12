@@ -32,7 +32,7 @@ const UserManagement: React.FC = () => {
   const [updateUser] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
 
-  // Backend returns User[] directly, not wrapped in { data: User[] }
+  // Backend returns User[] wrapped in { data: User[] }
   const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || [];
 
   console.log('🔍 Processed users array:', users);

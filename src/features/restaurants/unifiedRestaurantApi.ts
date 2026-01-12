@@ -4,6 +4,7 @@ import type {
   Restaurant,
   RestaurantStaff,
   Shift,
+  CreateRestaurantDto,
   CreateRestaurantStaffDto,
   UpdateRestaurantStaffDto,
   CreateShiftDto,
@@ -127,7 +128,7 @@ export const unifiedRestaurantApi = baseApi.injectEndpoints({
     }),
 
     // Create restaurant
-    createRestaurant: builder.mutation<Restaurant, Partial<Restaurant>>({
+    createRestaurant: builder.mutation<Restaurant, CreateRestaurantDto>({
       query: (data) => ({
         url: 'restaurants',
         method: 'POST',

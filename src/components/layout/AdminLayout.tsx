@@ -15,13 +15,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   console.log('🔐 AdminLayout - Auth state:', { user, isAuthenticated, accessToken });
+  console.log('📍 AdminLayout - Current path:', location.pathname);
 
-  // Check if user is authenticated and has admin role
+  // Authentication and role checks are handled by ProtectedRoute and RoleBasedDashboard
+  // Removing redundant check here to prevent redirect loops
+  /* 
   if (!isAuthenticated || !user || user.role !== 'Admin') {
     console.log('🔐 AdminLayout - User not authenticated or not admin, redirecting to login');
     navigate('/login');
     return null;
   }
+  */
 
   const handleLogout = () => {
     dispatch(logout());
@@ -42,7 +46,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: 'Notification Center', href: '/dashboard/notifications', icon: '🔔' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -71,8 +77,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                       <Link
                         to={item.href}
                         className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${isActive(item.href)
-                            ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
+                          ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
                           }`}
                       >
                         <span className="text-lg">{item.icon}</span>
@@ -182,8 +188,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                 to={item.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${isActive(item.href)
-                                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
+                                  ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
+                                  : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
                                   }`}
                               >
                                 <span className="text-lg">{item.icon}</span>
@@ -201,11 +207,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </div>
         )}
 
-        {/* Main Content Area */}
+        {/* Main Content Area - Use Outlet for nested routes */}
         <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
-            {/* Use Outlet for nested routes or children for direct rendering */}
-            {children ? children : <Outlet />}
+            {/* DEBUG BANNER */}
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
+              <p className="font-bold">Debug Info</p>
+              <p>Current URL Path: <code className="bg-yellow-200 px-1 rounded">{location.pathname}</code></p>
+              <p>User Role: {user?.role}</p>
+            </div>
+            {children || <Outlet />}
           </div>
         </main>
       </div>

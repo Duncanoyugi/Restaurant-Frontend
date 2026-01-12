@@ -20,18 +20,21 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-    { name: 'Deliveries', href: '/dashboard/deliveries', icon: '🚚' },
-    { name: 'Active Orders', href: '/dashboard/active-orders', icon: '📦' },
-    { name: 'Earnings', href: '/dashboard/earnings', icon: '💰' },
-    { name: 'Route', href: '/dashboard/route', icon: '🗺️' },
-    { name: 'Schedule', href: '/dashboard/schedule', icon: '📅' },
-    { name: 'Performance', href: '/dashboard/performance', icon: '📈' },
-    { name: 'Support', href: '/dashboard/support', icon: '🆘' },
-    { name: 'Profile', href: '/dashboard/profile', icon: '👤' },
+    { name: 'Dashboard', href: '', icon: '📊' },
+    { name: 'Deliveries', href: 'deliveries', icon: '🚚' },
+    { name: 'Active Orders', href: 'active-orders', icon: '📦' },
+    { name: 'Earnings', href: 'earnings', icon: '💰' },
+    { name: 'Route', href: 'route', icon: '🗺️' },
+    { name: 'Schedule', href: 'schedule', icon: '📅' },
+    { name: 'Performance', href: 'performance', icon: '📈' },
+    { name: 'Support', href: 'support', icon: '🆘' },
+    { name: 'Profile', href: 'profile', icon: '👤' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    // Check if the current path matches the navigation path exactly or starts with it (for nested routes)
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

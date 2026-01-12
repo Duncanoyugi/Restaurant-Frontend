@@ -174,7 +174,7 @@ const SelectRestaurant: React.FC = () => {
                 </p>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-500">
-                    {restaurant.address}
+                    {restaurant.streetAddress}
                   </span>
                   {selectedRestaurantId === Number(restaurant.id) && (
                     <CheckCircle2 className="w-5 h-5 text-green-500" />

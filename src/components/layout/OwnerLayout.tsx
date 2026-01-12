@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
 import { ThemeToggle } from '../ui/ThemeToggle';
-import { Building2, Users, Truck, Utensils, Calendar, Bed, FileText, Settings, PlusCircle, LogOut } from 'lucide-react';
+import { Building2, Users, Truck, Utensils, Calendar, Bed, FileText, PlusCircle, LogOut } from 'lucide-react';
 
 interface OwnerLayoutProps {
   children?: React.ReactNode;
@@ -29,16 +29,13 @@ const OwnerLayout: React.FC<OwnerLayoutProps> = ({ children }) => {
     { name: 'Menu Management', href: '/dashboard/menu', icon: <Utensils className="w-5 h-5" /> },
     { name: 'Reservations', href: '/dashboard/reservations', icon: <Calendar className="w-5 h-5" /> },
     { name: 'Accommodations', href: '/dashboard/rooms', icon: <Bed className="w-5 h-5" /> },
-    { name: 'Reports', href: '/dashboard/reports', icon: <FileText className="w-5 h-5" /> },
-    { name: 'Settings', href: '/dashboard/settings', icon: <Settings className="w-5 h-5" /> },
+    { name: 'Reviews', href: '/dashboard/reviews', icon: <FileText className="w-5 h-5" /> },
+    { name: 'Orders', href: '/dashboard/orders', icon: <Utensils className="w-5 h-5" /> },
   ];
 
   const isActive = (path: string) => {
-    // Handle dynamic routes
-    if (path.includes(':id')) {
-      return location.pathname.includes(path.replace(':id', ''));
-    }
-    return location.pathname === path;
+    // Check if the current path matches the navigation path exactly or starts with it (for nested routes)
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   return (

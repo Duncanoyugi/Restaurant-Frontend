@@ -165,10 +165,10 @@ export const useDashboardMetrics = () => {
       r.status?.name === 'Cancelled' || r.status === 'Cancelled'
     ).length;
 
-    // Generate chart data from revenueData
-    // Map backend response to chart format
-    // Backend returns revenueData array with date and values
-    const rawChartData = revenueData?.revenueData || [];
+    // Generate chart data from revenue analytics response
+    // The revenue analytics endpoint returns an array where each item
+    // contains a date and totalRevenue value
+    const rawChartData = revenueData || [];
     const chartData = rawChartData.length > 0
       ? rawChartData.map((item: any) => ({
         date: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),

@@ -31,9 +31,9 @@ export type Restaurant = {
   description: string;
   email: string;
   phone: string;
-  address: string;
+  streetAddress: string;
   cityId: number;
-  ownerId: string;
+  ownerId: number;
   latitude?: number;
   longitude?: number;
   logoUrl?: string;
@@ -112,6 +112,7 @@ export type CreateRestaurantDto = {
   active?: boolean;
   ownerId: number;
   cityId: number;
+  cuisineType?: string;
 };
 
 export type UpdateRestaurantDto = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import DriverLayout from '../../components/layout/DriverLayout';
 import DeliveryQueue from '../../components/driver/DeliveryQueue';
 import EarningsDashboard from '../../components/driver/EarningsDashboard';
@@ -180,14 +180,15 @@ const DriverDashboard: React.FC = () => {
   return (
     <DriverLayout>
       <Routes>
-        <Route path="/" element={<DashboardOverview />} />
-        <Route path="/deliveries" element={<Deliveries />} />
-        <Route path="/active-orders" element={<Deliveries />} />
-        <Route path="/earnings" element={<Earnings />} />
-        <Route path="/route" element={<Location />} />
-        <Route path="/schedule" element={<Availability />} />
-        <Route path="/performance" element={<Performance />} />
-        <Route path="/support" element={<Support />} />
+        <Route index element={<DashboardOverview />} />
+        <Route path="deliveries" element={<Deliveries />} />
+        <Route path="active-orders" element={<Deliveries />} />
+        <Route path="earnings" element={<Earnings />} />
+        <Route path="route" element={<Location />} />
+        <Route path="schedule" element={<Availability />} />
+        <Route path="performance" element={<Performance />} />
+        <Route path="support" element={<Support />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </DriverLayout>
   );

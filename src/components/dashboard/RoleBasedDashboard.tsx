@@ -3,31 +3,26 @@ import { useAppSelector } from '../../app/hooks';
 import CustomerDashboard from '../../Dashboard/customer/CustomerDashboard';
 import AdminDashboard from '../../Dashboard/admin/AdminDashboard';
 import DriverDashboard from '../../Dashboard/driver/DriverDashboard';
-import StaffDashboard from '../../Dashboard/staff/StaffDashboard'; // NEW IMPORT
+import StaffDashboard from '../../Dashboard/staff/StaffDashboard';
 import OwnerDashboard from '../../Dashboard/owner/OwnerDashboard';
 import { UserRoleEnum } from '../../features/auth/authSlice';
 
 // Helper to safely extract and normalize role name
 const extractRoleName = (role: any): string => {
   if (typeof role === 'string') {
-    // Normalize the role string
     const normalized = role.trim();
     
-    // Map all possible variations to the UserRoleEnum values
     const roleMap: Record<string, string> = {
-      // Driver variations
       'Driver': UserRoleEnum.DRIVER,
       'driver': UserRoleEnum.DRIVER,
       'DRIVER': UserRoleEnum.DRIVER,
       'Drvr': UserRoleEnum.DRIVER,
       'drvr': UserRoleEnum.DRIVER,
       
-      // Admin variations
       'Admin': UserRoleEnum.ADMIN,
       'admin': UserRoleEnum.ADMIN,
       'ADMIN': UserRoleEnum.ADMIN,
       
-      // Restaurant Owner variations
       'Restaurant Owner': UserRoleEnum.RESTAURANT_OWNER,
       'Restaurant_Owner': UserRoleEnum.RESTAURANT_OWNER,
       'RestaurantOwner': UserRoleEnum.RESTAURANT_OWNER,
@@ -36,7 +31,6 @@ const extractRoleName = (role: any): string => {
       'Owner': UserRoleEnum.RESTAURANT_OWNER,
       'owner': UserRoleEnum.RESTAURANT_OWNER,
       
-      // Restaurant Staff variations
       'Restaurant Staff': UserRoleEnum.RESTAURANT_STAFF,
       'Restaurant_Staff': UserRoleEnum.RESTAURANT_STAFF,
       'RestaurantStaff': UserRoleEnum.RESTAURANT_STAFF,
@@ -45,7 +39,6 @@ const extractRoleName = (role: any): string => {
       'Staff': UserRoleEnum.RESTAURANT_STAFF,
       'staff': UserRoleEnum.RESTAURANT_STAFF,
       
-      // Customer variations (default)
       'Customer': UserRoleEnum.CUSTOMER,
       'customer': UserRoleEnum.CUSTOMER,
       'CUSTOMER': UserRoleEnum.CUSTOMER,
@@ -55,10 +48,9 @@ const extractRoleName = (role: any): string => {
   }
   
   if (role && typeof role === 'object') {
-    // Extract role name from object
     const roleName = role.name || role.roleName || role.role || role.value;
     if (roleName && typeof roleName === 'string') {
-      return extractRoleName(roleName); // Recursively process
+      return extractRoleName(roleName);
     }
   }
   
@@ -94,7 +86,7 @@ const RoleBasedDashboard: React.FC = () => {
   
   console.log('🎯 Final decision - Role:', roleName);
 
-  // Route to appropriate dashboard
+  // Directly render the appropriate dashboard based on role
   if (roleName === UserRoleEnum.DRIVER) {
     console.log('✅ Rendering DriverDashboard');
     return <DriverDashboard />;

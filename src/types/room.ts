@@ -1,21 +1,21 @@
 export type RoomBookingStatus =
-  | 'PENDING'
-  | 'CONFIRMED'
-  | 'CHECKED_IN'
-  | 'CHECKED_OUT'
-  | 'COMPLETED'
-  | 'CANCELLED';
+  | 'Pending'
+  | 'Confirmed'
+  | 'Cancelled'
+  | 'Completed'
+  | 'Checked In'
+  | 'Checked Out';
 
 export type RoomType = 'STANDARD' | 'DELUXE' | 'SUITE' | 'FAMILY' | 'EXECUTIVE';
 
 // Constants for better IntelliSense
 export const RoomBookingStatusEnum = {
-  PENDING: 'PENDING' as RoomBookingStatus,
-  CONFIRMED: 'CONFIRMED' as RoomBookingStatus,
-  CHECKED_IN: 'CHECKED_IN' as RoomBookingStatus,
-  CHECKED_OUT: 'CHECKED_OUT' as RoomBookingStatus,
-  COMPLETED: 'COMPLETED' as RoomBookingStatus,
-  CANCELLED: 'CANCELLED' as RoomBookingStatus,
+  PENDING: 'Pending' as RoomBookingStatus,
+  CONFIRMED: 'Confirmed' as RoomBookingStatus,
+  CHECKED_IN: 'Checked In' as RoomBookingStatus,
+  CHECKED_OUT: 'Checked Out' as RoomBookingStatus,
+  COMPLETED: 'Completed' as RoomBookingStatus,
+  CANCELLED: 'Cancelled' as RoomBookingStatus,
 };
 
 export const RoomTypeEnum = {

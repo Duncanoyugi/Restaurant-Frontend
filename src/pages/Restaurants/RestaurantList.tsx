@@ -88,7 +88,7 @@ const RestaurantList: React.FC = () => {
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   <div className="flex items-center">
                     <MapPin className="w-4 h-4 mr-2" />
-                    <span>{restaurant.address}</span>
+                    <span>{restaurant.streetAddress}</span>
                   </div>
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-2" />

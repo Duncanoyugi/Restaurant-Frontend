@@ -24,6 +24,35 @@ const KitchenDashboard: React.FC<KitchenDashboardProps> = ({ restaurantId }) => 
 
   const orders = ordersData || [];
 
+  // Build a status name-to-ID mapping from all orders
+  const statusMap = useMemo(() => {
+    const map = new Map<string, string>();
+    orders.forEach((order: any) => {
+      if (order.status) {
+        const status = order.status;
+        const statusName = typeof status === 'object' ? status?.name : status;
+        const statusId = typeof status === 'object' ? status?.id : order.statusId;
+        if (statusName && statusId) {
+          map.set(statusName.toLowerCase(), String(statusId));
+        }
+      }
+      // Also check statusHistory if available
+      if (order.statusHistory) {
+        order.statusHistory.forEach((history: any) => {
+          const statusCatalog = history.statusCatalog || history.status;
+          if (statusCatalog) {
+            const name = statusCatalog.name || statusCatalog;
+            const id = statusCatalog.id;
+            if (name && id) {
+              map.set(String(name).toLowerCase(), String(id));
+            }
+          }
+        });
+      }
+    });
+    return map;
+  }, [orders]);
+
   const getStatusColor = (status: string | any) => {
     const statusName = typeof status === 'object' ? status?.name : status;
     switch (statusName?.toLowerCase()) {
@@ -38,44 +67,65 @@ const KitchenDashboard: React.FC<KitchenDashboardProps> = ({ restaurantId }) => 
   const getStatusId = (order: any, newStatusName?: string): string | null => {
     // If we're looking for a specific status (newStatusName), try to find it
     if (newStatusName) {
+      const normalizedName = newStatusName.toLowerCase();
+      
+      // First, try to find in status map built from all orders
+      const mappedId = statusMap.get(normalizedName);
+      if (mappedId) {
+        return mappedId;
+      }
+      
       // Look in status history first
       if (order.statusHistory) {
         const targetStatus = order.statusHistory.find(
-          (history: any) => 
-            history.statusCatalog?.name?.toLowerCase() === newStatusName.toLowerCase() ||
-            history.status?.toLowerCase() === newStatusName.toLowerCase()
+          (history: any) => {
+            const historyStatus = history.statusCatalog || history.status;
+            const historyName = typeof historyStatus === 'object' 
+              ? historyStatus?.name 
+              : historyStatus;
+            return historyName?.toLowerCase() === normalizedName;
+          }
         );
-        if (targetStatus?.statusCatalog?.id) {
-          return targetStatus.statusCatalog.id;
+        if (targetStatus) {
+          const statusCatalog = targetStatus.statusCatalog || targetStatus.status;
+          if (statusCatalog?.id) {
+            return String(statusCatalog.id);
+          }
         }
       }
       
       // Try to find in available statuses if provided
       if (order.availableStatuses) {
         const targetStatus = order.availableStatuses.find(
-          (status: any) => status.name?.toLowerCase() === newStatusName.toLowerCase()
+          (status: any) => status.name?.toLowerCase() === normalizedName
         );
         if (targetStatus?.id) {
-          return targetStatus.id;
+          return String(targetStatus.id);
         }
       }
+      
+      // If we're looking for a new status and can't find it, return null
+      // Don't fall back to current status
+      return null;
     }
     
-    // Fallback to current status ID
+    // If no newStatusName provided, return current status ID
     if (order.statusId) {
-      return order.statusId;
+      return String(order.statusId);
     }
     
     // Check status object
     const status = order.status;
-    if (typeof status === 'object' && status?.id) return status.id;
+    if (typeof status === 'object' && status?.id) {
+      return String(status.id);
+    }
     
     return null;
   };
 
   const handleStatusUpdate = async (orderId: string, order: any, newStatusName: string) => {
     try {
-      const statusId = getStatusId(order);
+      const statusId = getStatusId(order, newStatusName);
       if (!statusId) {
         showToast('Unable to determine status. Please try again.', 'error');
         return;
