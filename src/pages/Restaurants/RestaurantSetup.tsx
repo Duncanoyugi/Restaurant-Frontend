@@ -8,14 +8,16 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/input';
 import { Building2 } from 'lucide-react';
+import { validatePhone } from '../../utils/validators';
 
 const RestaurantSetup: React.FC = () => {
   const navigate = useNavigate();
   const [createRestaurant, { isLoading }] = useCreateRestaurantMutation();
   const { data: cities = [], isLoading: citiesLoading } = useGetAllCitiesQuery();
   const user = useSelector((state: RootState) => state.auth.user);
+  const [phoneError, setPhoneError] = useState('');
 
-  console.log('🏗️ RestaurantSetup component rendered');
+  console.log('RestaurantSetup component rendered');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -41,6 +43,14 @@ const RestaurantSetup: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate phone
+    if (!validatePhone(formData.phone)) {
+      setPhoneError('Please enter a valid phone number');
+      return;
+    }
+    setPhoneError('');
+    
     if (!user?.id) {
       alert('User not authenticated. Please log in again.');
       return;
@@ -104,9 +114,13 @@ const RestaurantSetup: React.FC = () => {
                 id="phone"
                 name="phone"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  if (phoneError) setPhoneError('');
+                }}
                 required
-                placeholder="+1 (123) 456-7890"
+                placeholder="+254 712 345678"
+                error={phoneError}
               />
             </div>
 

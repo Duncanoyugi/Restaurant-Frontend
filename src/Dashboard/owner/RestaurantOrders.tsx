@@ -332,7 +332,7 @@ const RestaurantOrders: React.FC = () => {
                     <button
                       onClick={() => handleStatusChange(order.id, getNextStatus(order.status) as Order['status'])}
                       disabled={loading || !getNextStatus(order.status)}
-                      className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                      className="bg-linear-to-r from-primary-600 to-secondary-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                     >
                       {loading ? (
                         <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></span>

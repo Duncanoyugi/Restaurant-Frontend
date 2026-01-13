@@ -160,7 +160,7 @@ const RoomDetailsPage: React.FC = () => {
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                         {amenityNames.map((feature: string, index: number) => (
                                             <div key={index} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                <FaCheck className="text-green-500 flex-shrink-0" />
+                                                <FaCheck className="text-green-500 shrink-0" />
                                                 <span className="text-sm">{feature}</span>
                                             </div>
                                         ))}

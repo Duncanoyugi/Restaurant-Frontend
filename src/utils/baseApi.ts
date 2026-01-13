@@ -4,7 +4,7 @@ import type { RootState } from '../app/store';
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:3000',
+  baseUrl: '/api',
   prepareHeaders: (headers, { getState }) => {
     // Get token from Redux state first, fallback to localStorage
     const state = getState() as RootState;
@@ -47,7 +47,7 @@ const baseQueryWithReauth: BaseQueryFn<
     if (refreshToken) {
       try {
         // Attempt to refresh the token
-        const refreshResult = await fetch('http://localhost:3000/auth/refresh', {
+        const refreshResult = await fetch('/api/auth/refresh', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

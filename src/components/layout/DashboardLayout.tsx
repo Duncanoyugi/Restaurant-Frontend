@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
-import { UserRoleEnum } from '../../features/auth/authSlice';
+import { UserRoleEnum, extractRoleName } from '../../features/auth/authSlice';
 import CustomerLayout from './CustomerLayout';
 import AdminLayout from './AdminLayout';
 import OwnerLayout from './OwnerLayout';
@@ -11,25 +11,13 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-// Helper to safely extract role name (consistent with authSlice and RoleBasedDashboard)
-const extractRoleName = (role: any): string => {
-  if (typeof role === 'string') {
-    return role;
-  }
-  if (role && typeof role === 'object') {
-    // Try different possible property names
-    return role.name || role.roleName || role.role || role.value || UserRoleEnum.CUSTOMER;
-  }
-  return UserRoleEnum.CUSTOMER;
-};
-
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user } = useAppSelector((state) => state.auth);
 
   // Safely extract role name
   const roleName = user ? extractRoleName(user.role) : UserRoleEnum.CUSTOMER;
 
-  console.log('🏗️ DashboardLayout - Role:', roleName);
+  console.log('DashboardLayout - Role:', roleName);
 
   const renderLayout = () => {
     switch (roleName) {

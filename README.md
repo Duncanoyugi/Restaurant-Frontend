@@ -30,7 +30,7 @@ This frontend application provides a complete user interface for restaurant oper
 - Payment processing with Paystack
 - Leave reviews and ratings
 
-#### 👨‍🍳 Restaurant Staff
+#### Restaurant Staff
 - Kitchen order management
 - Table and reservation management
 - Inventory stock monitoring
@@ -52,7 +52,7 @@ This frontend application provides a complete user interface for restaurant oper
 - Financial reports
 - Customer insights
 
-#### 🛡️ Administrator
+#### Administrator
 - System-wide user management
 - Restaurant onboarding
 - Platform analytics

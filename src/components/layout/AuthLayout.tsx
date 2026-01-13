@@ -32,7 +32,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
             {/* Logo */}
             <div className="text-center mb-8">
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-16 h-16 bg-linear-to-r from-primary-600 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg">
                   <span className="text-white text-xl font-bold">SB</span>
                 </div>
               </div>

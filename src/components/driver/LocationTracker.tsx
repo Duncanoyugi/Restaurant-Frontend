@@ -37,7 +37,7 @@ const LocationTracker: React.FC = () => {
       </div>
 
       {/* Location Status Card */}
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl p-6 mb-8">
+      <div className="bg-linear-to-r from-blue-500 to-indigo-600 text-white rounded-xl p-6 mb-8">
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-xl font-bold mb-2">Location Services</h3>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useInventoryAlerts } from '../../Dashboard/owner/hooks/useInventoryAlerts';
+import { Circle, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
 
 const InventoryAlerts: React.FC = () => {
   const { alerts, loading, reorderItem } = useInventoryAlerts();
@@ -13,13 +14,13 @@ const InventoryAlerts: React.FC = () => {
     return colors[level] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
   };
 
-  const getAlertIcon = (level: string) => {
-    const icons: { [key: string]: string } = {
-      critical: '🔴',
-      warning: '🟠',
-      info: '🔵'
+  const getAlertIcon = (level: string): React.ComponentType<React.SVGProps<SVGSVGElement>> => {
+    const icons: { [key: string]: React.ComponentType<React.SVGProps<SVGSVGElement>> } = {
+      critical: Circle,
+      warning: AlertCircle,
+      info: Info
     };
-    return icons[level] || '⚪';
+    return icons[level] || Circle;
   };
 
   if (loading) {
@@ -51,7 +52,7 @@ const InventoryAlerts: React.FC = () => {
       <div className="space-y-3 max-h-60 overflow-y-auto">
         {alerts.length === 0 ? (
           <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-            <div className="text-2xl mb-2">✅</div>
+            <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
             <p>All inventory levels are good</p>
           </div>
         ) : (
@@ -62,7 +63,10 @@ const InventoryAlerts: React.FC = () => {
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm">{getAlertIcon(alert.level)}</span>
+                  {(() => {
+                    const IconComponent = getAlertIcon(alert.level);
+                    return <IconComponent className="h-4 w-4" />;
+                  })()}
                   <span className="font-medium text-sm">{alert.itemName}</span>
                 </div>
                 <span className="text-xs font-semibold">

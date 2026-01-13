@@ -128,7 +128,7 @@ const RestaurantList: React.FC = () => {
                     className="absolute top-3 right-3 w-10 h-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition-colors"
                   >
                     <span className={`text-xl ${isFavorite(restaurant.id) ? 'text-red-500' : 'text-gray-400'}`}>
-                      {isFavorite(restaurant.id) ? '❤️' : '🤍'}
+                      {isFavorite(restaurant.id) ? '♥' : '♡'}
                     </span>
                   </button>
                 </div>

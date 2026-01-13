@@ -23,7 +23,7 @@ const RevenueChart: React.FC = () => {
             <div className="flex-1 ml-4">
               <div className="flex items-center">
                 <div 
-                  className="h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-l transition-all duration-300"
+                  className="h-8 bg-linear-to-r from-indigo-500 to-purple-600 rounded-l transition-all duration-300"
                   style={{ 
                     width: `${Math.max(0, Math.min(100, ((day.revenue || 0) / maxRevenue) * 100))}%`,
                     maxWidth: 'calc(100% - 80px)'

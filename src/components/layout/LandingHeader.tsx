@@ -57,7 +57,7 @@ const LandingHeader: React.FC = () => {
             to="/" 
             className="flex items-center space-x-2 text-xl font-bold"
           >
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm font-bold">SB</span>
             </div>
             <span className="text-gray-900 dark:text-white">
@@ -115,7 +115,7 @@ const LandingHeader: React.FC = () => {
                 </Link>
                 <div className="relative group">
                   <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
-                    <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    <div className="w-8 h-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
                   </button>

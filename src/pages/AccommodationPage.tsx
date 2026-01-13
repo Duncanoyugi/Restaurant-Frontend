@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LandingLayout } from '../components/layout/LandingLayout';
 import { useAppSelector } from '../app/hooks';
 import Button from '../components/ui/Button';
@@ -63,9 +63,9 @@ const AccommodationPage: React.FC = () => {
 
   return (
     <LandingLayout>
-      <div className="pt-20 min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/20">
+      <div className="pt-20 min-h-screen bg-linear-to-b from-slate-50 via-white to-amber-50/20">
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-slate-800 via-slate-900 to-amber-900/30 text-white py-20 overflow-hidden">
+        <div className="relative bg-linear-to-r from-slate-800 via-slate-900 to-amber-900/30 text-white py-20 overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20"></div>
           <div className="container mx-auto px-4 text-center relative z-10">
             {restaurantId && (
@@ -77,7 +77,7 @@ const AccommodationPage: React.FC = () => {
                 ← Back to Restaurant
               </Button>
             )}
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent drop-shadow-2xl">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight bg-linear-to-r from-white to-amber-200 bg-clip-text text-transparent drop-shadow-2xl">
               Luxury Hotel Accommodations
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-slate-200 leading-relaxed backdrop-blur-sm">
@@ -85,9 +85,9 @@ const AccommodationPage: React.FC = () => {
               designed for the discerning traveler
             </p>
             <div className="flex flex-wrap justify-center gap-4 mb-12">
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">⭐ 4.8 Guest Rating</span>
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">🏆 Best Hotel Award 2024</span>
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">📍 Central Location</span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">4.8 Guest Rating</span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">Best Hotel Award 2024</span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">Central Location</span>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@ const AccommodationPage: React.FC = () => {
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98] ${selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/25'
+                    ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/25'
                     : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
                     }`}
                 >
@@ -163,10 +163,10 @@ const AccommodationPage: React.FC = () => {
                             <FaRulerCombined className="text-amber-600" />
                             {room.size ? `${room.size} m²` : 'N/A'}
                           </span>
-                          <span className="flex items-center gap-1">👤 {room.capacity} Guests</span>
+                          <span className="flex items-center gap-1">{room.capacity} Guests</span>
                         </div>
                       </div>
-                      <div className="text-right flex-shrink-0 ml-4">
+                      <div className="text-right shrink-0 ml-4">
                         <div className="text-3xl font-bold text-amber-600">KSh {room.pricePerNight.toLocaleString()}</div>
                         <div className="text-sm text-slate-500">per night</div>
                       </div>
@@ -178,13 +178,13 @@ const AccommodationPage: React.FC = () => {
                     <div className="mb-6">
                       <div className="flex gap-3 mb-3">
                         {/* Placeholder for amenity icons - backend returns strings */}
-                        <div className="p-2 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl shadow-sm">
+                        <div className="p-2 bg-linear-to-br from-slate-100 to-slate-200 rounded-xl shadow-sm">
                           <FaWifi className="text-slate-700 text-xl" />
                         </div>
-                        <div className="p-2 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl shadow-sm">
+                        <div className="p-2 bg-linear-to-br from-slate-100 to-slate-200 rounded-xl shadow-sm">
                           <FaSnowflake className="text-slate-700 text-xl" />
                         </div>
-                        <div className="p-2 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl shadow-sm">
+                        <div className="p-2 bg-linear-to-br from-slate-100 to-slate-200 rounded-xl shadow-sm">
                           <FaTv className="text-slate-700 text-xl" />
                         </div>
                       </div>
@@ -192,7 +192,7 @@ const AccommodationPage: React.FC = () => {
                         {room.amenities?.slice(0, 3).map((feature: string, index: number) => (
                           <span
                             key={index}
-                            className="px-3 py-1 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 rounded-full text-xs font-medium border border-amber-200/50"
+                            className="px-3 py-1 bg-linear-to-r from-amber-50 to-orange-50 text-amber-700 rounded-full text-xs font-medium border border-amber-200/50"
                           >
                             {feature}
                           </span>
@@ -203,7 +203,7 @@ const AccommodationPage: React.FC = () => {
                     <div className="flex gap-3">
                       <Button
                         variant="primary"
-                        className="flex-1 py-3 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
+                        className="flex-1 py-3 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
                         onClick={() => handleBookRoom(room.id)}
                       >
                         {isAuthenticated ? 'Book Now' : 'Login to Book'}
@@ -223,23 +223,22 @@ const AccommodationPage: React.FC = () => {
           )}
 
           {/* Hotel Features */}
-          <div className="bg-gradient-to-r from-slate-50 via-amber-50 to-orange-50/30 rounded-3xl p-8 md:p-12 mb-12 border border-slate-200/50 shadow-lg">
-            <h2 className="text-3xl font-bold text-center text-slate-900 mb-8 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <div className="bg-linear-to-r from-slate-50 via-amber-50 to-orange-50/30 rounded-3xl p-8 md:p-12 mb-12 border border-slate-200/50 shadow-lg">
+            <h2 className="text-3xl font-bold text-center mb-8 bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
               Hotel Amenities & Services
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { icon: '🏊', title: 'Infinity Pool', desc: 'Rooftop with city views' },
-                { icon: '🏋️', title: 'Fitness Center', desc: '24/7 access' },
-                { icon: '🍽️', title: 'Fine Dining', desc: 'Gourmet restaurant' },
-                { icon: '🚗', title: 'Valet Parking', desc: 'Free for guests' },
-                { icon: '💼', title: 'Business Center', desc: 'Meeting rooms available' },
-                { icon: '🧘', title: 'Spa & Wellness', desc: 'Massage & treatments' },
-                { icon: '👨‍🍳', title: 'Room Service', desc: '24-hour dining' },
-                { icon: '🧳', title: 'Concierge', desc: 'Personal assistance' },
+                { title: 'Infinity Pool', desc: 'Rooftop with city views' },
+                { title: 'Fitness Center', desc: '24/7 access' },
+                { title: 'Fine Dining', desc: 'Gourmet restaurant' },
+                { title: 'Valet Parking', desc: 'Free for guests' },
+                { title: 'Business Center', desc: 'Meeting rooms available' },
+                { title: 'Spa & Wellness', desc: 'Massage & treatments' },
+                { title: 'Room Service', desc: '24-hour dining' },
+                { title: 'Concierge', desc: 'Personal assistance' },
               ].map((feature, index) => (
                 <div key={index} className="text-center p-4 group cursor-default hover:scale-105 transition-transform duration-300">
-                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
                   <h3 className="font-semibold text-slate-900 text-lg mb-1">{feature.title}</h3>
                   <p className="text-sm text-slate-600">{feature.desc}</p>
                 </div>
@@ -249,8 +248,8 @@ const AccommodationPage: React.FC = () => {
 
           {/* Login Prompt */}
           {!isAuthenticated && (
-            <div className="text-center mt-12 p-8 bg-gradient-to-r from-amber-50 to-orange-50/30 rounded-3xl shadow-xl border border-amber-200/50">
-              <h3 className="text-3xl font-bold text-slate-900 mb-4 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <div className="text-center mt-12 p-8 bg-linear-to-r from-amber-50 to-orange-50/30 rounded-3xl shadow-xl border border-amber-200/50">
+              <h3 className="text-3xl font-bold mb-4 bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                 Ready to Experience Luxury?
               </h3>
               <p className="text-slate-600 mb-8 text-lg max-w-2xl mx-auto leading-relaxed">
@@ -261,7 +260,7 @@ const AccommodationPage: React.FC = () => {
                   variant="primary"
                   size="lg"
                   onClick={() => navigate('/login', { state: { from: '/accommodation' } })}
-                  className="px-8 py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
+                  className="px-8 py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
                 >
                   Login to Book
                 </Button>
@@ -279,14 +278,14 @@ const AccommodationPage: React.FC = () => {
 
           {/* Contact Info */}
           <div className="mt-12 pt-8 border-t border-slate-200 text-center text-slate-600">
-            <p className="mb-2 text-lg flex items-center justify-center gap-2">
-              <span className="text-amber-600">📞</span> For reservations: (555) 123-4567
+            <p className="mb-2 text-lg">
+              Phone: (555) 123-4567
             </p>
-            <p className="mb-2 text-lg flex items-center justify-center gap-2">
-              <span className="text-amber-600">✉️</span> Email: reservations@luxuryhotel.com
+            <p className="mb-2 text-lg">
+              Email: reservations@luxuryhotel.com
             </p>
-            <p className="text-lg flex items-center justify-center gap-2">
-              <span className="text-amber-600">📍</span> 123 Luxury Avenue, City Center
+            <p className="text-lg">
+              Address: 123 Luxury Avenue, City Center
             </p>
           </div>
         </div>

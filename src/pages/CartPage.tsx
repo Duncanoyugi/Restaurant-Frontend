@@ -5,6 +5,7 @@ import { removeFromCart, updateQuantity, clearCart } from '../features/cart/cart
 import Button from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
+import { ShoppingCart, Trash2, UtensilsCrossed, Truck, Shield, CreditCard } from 'lucide-react';
 
 const CartPage: React.FC = () => {
   const { items, total } = useAppSelector((state) => state.cart);
@@ -35,16 +36,16 @@ const CartPage: React.FC = () => {
   if (items.length === 0) {
     return (
       <LandingLayout>
-        <div className="pt-20 min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/30">
+        <div className="pt-20 min-h-screen bg-linear-to-b from-slate-50 via-white to-amber-50/30">
           <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
             <div className="max-w-md mx-auto text-center">
               <div className="relative w-32 h-32 mx-auto mb-8">
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-500/10 to-amber-400/20 rounded-full animate-pulse blur-sm"></div>
+                <div className="absolute inset-0 bg-linear-to-r from-amber-400/20 via-orange-500/10 to-amber-400/20 rounded-full animate-pulse blur-sm"></div>
                 <div className="absolute inset-4 bg-white/80 backdrop-blur-sm rounded-full shadow-xl flex items-center justify-center border border-white/50">
-                  <span className="text-5xl drop-shadow-md">🛒</span>
+                  <ShoppingCart className="h-12 w-12 text-amber-600" />
                 </div>
               </div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold mb-4 tracking-tight bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                 Your cart feels lonely
               </h1>
               <p className="text-slate-600 mb-8 text-lg leading-relaxed max-w-sm mx-auto">
@@ -53,7 +54,7 @@ const CartPage: React.FC = () => {
               <Button
                 variant="primary"
                 onClick={() => navigate('/menu')}
-                className="px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
+                className="px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
               >
                 <span className="flex items-center gap-2">
                   <span className="rotate-180 transition-transform group-hover:-translate-x-0.5">←</span>
@@ -69,7 +70,7 @@ const CartPage: React.FC = () => {
 
   return (
     <LandingLayout>
-      <div className="pt-20 min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/20">
+      <div className="pt-20 min-h-screen bg-linear-to-br from-slate-50 via-white to-amber-50/20">
         <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
@@ -82,7 +83,7 @@ const CartPage: React.FC = () => {
             </button>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-slate-900 tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold tracking-tight bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                   Your Cart
                 </h1>
                 <p className="text-slate-600 mt-2">{items.length} {items.length === 1 ? 'item' : 'items'}</p>
@@ -91,7 +92,7 @@ const CartPage: React.FC = () => {
                 onClick={() => dispatch(clearCart())}
                 className="flex items-center gap-2 px-4 py-2 text-red-500 hover:text-red-600 hover:bg-red-50/80 rounded-xl transition-all duration-200 font-medium shadow-sm hover:shadow-md active:scale-[0.98]"
               >
-                <span>🗑️</span>
+                <Trash2 className="h-5 w-5" />
                 Clear All
               </button>
             </div>
@@ -108,14 +109,14 @@ const CartPage: React.FC = () => {
                   <div className="p-6">
                     <div className="flex items-start gap-6">
                       {/* Item Image */}
-                      <div className="relative flex-shrink-0">
-                        <div className="w-24 h-24 bg-gradient-to-br from-amber-400/20 via-orange-500/10 to-amber-400/20 rounded-xl overflow-hidden relative">
-                          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/30 via-orange-400/20 to-amber-500/30 animate-pulse"></div>
+                      <div className="relative shrink-0">
+                        <div className="w-24 h-24 bg-linear-to-br from-amber-400/20 via-orange-500/10 to-amber-400/20 rounded-xl overflow-hidden relative">
+                          <div className="absolute inset-0 bg-linear-to-br from-amber-500/30 via-orange-400/20 to-amber-500/30 animate-pulse"></div>
                           <div className="absolute inset-0 flex items-center justify-center p-2">
-                            <span className="text-3xl drop-shadow-md">🍽️</span>
+                            <UtensilsCrossed className="h-8 w-8 text-amber-600" />
                           </div>
                         </div>
-                        <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border border-white/30">
+                        <div className="absolute -top-2 -right-2 bg-linear-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg border border-white/30">
                           {item.quantity}x
                         </div>
                       </div>
@@ -131,10 +132,10 @@ const CartPage: React.FC = () => {
                           </div>
                           <button
                             onClick={() => dispatch(removeFromCart(item.id))}
-                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50/80 rounded-xl transition-all duration-200 ml-4 flex-shrink-0 hover:scale-110"
+                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50/80 rounded-xl transition-all duration-200 ml-4 shrink-0 hover:scale-110"
                             aria-label="Remove item"
                           >
-                            <span className="text-xl">🗑️</span>
+                            <Trash2 className="h-5 w-5" />
                           </button>
                         </div>
 
@@ -148,7 +149,7 @@ const CartPage: React.FC = () => {
                             >
                               <span className="text-xl font-bold">−</span>
                             </button>
-                            <span className="font-bold text-lg w-8 text-center text-slate-900 min-w-[2rem]">{item.quantity}</span>
+                            <span className="font-bold text-lg w-8 text-center text-slate-900 min-w-8">{item.quantity}</span>
                             <button
                               onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                               className="w-10 h-10 rounded-full border-2 border-slate-200 flex items-center justify-center hover:border-amber-500 hover:bg-amber-50 hover:text-amber-600 transition-all duration-200 active:scale-95 shadow-sm hover:shadow-md"
@@ -174,9 +175,9 @@ const CartPage: React.FC = () => {
             {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="sticky top-24">
-                <div className="bg-gradient-to-b from-white/90 to-slate-50/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-slate-200/50 overflow-hidden">
+                <div className="bg-linear-to-b from-white/90 to-slate-50/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-slate-200/50 overflow-hidden">
                   <div className="p-6 sm:p-8">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-6 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                    <h2 className="text-2xl font-bold mb-6 bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
                       Order Summary
                     </h2>
                     
@@ -194,27 +195,27 @@ const CartPage: React.FC = () => {
                         <span className="text-slate-600 font-medium">Delivery</span>
                         <span className="font-semibold text-slate-900">KSh {delivery}</span>
                       </div>
-                      <div className="flex justify-between py-4 border-t border-slate-200 pt-6 bg-gradient-to-r from-amber-50 to-orange-50/50 rounded-xl p-4">
+                      <div className="flex justify-between py-4 border-t border-slate-200 pt-6 bg-linear-to-r from-amber-50 to-orange-50/50 rounded-xl p-4">
                         <span className="text-xl font-bold text-slate-900">Total Amount</span>
                         <span className="text-2xl font-bold text-amber-600">KSh {grandTotal.toFixed(0)}</span>
                       </div>
                     </div>
 
                     {/* Trust Badges */}
-                    <div className="bg-gradient-to-r from-amber-50 to-orange-50/30 rounded-xl p-4 mb-6 border border-amber-100/50">
+                    <div className="bg-linear-to-r from-amber-50 to-orange-50/30 rounded-xl p-4 mb-6 border border-amber-100/50">
                       <div className="flex items-center justify-around text-center">
                         <div className="flex flex-col items-center">
-                          <span className="text-2xl mb-1 animate-bounce">🚚</span>
+                          <Truck className="h-6 w-6 mb-1 text-amber-600 animate-bounce" />
                           <span className="text-xs text-slate-600 font-medium">Free Delivery</span>
                           <span className="text-xs font-bold text-amber-700">Over 2000</span>
                         </div>
                         <div className="flex flex-col items-center">
-                          <span className="text-2xl mb-1">🛡️</span>
+                          <Shield className="h-6 w-6 mb-1 text-amber-600" />
                           <span className="text-xs text-slate-600 font-medium">Secure</span>
                           <span className="text-xs font-bold text-amber-700">Payment</span>
                         </div>
                         <div className="flex flex-col items-center">
-                          <span className="text-2xl mb-1">💳</span>
+                          <CreditCard className="h-6 w-6 mb-1 text-amber-600" />
                           <span className="text-xs text-slate-600 font-medium">Easy</span>
                           <span className="text-xs font-bold text-amber-700">Returns</span>
                         </div>
@@ -225,7 +226,7 @@ const CartPage: React.FC = () => {
                     <div className="space-y-4">
                       <Button
                         variant="primary"
-                        className="w-full py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] border border-amber-400/30"
+                        className="w-full py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] border border-amber-400/30"
                         onClick={handleCheckout}
                       >
                         <span className="flex items-center justify-center gap-2">
@@ -246,7 +247,7 @@ const CartPage: React.FC = () => {
                     {/* Estimated Delivery */}
                     <div className="mt-6 pt-6 border-t border-slate-100">
                       <p className="text-sm text-slate-600 text-center flex items-center justify-center gap-2">
-                        <span>🚚</span>
+                        <Truck className="h-4 w-4" />
                         Estimated delivery: <span className="font-semibold text-amber-700">30-45 minutes</span>
                       </p>
                     </div>

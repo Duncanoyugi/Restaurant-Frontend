@@ -8,7 +8,11 @@ export const validatePassword = (password: string): boolean => {
 };
 
 export const validatePhone = (phone: string): boolean => {
-  // Allows +254712345678, 0712345678, (071) 2345678, 071-234-5678
-  const phoneRegex = /^\+?[0-9]{7,15}$/;
-  return phoneRegex.test(phone);
+  // Allow optional leading +, then digits, spaces, dashes, dots, or parentheses
+  const charRegex = /^\+?[\d\s\-().]{7,20}$/;
+  if (!charRegex.test(phone.trim())) return false;
+  
+  // Ensure there are between 7 and 15 actual digits
+  const digits = phone.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15;
 };

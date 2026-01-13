@@ -117,7 +117,7 @@ const ReservationManagement: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <FaCalendarAlt className="h-5 w-5 text-gray-400" />
                       </div>
                       <div>

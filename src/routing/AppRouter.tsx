@@ -9,6 +9,7 @@ import ForgotPasswordPage from '../pages/ForgotPasswordPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage';
 import VerifyOtpPage from '../pages/VerifyOtp';
 import RoleBasedDashboard from '../components/dashboard/RoleBasedDashboard';
+import DashboardLayout from '../components/layout/DashboardLayout';
 import LandingPage from '../pages/LandingPage';
 import MenuPage from '../pages/MenuPage';
 import AccommodationPage from '../pages/AccommodationPage';
@@ -65,12 +66,23 @@ const AppRouter: React.FC = () => {
       {/* Restaurant routes */}
       <Route path="/restaurants" element={<RestaurantList />} />
       <Route path="/restaurants/:id" element={<RestaurantDetail />} />
-      <Route path="/select-restaurant" element={<SelectRestaurant />} />
+      <Route
+        path="/select-restaurant"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <SelectRestaurant />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/restaurant-setup"
         element={
           <ProtectedRoute requiredRole={UserRoleEnum.RESTAURANT_OWNER}>
-            <RestaurantSetup />
+            <DashboardLayout>
+              <RestaurantSetup />
+            </DashboardLayout>
           </ProtectedRoute>
         }
       />

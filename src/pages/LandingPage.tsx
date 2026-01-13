@@ -88,8 +88,8 @@ const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <AnimatedSection direction="up" delay={100}>
-              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center p-8 rounded-2xl bg-linear-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
+                <div className="w-20 h-20 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl text-white"><FaUtensils /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Gourmet Cuisine</h3>
@@ -100,8 +100,8 @@ const LandingPage: React.FC = () => {
             </AnimatedSection>
 
             <AnimatedSection direction="up" delay={200}>
-              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-secondary-50 to-primary-50 dark:from-gray-600 dark:to-gray-700 hover:shadow-xl transition-all duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-secondary-600 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center p-8 rounded-2xl bg-linear-to-br from-secondary-50 to-primary-50 dark:from-gray-600 dark:to-gray-700 hover:shadow-xl transition-all duration-300">
+                <div className="w-20 h-20 bg-linear-to-r from-secondary-600 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl text-white"><FaMapMarkerAlt /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Convenient Locations</h3>
@@ -112,8 +112,8 @@ const LandingPage: React.FC = () => {
             </AnimatedSection>
 
             <AnimatedSection direction="up" delay={300}>
-              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center p-8 rounded-2xl bg-linear-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
+                <div className="w-20 h-20 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl text-white"><FaClock /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Flexible Hours</h3>
@@ -262,8 +262,8 @@ const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <AnimatedSection direction="up" delay={100}>
-              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center p-8 rounded-2xl bg-linear-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
+                <div className="w-20 h-20 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl text-white"><FaUserTie /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Award-Winning Chefs</h3>
@@ -275,8 +275,8 @@ const LandingPage: React.FC = () => {
             </AnimatedSection>
 
             <AnimatedSection direction="up" delay={200}>
-              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-secondary-50 to-primary-50 dark:from-gray-600 dark:to-gray-700 hover:shadow-xl transition-all duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-secondary-600 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center p-8 rounded-2xl bg-linear-to-br from-secondary-50 to-primary-50 dark:from-gray-600 dark:to-gray-700 hover:shadow-xl transition-all duration-300">
+                <div className="w-20 h-20 bg-linear-to-r from-secondary-600 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl text-white"><FaStar /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">5-Star Service</h3>
@@ -288,8 +288,8 @@ const LandingPage: React.FC = () => {
             </AnimatedSection>
 
             <AnimatedSection direction="up" delay={300}>
-              <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
-                <div className="w-20 h-20 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="text-center p-8 rounded-2xl bg-linear-to-br from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 hover:shadow-xl transition-all duration-300">
+                <div className="w-20 h-20 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-3xl text-white"><FaHotel /></span>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Luxury Stay</h3>
@@ -304,7 +304,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-700 dark:to-secondary-800 transition-colors duration-300">
+      <section className="py-20 bg-linear-to-r from-primary-600 to-secondary-600 dark:from-primary-700 dark:to-secondary-800 transition-colors duration-300">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection direction="up">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -314,7 +314,7 @@ const LandingPage: React.FC = () => {
               Join us for an unforgettable journey of taste and luxury. Book your table or room today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/auth/register">
+              <Link to="/register">
                 <Button size="lg" className="bg-white text-primary-600 hover:bg-gray-100 dark:bg-white dark:text-primary-700 dark:hover:bg-gray-100">
                   Get Started Free
                 </Button>

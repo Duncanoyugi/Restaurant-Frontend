@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGetAllUsersQuery, useUpdateUserMutation, useDeleteUserMutation } from '../../features/users/usersApi';
 import { FaUsers } from 'react-icons/fa';
+import { UserRoleEnum, extractRoleName } from '../../features/auth/authSlice';
 
 interface User {
   id: string;
@@ -14,7 +15,7 @@ interface User {
 }
 
 const UserManagement: React.FC = () => {
-  console.log('🔍 UserManagement component rendering');
+  // console.log('🔍 UserManagement component rendering');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
@@ -27,7 +28,7 @@ const UserManagement: React.FC = () => {
     limit: 50
   });
 
-  console.log('🔍 useGetAllUsersQuery result:', { usersResponse, isLoading, error });
+  // console.log('🔍 useGetAllUsersQuery result:', { usersResponse, isLoading, error });
 
   const [updateUser] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
@@ -35,7 +36,7 @@ const UserManagement: React.FC = () => {
   // Backend returns User[] wrapped in { data: User[] }
   const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || [];
 
-  console.log('🔍 Processed users array:', users);
+  // console.log('🔍 Processed users array:', users);
 
   const handleStatusChange = async (userId: string, newStatus: string) => {
     try {
@@ -65,21 +66,14 @@ const UserManagement: React.FC = () => {
   };
 
   const getRoleColor = (role: string | any) => {
-    // Handle both string and object roles
-    const roleName = typeof role === 'string' 
-      ? role 
-      : role?.name || role?.roleName || role?.role || '';
+    const roleName = extractRoleName(role);
     
-    if (!roleName) return 'bg-gray-100 text-gray-800';
-    
-    switch (roleName.toLowerCase()) {
-      case 'admin': return 'bg-red-100 text-red-800';
-      case 'restaurant owner': 
-      case 'restaurant_owner': return 'bg-green-100 text-green-800';
-      case 'restaurant staff':
-      case 'restaurant_staff': return 'bg-blue-100 text-blue-800';
-      case 'driver': return 'bg-purple-100 text-purple-800';
-      case 'customer': return 'bg-gray-100 text-gray-800';
+    switch (roleName) {
+      case UserRoleEnum.ADMIN: return 'bg-red-100 text-red-800';
+      case UserRoleEnum.RESTAURANT_OWNER: return 'bg-green-100 text-green-800';
+      case UserRoleEnum.RESTAURANT_STAFF: return 'bg-blue-100 text-blue-800';
+      case UserRoleEnum.DRIVER: return 'bg-purple-100 text-purple-800';
+      case UserRoleEnum.CUSTOMER: return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -212,7 +206,7 @@ const UserManagement: React.FC = () => {
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
+                      <div className="shrink-0 h-10 w-10">
                         <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             {user.name.charAt(0).toUpperCase()}
@@ -231,9 +225,7 @@ const UserManagement: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(user.role)}`}>
-                      {typeof user.role === 'string' 
-                        ? user.role.replace('_', ' ') 
-                        : (user.role as any)?.name || (user.role as any)?.roleName || 'Unknown'}
+                      {extractRoleName(user.role)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

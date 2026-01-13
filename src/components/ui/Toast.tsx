@@ -47,7 +47,7 @@ const Toast: React.FC<ToastProps> = ({
     switch (type) {
       case 'success':
         return (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <svg className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -55,7 +55,7 @@ const Toast: React.FC<ToastProps> = ({
         );
       case 'error':
         return (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -63,7 +63,7 @@ const Toast: React.FC<ToastProps> = ({
         );
       case 'warning':
         return (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <svg className="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
@@ -71,7 +71,7 @@ const Toast: React.FC<ToastProps> = ({
         );
       case 'info':
         return (
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <svg className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -91,7 +91,7 @@ const Toast: React.FC<ToastProps> = ({
                 {message}
               </p>
             </div>
-            <div className="ml-4 flex-shrink-0 flex">
+            <div className="ml-4 shrink-0 flex">
               <button
                 onClick={onClose}
                 className="bg-white dark:bg-gray-800 rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"

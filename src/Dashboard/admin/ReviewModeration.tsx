@@ -13,7 +13,6 @@ const ReviewModeration: React.FC = () => {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-        <div className="text-6xl mb-4">⭐</div>
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
           Review Moderation System
         </h3>

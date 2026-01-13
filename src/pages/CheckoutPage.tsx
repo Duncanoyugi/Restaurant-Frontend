@@ -9,6 +9,7 @@ import { PaymentMethod } from '../types/payment';
 import Button from '../components/ui/Button';
 import { FaCar, FaStore, FaCreditCard, FaMobileAlt, FaMoneyBillWave, FaShoppingCart } from 'react-icons/fa';
 import { useToast } from '../contexts/ToastContext';
+import { validatePhone } from '../utils/validators';
 
 // Type for address
 interface AddressState {
@@ -108,6 +109,10 @@ const CheckoutPage: React.FC = () => {
         showToast('Please enter your phone number', 'error');
         return;
       }
+      if (!validatePhone(safeAddress.phone)) {
+        showToast('Please enter a valid phone number', 'error');
+        return;
+      }
     }
     setStep(step + 1);
   };
@@ -150,6 +155,11 @@ const CheckoutPage: React.FC = () => {
         }
         if (!safeAddress.phone) {
           showToast('Please enter your phone number', 'error');
+          setIsProcessing(false);
+          return;
+        }
+        if (!validatePhone(safeAddress.phone)) {
+          showToast('Please enter a valid phone number', 'error');
           setIsProcessing(false);
           return;
         }

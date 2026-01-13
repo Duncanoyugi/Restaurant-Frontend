@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGetMyRestaurantInventoryItemsQuery } from '../../features/inventory/inventoryApi';
 import { useAppSelector } from '../../app/hooks';
 import type { InventoryItem } from '../../types/inventory';
+import { CheckCircle2, AlertTriangle, AlertCircle, XCircle, HelpCircle, Package, FileText, ShoppingCart, BarChart3 } from 'lucide-react';
 
 interface StockOverviewProps {
   restaurantId: string;
@@ -61,13 +62,13 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string): React.ComponentType<React.SVGProps<SVGSVGElement>> => {
     switch (status) {
-      case 'normal': return '✅';
-      case 'low': return '⚠️';
-      case 'critical': return '🚨';
-      case 'out_of_stock': return '❌';
-      default: return '❓';
+      case 'normal': return CheckCircle2;
+      case 'low': return AlertTriangle;
+      case 'critical': return AlertCircle;
+      case 'out_of_stock': return XCircle;
+      default: return HelpCircle;
     }
   };
 
@@ -219,7 +220,7 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <div className="text-2xl mr-3">🚨</div>
+              <AlertCircle className="h-6 w-6 mr-3 text-red-600" />
               <div>
                 <h3 className="text-lg font-semibold text-red-800">Low Stock Alert</h3>
                 <p className="text-red-600">{lowStockItems.length} items need attention</p>
@@ -237,8 +238,12 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
                 <div key={item.id} className="bg-white p-4 rounded-lg border border-red-300">
                   <div className="flex justify-between items-start mb-2">
                     <div className="font-medium">{item.name}</div>
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(status)}`}>
-                      {getStatusIcon(status)} {status.toUpperCase().replace('_', ' ')}
+                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs rounded-full ${getStatusColor(status)}`}>
+                      {(() => {
+                        const IconComponent = getStatusIcon(status);
+                        return <IconComponent className="h-3.5 w-3.5" />;
+                      })()}
+                      {status.toUpperCase().replace('_', ' ')}
                     </span>
                   </div>
                   <div className="text-sm text-gray-600 mb-2">{item.category}</div>
@@ -291,8 +296,12 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
                       <div className="text-xs text-gray-500">Threshold: {item.threshold}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-3 py-1 text-xs rounded-full border ${getStatusColor(status)}`}>
-                        {getStatusIcon(status)} {status.replace('_', ' ').toUpperCase()}
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full border ${getStatusColor(status)}`}>
+                        {(() => {
+                          const IconComponent = getStatusIcon(status);
+                          return <IconComponent className="h-3.5 w-3.5" />;
+                        })()}
+                        {status.replace('_', ' ').toUpperCase()}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -324,7 +333,7 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
         
         {filteredItems.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">📦</div>
+            <Package className="h-16 w-16 mx-auto mb-4 text-gray-400" />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">No Items Found</h3>
             <p className="text-gray-500">No inventory items match your current filter</p>
           </div>
@@ -336,15 +345,15 @@ const StockOverview: React.FC<StockOverviewProps> = ({ }) => {
         <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button className="p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 text-center">
-            <div className="text-2xl mb-2">📝</div>
+            <FileText className="h-6 w-6 mx-auto mb-2 text-green-600" />
             <div className="font-medium">Generate Stock Report</div>
           </button>
           <button className="p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 text-center">
-            <div className="text-2xl mb-2">🛒</div>
+            <ShoppingCart className="h-6 w-6 mx-auto mb-2 text-blue-600" />
             <div className="font-medium">Create Purchase Order</div>
           </button>
           <button className="p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 text-center">
-            <div className="text-2xl mb-2">📊</div>
+            <BarChart3 className="h-6 w-6 mx-auto mb-2 text-purple-600" />
             <div className="font-medium">View Stock History</div>
           </button>
         </div>

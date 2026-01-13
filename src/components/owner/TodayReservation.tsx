@@ -121,7 +121,7 @@ const TodayReservations: React.FC = () => {
                   </div>
                   {reservation.specialRequests && (
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      💬 {reservation.specialRequests}
+                      Note: {reservation.specialRequests}
                     </div>
                   )}
                 </div>

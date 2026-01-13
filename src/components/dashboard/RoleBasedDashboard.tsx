@@ -5,70 +5,10 @@ import AdminDashboard from '../../Dashboard/admin/AdminDashboard';
 import DriverDashboard from '../../Dashboard/driver/DriverDashboard';
 import StaffDashboard from '../../Dashboard/staff/StaffDashboard';
 import OwnerDashboard from '../../Dashboard/owner/OwnerDashboard';
-import { UserRoleEnum } from '../../features/auth/authSlice';
-
-// Helper to safely extract and normalize role name
-const extractRoleName = (role: any): string => {
-  if (typeof role === 'string') {
-    const normalized = role.trim();
-    
-    const roleMap: Record<string, string> = {
-      'Driver': UserRoleEnum.DRIVER,
-      'driver': UserRoleEnum.DRIVER,
-      'DRIVER': UserRoleEnum.DRIVER,
-      'Drvr': UserRoleEnum.DRIVER,
-      'drvr': UserRoleEnum.DRIVER,
-      
-      'Admin': UserRoleEnum.ADMIN,
-      'admin': UserRoleEnum.ADMIN,
-      'ADMIN': UserRoleEnum.ADMIN,
-      
-      'Restaurant Owner': UserRoleEnum.RESTAURANT_OWNER,
-      'Restaurant_Owner': UserRoleEnum.RESTAURANT_OWNER,
-      'RestaurantOwner': UserRoleEnum.RESTAURANT_OWNER,
-      'Restaurant owner': UserRoleEnum.RESTAURANT_OWNER,
-      'restaurant_owner': UserRoleEnum.RESTAURANT_OWNER,
-      'Owner': UserRoleEnum.RESTAURANT_OWNER,
-      'owner': UserRoleEnum.RESTAURANT_OWNER,
-      
-      'Restaurant Staff': UserRoleEnum.RESTAURANT_STAFF,
-      'Restaurant_Staff': UserRoleEnum.RESTAURANT_STAFF,
-      'RestaurantStaff': UserRoleEnum.RESTAURANT_STAFF,
-      'Restaurant staff': UserRoleEnum.RESTAURANT_STAFF,
-      'restaurant_staff': UserRoleEnum.RESTAURANT_STAFF,
-      'Staff': UserRoleEnum.RESTAURANT_STAFF,
-      'staff': UserRoleEnum.RESTAURANT_STAFF,
-      
-      'Customer': UserRoleEnum.CUSTOMER,
-      'customer': UserRoleEnum.CUSTOMER,
-      'CUSTOMER': UserRoleEnum.CUSTOMER,
-    };
-    
-    return roleMap[normalized] || UserRoleEnum.CUSTOMER;
-  }
-  
-  if (role && typeof role === 'object') {
-    const roleName = role.name || role.roleName || role.role || role.value;
-    if (roleName && typeof roleName === 'string') {
-      return extractRoleName(roleName);
-    }
-  }
-  
-  return UserRoleEnum.CUSTOMER;
-};
+import { UserRoleEnum, extractRoleName } from '../../features/auth/authSlice';
 
 const RoleBasedDashboard: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
-
-  // Debug logging
-  useEffect(() => {
-    if (user) {
-      console.log('🔍 RoleBasedDashboard Debug:');
-      console.log('User object:', user);
-      console.log('Raw role property:', user.role);
-      console.log('Extracted role name:', extractRoleName(user.role));
-    }
-  }, [user]);
 
   if (!user) {
     return (
@@ -84,23 +24,16 @@ const RoleBasedDashboard: React.FC = () => {
   // Extract and normalize role name
   const roleName = extractRoleName(user.role);
   
-  console.log('🎯 Final decision - Role:', roleName);
-
   // Directly render the appropriate dashboard based on role
   if (roleName === UserRoleEnum.DRIVER) {
-    console.log('✅ Rendering DriverDashboard');
     return <DriverDashboard />;
   } else if (roleName === UserRoleEnum.ADMIN) {
-    console.log('✅ Rendering AdminDashboard');
     return <AdminDashboard />;
-  } else if (roleName === UserRoleEnum.RESTAURANT_OWNER || roleName === 'Restaurant Owner') {
-    console.log('✅ Rendering OwnerDashboard');
+  } else if (roleName === UserRoleEnum.RESTAURANT_OWNER) {
     return <OwnerDashboard />;
   } else if (roleName === UserRoleEnum.RESTAURANT_STAFF) {
-    console.log('✅ Rendering StaffDashboard');
     return <StaffDashboard />;
   } else {
-    console.log('✅ Rendering CustomerDashboard');
     return <CustomerDashboard />;
   }
 };

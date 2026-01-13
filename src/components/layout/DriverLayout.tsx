@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
+import { 
+  LayoutDashboard, Truck, Package, DollarSign, Map, Calendar, 
+  TrendingUp, HelpCircle, User, LogOut 
+} from 'lucide-react';
 
 interface DriverLayoutProps {
   children?: React.ReactNode;
@@ -20,15 +24,15 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '', icon: '📊' },
-    { name: 'Deliveries', href: 'deliveries', icon: '🚚' },
-    { name: 'Active Orders', href: 'active-orders', icon: '📦' },
-    { name: 'Earnings', href: 'earnings', icon: '💰' },
-    { name: 'Route', href: 'route', icon: '🗺️' },
-    { name: 'Schedule', href: 'schedule', icon: '📅' },
-    { name: 'Performance', href: 'performance', icon: '📈' },
-    { name: 'Support', href: 'support', icon: '🆘' },
-    { name: 'Profile', href: 'profile', icon: '👤' },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Deliveries', href: '/dashboard/deliveries', icon: Truck },
+    { name: 'Active Orders', href: '/dashboard/active-orders', icon: Package },
+    { name: 'Earnings', href: '/dashboard/earnings', icon: DollarSign },
+    { name: 'Route', href: '/dashboard/route', icon: Map },
+    { name: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
+    { name: 'Performance', href: '/dashboard/performance', icon: TrendingUp },
+    { name: 'Support', href: '/dashboard/support', icon: HelpCircle },
+    { name: 'Profile', href: '/dashboard/profile', icon: User },
   ];
 
   const isActive = (path: string) => {
@@ -44,7 +48,7 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-linear-to-r from-purple-600 to-purple-700 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">DRIVER</span>
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -58,28 +62,31 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        to={item.href}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
-                          isActive(item.href)
-                            ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
-                        }`}
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {navigation.map((item) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
+                            isActive(item.href)
+                              ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
+                          }`}
+                        >
+                          <IconComponent className="h-5 w-5" />
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </li>
 
               {/* User Section */}
               <li className="mt-auto">
                 <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700">
-                  <div className="relative h-8 w-8 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full flex items-center justify-center">
+                  <div className="relative h-8 w-8 bg-linear-to-r from-purple-600 to-purple-700 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase() || 'D'}
                     </span>
@@ -139,7 +146,7 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
                 onClick={handleLogout}
                 className="flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
               >
-                <span>🚪</span>
+                <LogOut className="h-4 w-4" />
                 Logout
               </button>
             </div>
@@ -168,7 +175,7 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-linear-to-r from-purple-600 to-purple-700 rounded-lg flex items-center justify-center">
                         <span className="text-white text-sm font-bold">DRIVER</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -180,22 +187,25 @@ const DriverLayout: React.FC<DriverLayoutProps> = ({ children }) => {
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
-                          {navigation.map((item) => (
-                            <li key={item.name}>
-                              <Link
-                                to={item.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
-                                  isActive(item.href)
-                                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
-                                }`}
-                              >
-                                <span className="text-lg">{item.icon}</span>
-                                {item.name}
-                              </Link>
-                            </li>
-                          ))}
+                          {navigation.map((item) => {
+                            const IconComponent = item.icon;
+                            return (
+                              <li key={item.name}>
+                                <Link
+                                  to={item.href}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
+                                    isActive(item.href)
+                                      ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
+                                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
+                                  }`}
+                                >
+                                  <IconComponent className="h-5 w-5" />
+                                  {item.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
                         </ul>
                       </li>
                     </ul>

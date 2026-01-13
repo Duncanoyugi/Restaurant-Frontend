@@ -59,7 +59,7 @@ const VehicleManagement: React.FC = () => {
       </div>
 
       {/* Vehicle Status Card */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-xl p-6 mb-8">
+      <div className="bg-linear-to-r from-gray-800 to-gray-900 text-white rounded-xl p-6 mb-8">
         <div className="flex justify-between items-start">
           <div>
             <div className="flex items-center mb-4">

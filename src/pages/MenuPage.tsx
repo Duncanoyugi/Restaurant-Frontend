@@ -99,7 +99,7 @@ const MenuPage: React.FC = () => {
 
   return (
     <LandingLayout>
-      <div className="pt-20 min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/20">
+      <div className="pt-20 min-h-screen bg-linear-to-b from-slate-50 via-white to-amber-50/20">
         <div className="container mx-auto px-4 py-16">
           {/* Hero Section */}
           <div className="text-center mb-16 relative">
@@ -112,7 +112,7 @@ const MenuPage: React.FC = () => {
                 ← Back to Restaurant
               </Button>
             )}
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-linear-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
               Our Menu
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -143,7 +143,7 @@ const MenuPage: React.FC = () => {
                   <button
                     onClick={() => setSelectedCategory(null)}
                     className={`px-6 py-2 rounded-full font-medium transition-all ${selectedCategory === null
-                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                      ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg'
                       : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:shadow-md'
                       }`}
                   >
@@ -154,7 +154,7 @@ const MenuPage: React.FC = () => {
                       key={category.id}
                       onClick={() => setSelectedCategory(category.id)}
                       className={`px-6 py-2 rounded-full font-medium transition-all ${selectedCategory === category.id
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg'
+                        ? 'bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg'
                         : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:shadow-md'
                         }`}
                     >
@@ -168,7 +168,7 @@ const MenuPage: React.FC = () => {
               {categoriesToDisplay.map((category) => (
                 <div key={category.id} className="mb-16">
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center">
-                    <span className="bg-gradient-to-r from-amber-500 to-orange-500 w-2 h-8 rounded-full mr-4"></span>
+                    <span className="bg-linear-to-r from-amber-500 to-orange-500 w-2 h-8 rounded-full mr-4"></span>
                     {category.name}
                   </h2>
 
@@ -210,7 +210,7 @@ const MenuPage: React.FC = () => {
                             <Button
                               variant="primary"
                               onClick={() => handleOrder(item)}
-                              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                              className="bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
                             >
                               Order Now
                             </Button>

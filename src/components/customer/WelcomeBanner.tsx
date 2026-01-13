@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppSelector } from '../../app/hooks';
+import { Target, Star } from 'lucide-react';
 
 export const WelcomeBanner: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -23,7 +24,7 @@ export const WelcomeBanner: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl p-8 text-white shadow-lg">
+    <div className="bg-linear-to-r from-primary-600 to-secondary-600 rounded-2xl p-8 text-white shadow-lg">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div className="flex-1">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
@@ -33,11 +34,13 @@ export const WelcomeBanner: React.FC = () => {
             {getMotivationalMessage()}
           </p>
           <div className="flex items-center space-x-4 text-sm">
-            <span className="bg-white/20 px-3 py-1 rounded-full">
-              🎯 {(user as any)?.loyaltyTier || 'Silver'} Member
+            <span className="bg-white/20 px-3 py-1 rounded-full flex items-center gap-1.5">
+              <Target className="h-4 w-4" />
+              {(user as any)?.loyaltyTier || 'Silver'} Member
             </span>
-            <span className="bg-white/20 px-3 py-1 rounded-full">
-              ⭐ {user?.averageRating || '4.8'} Rating
+            <span className="bg-white/20 px-3 py-1 rounded-full flex items-center gap-1.5">
+              <Star className="h-4 w-4" />
+              {user?.averageRating || '4.8'} Rating
             </span>
           </div>
         </div>

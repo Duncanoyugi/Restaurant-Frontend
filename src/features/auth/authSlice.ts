@@ -13,7 +13,7 @@ export const UserRoleEnum = {
 export type UserRoleEnum = typeof UserRoleEnum[keyof typeof UserRoleEnum];
 
 // Helper function to extract and normalize role name
-const extractRoleName = (role: any): UserRoleEnum => {
+export const extractRoleName = (role: any): UserRoleEnum => {
   let roleStr = '';
 
   if (typeof role === 'string') {
@@ -153,9 +153,16 @@ const authSlice = createSlice({
     // Add this new action to update user profile
     updateUserProfile: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
+        const updatedData = { ...action.payload };
+        
+        // Ensure role is normalized if it's being updated
+        if (updatedData.role) {
+          updatedData.role = extractRoleName(updatedData.role);
+        }
+
         const updatedUser = {
           ...state.user,
-          ...action.payload,
+          ...updatedData,
         };
         state.user = updatedUser;
         localStorage.setItem('user', JSON.stringify(updatedUser));

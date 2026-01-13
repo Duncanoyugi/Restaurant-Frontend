@@ -2,12 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { useGetDashboardOverviewQuery } from '../../features/customer/customerApi';
+import { Rocket, Calendar, DollarSign, Package, Heart, Hotel } from 'lucide-react';
 
 interface StatCard {
   title: string;
   value: string | number;
   subtitle: string;
-  icon: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   trend?: {
     value: number;
     isPositive: boolean;
@@ -26,7 +27,7 @@ export const StatsGrid: React.FC = () => {
       title: 'Active Orders',
       value: dashboardData?.activeOrders || user?.totalOrders || 0,
       subtitle: 'Orders in progress',
-      icon: '🚀',
+      icon: Rocket,
       trend: { value: 12, isPositive: true },
       link: '/dashboard/orders',
       color: 'blue'
@@ -35,41 +36,41 @@ export const StatsGrid: React.FC = () => {
       title: 'Upcoming Reservations',
       value: dashboardData?.upcomingReservations || 0,
       subtitle: 'Table reservations',
-      icon: '📅',
+      icon: Calendar,
       trend: { value: 5, isPositive: true },
       link: '/dashboard/reservations',
-      color: 'green'
+      color: 'blue'
     },
     {
       title: 'Total Spent',
       value: dashboardData?.totalSpent ? `KSh ${dashboardData.totalSpent.toLocaleString()}` : `KSh ${(user?.totalSpent || 0).toLocaleString()}`,
       subtitle: 'Lifetime spending',
-      icon: '💰',
+      icon: DollarSign,
       trend: { value: 8, isPositive: true },
       link: '/dashboard/orders',
-      color: 'purple'
+      color: 'blue'
     },
     {
       title: 'Monthly Orders',
       value: dashboardData?.monthlyOrders || 0,
       subtitle: 'This month',
-      icon: '📦',
+      icon: Package,
       trend: { value: 15, isPositive: true },
-      color: 'orange'
+      color: 'blue'
     },
     {
       title: 'Favorite Cuisines',
       value: user?.favoriteCuisines?.length || 0,
       subtitle: 'Saved preferences',
-      icon: '❤️',
+      icon: Heart,
       link: '/dashboard/profile',
-      color: 'red'
+      color: 'blue'
     },
     {
       title: 'Room Bookings',
       value: dashboardData?.roomBookings || 0,
       subtitle: 'Accommodation stays',
-      icon: '🏨',
+      icon: Hotel,
       link: '/dashboard/room-bookings',
       color: 'blue'
     }
@@ -105,10 +106,12 @@ export const StatsGrid: React.FC = () => {
     return colors[color];
   };
 
-  const CardContent = ({ stat }: { stat: StatCard }) => (
+  const CardContent = ({ stat }: { stat: StatCard }) => {
+    const IconComponent = stat.icon;
+    return (
     <div className="flex items-center">
-      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${getColorClasses(stat.color)} flex items-center justify-center mr-4`}>
-        <span className="text-white text-xl">{stat.icon}</span>
+      <div className={`w-12 h-12 rounded-xl bg-linear-to-r ${getColorClasses(stat.color)} flex items-center justify-center mr-4`}>
+        <IconComponent className="text-white h-6 w-6" />
       </div>
       <div className="flex-1">
         <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.title}</p>
@@ -123,7 +126,8 @@ export const StatsGrid: React.FC = () => {
         <p className="text-sm text-gray-500 dark:text-gray-400">{stat.subtitle}</p>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

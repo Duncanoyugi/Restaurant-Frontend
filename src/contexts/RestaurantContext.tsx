@@ -73,49 +73,7 @@ export const RestaurantProvider: React.FC<{ children: ReactNode }> = ({ children
   // Check if user needs to select a restaurant
   const isRestaurantSelected = !!selectedRestaurant;
 
-  // Redirect logic for different user roles
-  useEffect(() => {
-    // Only run redirect logic if user is authenticated AND has a user object with a role
-    if (!isAuthenticated || !user || !user.role) {
-      return;
-    }
-
-    // For customers: redirect to dashboard (they'll need to select restaurant there)
-    if (user.role === UserRoleEnum.CUSTOMER) {
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/dashboard') {
-        navigate('/dashboard');
-      }
-    }
-
-    // For staff/drivers: redirect to dashboard
-    if (user.role === UserRoleEnum.RESTAURANT_STAFF || user.role === UserRoleEnum.DRIVER) {
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/dashboard') {
-        navigate('/dashboard');
-      }
-    }
-      
-    // For restaurant owners: check if they have a restaurant
-    // If not, redirect to restaurant setup; otherwise, go to dashboard
-    if (user.role === UserRoleEnum.RESTAURANT_OWNER) {
-      // Don't redirect if already on restaurant setup page
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/restaurant-setup') {
-        // In a real app, check if user has a restaurant
-        // For now, redirect to dashboard
-        navigate('/dashboard');
-      }
-    }
-      
-    // For admins: redirect to dashboard
-    if (user.role === UserRoleEnum.ADMIN) {
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/dashboard') {
-        navigate('/dashboard');
-      }
-    }
-  }, [isAuthenticated, user?.role, navigate]);
+  // No automatic redirects needed here - AppRouter handles all routing logic
 
   return (
     <RestaurantContext.Provider value={{

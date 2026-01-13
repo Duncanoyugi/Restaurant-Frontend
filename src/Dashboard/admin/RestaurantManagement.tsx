@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { unifiedRestaurantApi } from '../../features/restaurants/unifiedRestaurantApi';
 import { FaStore, FaPlus, FaSearch, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 import type { Restaurant, CreateRestaurantDto } from '../../types/restaurant';
+import { validatePhone, validateEmail } from '../../utils/validators';
 
 const RestaurantManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<Restaurant | null>(null);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
   // Form state
+  // ... (rest of state)
   const [formData, setFormData] = useState<Partial<CreateRestaurantDto>>({
     name: '',
     description: '',
@@ -37,10 +40,39 @@ const RestaurantManagement: React.FC = () => {
       ...prev,
       [name]: name === 'cityId' ? (parseInt(value) || 1) : value
     }));
+    // Clear error when user types
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formData.name) errors.name = 'Restaurant name is required';
+    if (!formData.email) {
+      errors.email = 'Email is required';
+    } else if (!validateEmail(formData.email)) {
+      errors.email = 'Invalid email format';
+    }
+    if (!formData.phone) {
+      errors.phone = 'Phone number is required';
+    } else if (!validatePhone(formData.phone)) {
+      errors.phone = 'Invalid phone number format';
+    }
+    if (!formData.streetAddress) errors.streetAddress = 'Street address is required';
+    if (!formData.cuisineType) errors.cuisineType = 'Cuisine type is required';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
     try {
       if (editingRestaurant) {
         await updateRestaurant({
@@ -132,7 +164,7 @@ const RestaurantManagement: React.FC = () => {
             resetForm();
             setShowCreateModal(true);
           }}
-          className="flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 shadow-md transition-all duration-200"
+          className="flex items-center px-4 py-2 bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 shadow-md transition-all duration-200"
         >
           <FaPlus className="mr-2" />
           Add Restaurant
@@ -265,8 +297,9 @@ const RestaurantManagement: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white ${formErrors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                   />
+                  {formErrors.name && <p className="mt-1 text-xs text-red-500">{formErrors.name}</p>}
                 </div>
 
                 <div className="col-span-2">
@@ -288,8 +321,9 @@ const RestaurantManagement: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white ${formErrors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                   />
+                  {formErrors.email && <p className="mt-1 text-xs text-red-500">{formErrors.email}</p>}
                 </div>
 
                 <div>
@@ -300,8 +334,9 @@ const RestaurantManagement: React.FC = () => {
                     required
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white ${formErrors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                   />
+                  {formErrors.phone && <p className="mt-1 text-xs text-red-500">{formErrors.phone}</p>}
                 </div>
 
                 <div className="col-span-2">
@@ -312,8 +347,9 @@ const RestaurantManagement: React.FC = () => {
                     required
                     value={formData.streetAddress}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white ${formErrors.streetAddress ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                   />
+                  {formErrors.streetAddress && <p className="mt-1 text-xs text-red-500">{formErrors.streetAddress}</p>}
                 </div>
 
                 <div>
@@ -325,8 +361,9 @@ const RestaurantManagement: React.FC = () => {
                     value={formData.cuisineType}
                     onChange={handleInputChange}
                     placeholder="e.g., Italian, Mexican"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white ${formErrors.cuisineType ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                   />
+                  {formErrors.cuisineType && <p className="mt-1 text-xs text-red-500">{formErrors.cuisineType}</p>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -363,7 +400,7 @@ const RestaurantManagement: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 shadow-md transition-all duration-200 font-medium"
+                  className="px-6 py-2 bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 shadow-md transition-all duration-200 font-medium"
                 >
                   {editingRestaurant ? 'Save Changes' : 'Create Restaurant'}
                 </button>

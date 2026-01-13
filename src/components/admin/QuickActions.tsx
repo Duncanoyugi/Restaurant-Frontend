@@ -28,7 +28,7 @@ const QuickActions: React.FC = () => {
     {
       title: 'Review Moderation',
       description: 'Approve or block reviews',
-      icon: '⭐',
+      icon: '★',
       count: 23,
       countLabel: 'awaiting',
       action: () => navigate('/dashboard/reviews'),

@@ -113,7 +113,7 @@ const ReservationsPage: React.FC = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes}`;
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -157,22 +157,20 @@ const ReservationsPage: React.FC = () => {
           ].filter(Boolean).join(' | ');
 
           const createdReservation = await createReservation({
-            // Backend expects numbers, frontend types use string in some places
-            restaurantId: Number(restaurantParam) as any,
-            userId: Number(user?.id) as any,
-            reservationType: 'TABLE' as any,
+            restaurantId: Number(restaurantParam),
+            userId: Number(user?.id),
+            reservationType: 'TABLE',
             reservationDate: formData.date,
             reservationTime: to24HourTime(formData.time),
             guestCount: Number(formData.guests) + Number(formData.children),
-            // Backend DTO uses `specialRequest` (singular). Use `any` to support both.
             specialRequest: combinedRequests || undefined,
             depositAmount: depositAmount,
-          } as any).unwrap();
+          }).unwrap();
 
           // Initialize payment for 50% deposit
           const paymentResult = await initializePayment({
-            userId: user!.id,
-            reservationId: (createdReservation as any)?.id,
+            userId: Number(user?.id),
+            reservationId: createdReservation.id,
             amount: depositAmount,
             currency: 'KES',
             method: formData.paymentMethod,
@@ -218,10 +216,10 @@ const ReservationsPage: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl font-bold text-slate-900 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+              <h3 className="text-3xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
                 Reservation Details
               </h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
+              <span className="px-3 py-1 bg-linear-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
                 Step 1 of 5
               </span>
             </div>
@@ -229,7 +227,7 @@ const ReservationsPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Date */}
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaCalendarAlt className="text-amber-600 text-lg" />
                   Date *
                 </label>
@@ -245,7 +243,7 @@ const ReservationsPage: React.FC = () => {
 
               {/* Time */}
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaClock className="text-amber-600 text-lg" />
                   Time *
                 </label>
@@ -264,7 +262,7 @@ const ReservationsPage: React.FC = () => {
 
               {/* Guests */}
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaUsers className="text-amber-600 text-lg" />
                   Number of Adults *
                 </label>
@@ -304,7 +302,7 @@ const ReservationsPage: React.FC = () => {
 
             {/* Children */}
             <div className="mt-4">
-              <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+              <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                 <FaChild className="text-amber-600 text-lg" />
                 Children (under 12)
               </label>
@@ -327,17 +325,17 @@ const ReservationsPage: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl font-bold text-slate-900 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+              <h3 className="text-3xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
                 Guest Information
               </h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
+              <span className="px-3 py-1 bg-linear-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
                 Step 2 of 5
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaUser className="text-amber-600 text-lg" />
                   First Name *
                 </label>
@@ -351,7 +349,7 @@ const ReservationsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaUser className="text-amber-600 text-lg" />
                   Last Name *
                 </label>
@@ -365,7 +363,7 @@ const ReservationsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaEnvelope className="text-amber-600 text-lg" />
                   Email *
                 </label>
@@ -380,7 +378,7 @@ const ReservationsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                   <FaPhone className="text-amber-600 text-lg" />
                   Phone Number *
                 </label>
@@ -395,9 +393,8 @@ const ReservationsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/50 shadow-sm">
-              <p className="text-sm text-slate-700 flex items-center gap-2">
-                <span className="text-amber-600">💡</span>
+            <div className="mt-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/50 shadow-sm">
+              <p className="text-sm text-slate-700">
                 Your contact information will be used for reservation confirmation and reminders.
                 We'll never share your details with third parties.
               </p>
@@ -409,10 +406,10 @@ const ReservationsPage: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl font-bold text-slate-900 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+              <h3 className="text-3xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
                 Preferences & Special Requests
               </h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
+              <span className="px-3 py-1 bg-linear-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
                 Step 3 of 5
               </span>
             </div>
@@ -497,7 +494,7 @@ const ReservationsPage: React.FC = () => {
               <label className="flex items-center space-x-3 p-4 border border-slate-200 rounded-xl hover:bg-slate-50/50 cursor-pointer transition-all duration-300 hover:shadow-md group">
                 <input
                   type="checkbox"
-                  className="h-5 w-5 text-amber-600 rounded focus:ring-amber-500 rounded-md"
+                  className="h-5 w-5 text-amber-600 focus:ring-amber-500 rounded-md"
                   checked={formData.accessibilityNeeds}
                   onChange={(e) => handleInputChange('accessibilityNeeds', e.target.checked)}
                 />
@@ -511,7 +508,7 @@ const ReservationsPage: React.FC = () => {
               <label className="flex items-center space-x-3 p-4 border border-slate-200 rounded-xl hover:bg-slate-50/50 cursor-pointer transition-all duration-300 hover:shadow-md group">
                 <input
                   type="checkbox"
-                  className="h-5 w-5 text-amber-600 rounded focus:ring-amber-500 rounded-md"
+                  className="h-5 w-5 text-amber-600 focus:ring-amber-500 rounded-md"
                   checked={formData.highchair}
                   onChange={(e) => handleInputChange('highchair', e.target.checked)}
                 />
@@ -529,29 +526,27 @@ const ReservationsPage: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl font-bold text-slate-900 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+              <h3 className="text-3xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
                 Add-ons & Confirmation
               </h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
+              <span className="px-3 py-1 bg-linear-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
                 Step 4 of 5
               </span>
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <span>Enhance Your Experience</span>
-                <span className="text-amber-600">✨</span>
+              <h4 className="text-xl font-semibold text-slate-900 mb-4">
+                Enhance Your Experience
               </h4>
               
               {[
-                { id: 'welcomeDrinks', label: 'Welcome Drinks', desc: 'Complimentary welcome cocktails for your party', price: `KSh ${welcomeDrinksPrice.toLocaleString()}/person`, icon: '🍹' },
-                { id: 'winePairing', label: 'Wine Pairing', desc: 'Sommelier-selected wine pairing with your meal', price: `KSh ${winePairingPrice.toLocaleString()}/person`, icon: '🍷' },
-                { id: 'cakeService', label: 'Cake Service', desc: 'We handle your birthday/celebration cake', price: `KSh ${cakeServicePrice.toLocaleString()} service fee`, icon: '🎂' },
-                { id: 'specialDecorations', label: 'Special Decorations', desc: 'Table decorations for special occasions', price: `KSh ${specialDecorationsPrice.toLocaleString()} setup`, icon: '🎉' },
+                { id: 'welcomeDrinks', label: 'Welcome Drinks', desc: 'Complimentary welcome cocktails for your party', price: `KSh ${welcomeDrinksPrice.toLocaleString()}/person` },
+                { id: 'winePairing', label: 'Wine Pairing', desc: 'Sommelier-selected wine pairing with your meal', price: `KSh ${winePairingPrice.toLocaleString()}/person` },
+                { id: 'cakeService', label: 'Cake Service', desc: 'We handle your birthday/celebration cake', price: `KSh ${cakeServicePrice.toLocaleString()} service fee` },
+                { id: 'specialDecorations', label: 'Special Decorations', desc: 'Table decorations for special occasions', price: `KSh ${specialDecorationsPrice.toLocaleString()} setup` },
               ].map((addon) => (
                 <label key={addon.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-xl hover:bg-slate-50/50 cursor-pointer transition-all duration-300 group hover:shadow-md hover:border-amber-200">
                   <div className="flex items-center space-x-4 flex-1">
-                    <div className="text-2xl p-2 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg group-hover:from-amber-200 group-hover:to-amber-300 transition-colors">{addon.icon}</div>
                     <div>
                       <div className="font-semibold text-slate-900 group-hover:text-amber-700 transition-colors">{addon.label}</div>
                       <div className="text-sm text-slate-500">{addon.desc}</div>
@@ -561,7 +556,7 @@ const ReservationsPage: React.FC = () => {
                     <span className="text-amber-600 font-semibold text-sm">{addon.price}</span>
                     <input
                       type="checkbox"
-                      className="h-5 w-5 text-amber-600 rounded focus:ring-amber-500 rounded-md"
+                      className="h-5 w-5 text-amber-600 focus:ring-amber-500 rounded-md"
                       checked={formData[addon.id as keyof typeof formData] as boolean}
                       onChange={(e) => handleInputChange(addon.id, e.target.checked)}
                     />
@@ -570,7 +565,7 @@ const ReservationsPage: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-8 p-6 bg-gradient-to-br from-slate-50 to-amber-50/30 rounded-xl border border-slate-200/50 shadow-sm">
+            <div className="mt-8 p-6 bg-linear-to-br from-slate-50 to-amber-50/30 rounded-xl border border-slate-200/50 shadow-sm">
               <h4 className="text-xl font-semibold text-slate-900 mb-4">Reservation Summary</h4>
               <div className="space-y-3">
                 <div className="flex justify-between">
@@ -594,8 +589,7 @@ const ReservationsPage: React.FC = () => {
                   </div>
                 )}
                 <div className="border-t pt-3 mt-3">
-                  <p className="text-sm text-slate-600 flex items-center gap-2">
-                    <span className="text-amber-600">⚠️</span>
+                  <p className="text-sm text-slate-600">
                     Please arrive 15 minutes before your reservation time. 
                     We hold tables for 15 minutes past the reservation time.
                   </p>
@@ -609,16 +603,16 @@ const ReservationsPage: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl font-bold text-slate-900 bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+              <h3 className="text-3xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
                 Payment
               </h3>
-              <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
+              <span className="px-3 py-1 bg-linear-to-r from-amber-400 to-amber-500 text-white rounded-full text-sm font-semibold shadow-md">
                 Step 5 of 5
               </span>
             </div>
 
             {/* Reservation Summary */}
-            <div className="bg-gradient-to-br from-slate-50 to-amber-50/30 rounded-xl p-6 border border-slate-200/50 shadow-sm">
+            <div className="bg-linear-to-br from-slate-50 to-amber-50/30 rounded-xl p-6 border border-slate-200/50 shadow-sm">
               <h4 className="text-xl font-semibold text-slate-900 mb-4">Reservation Summary</h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
@@ -661,10 +655,9 @@ const ReservationsPage: React.FC = () => {
             </div>
 
             {/* Payment Notice */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl p-4 shadow-sm">
-              <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-                <span>Payment Policy</span>
-                <span className="text-blue-600">ℹ️</span>
+            <div className="bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl p-4 shadow-sm">
+              <h4 className="font-semibold text-blue-900 mb-2">
+                Payment Policy
               </h4>
               <p className="text-blue-800 text-sm">
                 A 50% deposit is required to secure your reservation. The remaining balance will be charged upon completion of your dining experience.
@@ -688,7 +681,6 @@ const ReservationsPage: React.FC = () => {
                     className="sr-only"
                   />
                   <div className="flex items-center space-x-3">
-                    <div className="text-2xl p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors">💳</div>
                     <div>
                       <div className="font-semibold text-slate-900 group-hover:text-amber-700 transition-colors">Credit/Debit Card</div>
                       <div className="text-sm text-slate-600">Visa, Mastercard, American Express</div>
@@ -708,7 +700,6 @@ const ReservationsPage: React.FC = () => {
                     className="sr-only"
                   />
                   <div className="flex items-center space-x-3">
-                    <div className="text-2xl p-2 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg group-hover:from-green-200 group-hover:to-emerald-200 transition-colors">📱</div>
                     <div>
                       <div className="font-semibold text-slate-900 group-hover:text-amber-700 transition-colors">M-Pesa</div>
                       <div className="text-sm text-slate-600">Mobile money payment</div>
@@ -724,10 +715,10 @@ const ReservationsPage: React.FC = () => {
 
   return (
     <LandingLayout>
-      <div className="pt-20 min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/20">
+      <div className="pt-20 min-h-screen bg-linear-to-b from-slate-50 via-white to-amber-50/20">
         {/* Restaurant Showcase */}
         <div className="relative h-96 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-amber-900/30 z-10" />
+          <div className="absolute inset-0 bg-linear-to-r from-black/60 via-black/40 to-amber-900/30 z-10" />
           <div className="absolute inset-0 flex">
             {restaurantPhotos.map((photo, index) => (
               <div key={index} className="flex-1">
@@ -740,16 +731,16 @@ const ReservationsPage: React.FC = () => {
             ))}
           </div>
           <div className="relative z-20 h-full flex flex-col items-center justify-center text-white px-4">
-            <h1 className="text-5xl md:text-6xl font-bold mb-4 text-center bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent tracking-tight drop-shadow-2xl">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 text-center bg-linear-to-r from-white to-amber-200 bg-clip-text text-transparent tracking-tight drop-shadow-2xl">
               Table Reservations
             </h1>
             <p className="text-xl md:text-2xl mb-6 text-center max-w-3xl text-slate-200 leading-relaxed">
               Book your table for an unforgettable dining experience at our award-winning restaurant
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">⭐ 4.8/5 Rating</span>
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">🏆 Best Fine Dining 2024</span>
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">🍽️ Chef's Tasting Menu Available</span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">4.8/5 Rating</span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">Best Fine Dining 2024</span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300">Chef's Tasting Menu Available</span>
             </div>
           </div>
         </div>
@@ -763,7 +754,7 @@ const ReservationsPage: React.FC = () => {
                   <div key={stepNum} className="flex flex-col items-center flex-1 relative">
                     <div className={`
                       w-10 h-10 rounded-full flex items-center justify-center font-bold mb-2 shadow-lg transition-all duration-500
-                      ${step >= stepNum ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-amber-500/25' : 'bg-slate-200 text-slate-500 hover:bg-slate-300'}
+                      ${step >= stepNum ? 'bg-linear-to-r from-amber-500 to-amber-600 text-white shadow-amber-500/25' : 'bg-slate-200 text-slate-500 hover:bg-slate-300'}
                     `}>
                       {step > stepNum ? <IoIosArrowForward className="text-sm" /> : stepNum}
                     </div>
@@ -779,7 +770,7 @@ const ReservationsPage: React.FC = () => {
               </div>
               <div className="h-2 bg-slate-200 rounded-full overflow-hidden shadow-inner">
                 <div
-                  className="h-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all duration-500 shadow-md"
+                  className="h-full bg-linear-to-r from-amber-500 to-amber-600 transition-all duration-500 shadow-md"
                   style={{ width: `${(step - 1) * 25}%` }}
                 />
               </div>
@@ -809,7 +800,7 @@ const ReservationsPage: React.FC = () => {
                     <Button
                       type="submit"
                       variant="primary"
-                      className="px-8 py-3 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] flex items-center gap-2"
+                      className="px-8 py-3 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98] flex items-center gap-2"
                     >
                       {step < 5 ? 'Continue' : 'Complete Payment'}
                       {step < 5 && <IoIosArrowForward className="text-white" />}
@@ -821,8 +812,7 @@ const ReservationsPage: React.FC = () => {
 
             {/* Restaurant Info Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <div className="text-3xl mb-4 animate-pulse">🕒</div>
+              <div className="bg-linear-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
                 <h3 className="font-bold text-xl mb-2">Opening Hours</h3>
                 <div className="space-y-2 text-sm">
                   <p className="flex justify-between"><span>Monday - Thursday</span><span>5 PM - 10 PM</span></p>
@@ -831,8 +821,7 @@ const ReservationsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <div className="text-3xl mb-4">👥</div>
+              <div className="bg-linear-to-br from-emerald-600 to-emerald-700 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
                 <h3 className="font-bold text-xl mb-2">Group Bookings</h3>
                 <p className="mb-4 text-sm">For parties of 8 or more, we offer special arrangements:</p>
                 <ul className="space-y-2 text-sm">
@@ -843,8 +832,7 @@ const ReservationsPage: React.FC = () => {
                 </ul>
               </div>
 
-              <div className="bg-gradient-to-br from-amber-600 to-orange-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-                <div className="text-3xl mb-4">📞</div>
+              <div className="bg-linear-to-br from-amber-600 to-orange-600 text-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
                 <h3 className="font-bold text-xl mb-2">Contact & Policies</h3>
                 <div className="space-y-3 text-sm">
                   <p className="font-semibold">+254 (700) 123-4567</p>
@@ -859,7 +847,7 @@ const ReservationsPage: React.FC = () => {
 
             {/* Login Prompt */}
             {!isAuthenticated && step === 1 && (
-              <div className="text-center mt-8 p-8 bg-gradient-to-r from-amber-50 to-orange-50/30 rounded-2xl border border-amber-200/50 shadow-lg">
+              <div className="text-center mt-8 p-8 bg-linear-to-r from-amber-50 to-orange-50/30 rounded-2xl border border-amber-200/50 shadow-lg">
                 <p className="text-slate-700 mb-4 text-lg leading-relaxed">
                   Please login or create an account to make a reservation and save your preferences.
                 </p>
@@ -867,7 +855,7 @@ const ReservationsPage: React.FC = () => {
                   <Button 
                     variant="primary"
                     onClick={() => navigate('/login', { state: { from: '/reservations' } })}
-                    className="px-8 py-3 text-lg font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="px-8 py-3 text-lg font-bold bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Login to Reserve
                   </Button>

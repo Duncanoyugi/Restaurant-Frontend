@@ -3,6 +3,7 @@ import { useGetMyRestaurantTablesQuery } from '../../features/reservations/reser
 import { useAppSelector } from '../../app/hooks';
 import { TableStatusEnum } from '../../types/reservation';
 import type { Table } from '../../types/reservation';
+import { CheckCircle2, Users, Calendar, Sparkles, HelpCircle, RotateCw } from 'lucide-react';
 
 interface TableManagementProps {
   restaurantId: string;
@@ -53,13 +54,13 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string): React.ComponentType<React.SVGProps<SVGSVGElement>> => {
     switch (status) {
-      case TableStatusEnum.AVAILABLE: return '✅';
-      case TableStatusEnum.OCCUPIED: return '👥';
-      case TableStatusEnum.RESERVED: return '📅';
-      case TableStatusEnum.OUT_OF_SERVICE: return '🧹';
-      default: return '❓';
+      case TableStatusEnum.AVAILABLE: return CheckCircle2;
+      case TableStatusEnum.OCCUPIED: return Users;
+      case TableStatusEnum.RESERVED: return Calendar;
+      case TableStatusEnum.OUT_OF_SERVICE: return Sparkles;
+      default: return HelpCircle;
     }
   };
 
@@ -195,21 +196,21 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
             onClick={() => console.log('Mark all for cleaning')}
             className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 text-center"
           >
-            <div className="text-2xl mb-2">🧹</div>
+            <Sparkles className="h-6 w-6 mx-auto mb-2 text-yellow-600" />
             <div className="font-medium">Mark All for Cleaning</div>
           </button>
           <button
             onClick={() => console.log('Clear all occupied')}
             className="p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 text-center"
           >
-            <div className="text-2xl mb-2">✅</div>
+            <CheckCircle2 className="h-6 w-6 mx-auto mb-2 text-green-600" />
             <div className="font-medium">Clear All Occupied</div>
           </button>
           <button
             onClick={() => setFloorView(floorView === 'grid' ? 'floorplan' : 'grid')}
             className="p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 text-center"
           >
-            <div className="text-2xl mb-2">🔄</div>
+            <RotateCw className="h-6 w-6 mx-auto mb-2 text-blue-600" />
             <div className="font-medium">
               Switch to {floorView === 'grid' ? 'Floor Plan' : 'Grid'} View
             </div>
@@ -218,7 +219,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
             onClick={() => console.log('Refresh all')}
             className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 text-center"
           >
-            <div className="text-2xl mb-2">🔄</div>
+            <RotateCw className="h-6 w-6 mx-auto mb-2 text-gray-600" />
             <div className="font-medium">Refresh All</div>
           </button>
         </div>
@@ -231,7 +232,7 @@ const TableCard: React.FC<{
   table: Table;
   onUpdateStatus: (id: string, status: string, notes?: string) => void;
   getStatusColor: (status: string) => string;
-  getStatusIcon: (status: string) => string;
+  getStatusIcon: (status: string) => React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }> = ({ table, onUpdateStatus, getStatusColor, getStatusIcon }) => {
   const [showActions, setShowActions] = useState(false);
 
@@ -248,8 +249,12 @@ const TableCard: React.FC<{
           <div className="text-sm text-gray-600">{table.location}</div>
           <div className="text-sm">Capacity: {table.capacity} seats</div>
         </div>
-        <span className={`px-3 py-1 text-xs rounded-full border ${getStatusColor(table.status)}`}>
-          {getStatusIcon(table.status)} {table.status}
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full border ${getStatusColor(table.status)}`}>
+          {(() => {
+            const IconComponent = getStatusIcon(table.status);
+            return <IconComponent className="h-3.5 w-3.5" />;
+          })()}
+          {table.status}
         </span>
       </div>
 

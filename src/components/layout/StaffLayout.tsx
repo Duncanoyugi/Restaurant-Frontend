@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
+import { 
+  LayoutDashboard, Package, Calendar, ClipboardList, Square, LogOut 
+} from 'lucide-react';
 
 interface StaffLayoutProps {
   children?: React.ReactNode;
@@ -20,11 +23,11 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '', icon: '📊' },
-    { name: 'Orders', href: 'orders', icon: '📦' },
-    { name: 'Reservations', href: 'reservations', icon: '📅' },
-    { name: 'Inventory', href: 'inventory', icon: '📋' },
-    { name: 'Tables', href: 'tables', icon: '🪑' },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Orders', href: '/dashboard/orders', icon: Package },
+    { name: 'Reservations', href: '/dashboard/reservations', icon: Calendar },
+    { name: 'Inventory', href: '/dashboard/inventory', icon: ClipboardList },
+    { name: 'Tables', href: '/dashboard/tables', icon: Square },
   ];
 
   const isActive = (path: string) => {
@@ -40,7 +43,7 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-linear-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">STAFF</span>
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -54,27 +57,30 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        to={item.href}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${isActive(item.href)
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
-                          }`}
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {navigation.map((item) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${isActive(item.href)
+                              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
+                            }`}
+                        >
+                          <IconComponent className="h-5 w-5" />
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </li>
 
               {/* User Section */}
               <li className="mt-auto">
                 <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700">
-                  <div className="relative h-8 w-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
+                  <div className="relative h-8 w-8 bg-linear-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase() || 'S'}
                     </span>
@@ -134,7 +140,7 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
                 onClick={handleLogout}
                 className="flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
               >
-                <span>🚪</span>
+                <LogOut className="h-4 w-4" />
                 Logout
               </button>
             </div>
@@ -163,7 +169,7 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-linear-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
                         <span className="text-white text-sm font-bold">STAFF</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -175,21 +181,24 @@ const StaffLayout: React.FC<StaffLayoutProps> = ({ children }) => {
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
-                          {navigation.map((item) => (
-                            <li key={item.name}>
-                              <Link
-                                to={item.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${isActive(item.href)
-                                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
-                                  }`}
-                              >
-                                <span className="text-lg">{item.icon}</span>
-                                {item.name}
-                              </Link>
-                            </li>
-                          ))}
+                          {navigation.map((item) => {
+                            const IconComponent = item.icon;
+                            return (
+                              <li key={item.name}>
+                                <Link
+                                  to={item.href}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${isActive(item.href)
+                                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400'
+                                    }`}
+                                >
+                                  <IconComponent className="h-5 w-5" />
+                                  {item.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
                         </ul>
                       </li>
                     </ul>

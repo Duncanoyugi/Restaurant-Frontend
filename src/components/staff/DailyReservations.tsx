@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGetDailyReservationsQuery } from '../../features/reservations/reservationsApi';
 import { useAppSelector } from '../../app/hooks';
 import { ReservationStatusEnum } from '../../types/reservation';
+import { Clock, CheckCircle2, Flag, XCircle, Ghost, HelpCircle, Calendar } from 'lucide-react';
 
 interface DailyReservationsProps {
   restaurantId: string;
@@ -51,14 +52,14 @@ const DailyReservations: React.FC<DailyReservationsProps> = ({ }) => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string): React.ComponentType<React.SVGProps<SVGSVGElement>> => {
     switch (status) {
-      case ReservationStatusEnum.PENDING: return '⏳';
-      case ReservationStatusEnum.CONFIRMED: return '✅';
-      case ReservationStatusEnum.COMPLETED: return '🏁';
-      case ReservationStatusEnum.CANCELLED: return '❌';
-      case ReservationStatusEnum.NO_SHOW: return '👻';
-      default: return '❓';
+      case ReservationStatusEnum.PENDING: return Clock;
+      case ReservationStatusEnum.CONFIRMED: return CheckCircle2;
+      case ReservationStatusEnum.COMPLETED: return Flag;
+      case ReservationStatusEnum.CANCELLED: return XCircle;
+      case ReservationStatusEnum.NO_SHOW: return Ghost;
+      default: return HelpCircle;
     }
   };
 
@@ -175,7 +176,7 @@ const DailyReservations: React.FC<DailyReservationsProps> = ({ }) => {
 
       {filteredReservations.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow">
-          <div className="text-gray-400 text-6xl mb-4">📅</div>
+          <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-600 mb-2">No Reservations</h3>
           <p className="text-gray-500">No reservations found for the selected date/filter</p>
         </div>
@@ -189,7 +190,7 @@ const ReservationCard: React.FC<{
   onUpdateStatus: (id: string, status: string, notes?: string) => void;
   onAssignTable: (id: string, tableId: string) => void;
   getStatusColor: (status: string) => string;
-  getStatusIcon: (status: string) => string;
+  getStatusIcon: (status: string) => React.ComponentType<React.SVGProps<SVGSVGElement>>;
   getTimeColor: (timeUntil: string) => string;
 }> = ({ reservation, onUpdateStatus, onAssignTable, getStatusColor, getStatusIcon }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -201,8 +202,12 @@ const ReservationCard: React.FC<{
           <div>
             <div className="flex items-center space-x-2">
               <span className="font-bold text-lg">#{reservation.reservationNumber}</span>
-              <span className={`px-3 py-1 text-xs rounded-full border ${getStatusColor(reservation.status)}`}>
-                {getStatusIcon(reservation.status)} {reservation.status}
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full border ${getStatusColor(reservation.status)}`}>
+                {(() => {
+                  const IconComponent = getStatusIcon(reservation.status);
+                  return <IconComponent className="h-3.5 w-3.5" />;
+                })()}
+                {reservation.status}
               </span>
             </div>
             <div className="text-sm text-gray-600 mt-1">{reservation.user?.name || 'Customer'}</div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChefHat, CheckCircle2, Car, Package, UtensilsCrossed } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Order {
@@ -52,10 +53,10 @@ export const ActiveOrders: React.FC = () => {
 
   const getStatusIcon = (status: Order['status']) => {
     const icons = {
-      preparing: '👨‍🍳',
-      ready: '✅',
-      'on-the-way': '🚗',
-      delivered: '📦'
+      preparing: ChefHat,
+      ready: CheckCircle2,
+      'on-the-way': Car,
+      delivered: Package
     };
     return icons[status];
   };
@@ -64,7 +65,7 @@ export const ActiveOrders: React.FC = () => {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-100 dark:border-gray-700">
         <div className="text-center py-8">
-          <div className="text-6xl mb-4">🍽️</div>
+          <UtensilsCrossed className="h-16 w-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             No Active Orders
           </h3>
@@ -111,8 +112,12 @@ export const ActiveOrders: React.FC = () => {
                   Order #{order.id} • {order.orderTime}
                 </p>
               </div>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                {getStatusIcon(order.status)} {order.statusText}
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                {(() => {
+                  const IconComponent = getStatusIcon(order.status);
+                  return <IconComponent className="h-3.5 w-3.5" />;
+                })()}
+                {order.statusText}
               </span>
             </div>
 

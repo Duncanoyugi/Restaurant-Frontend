@@ -32,8 +32,8 @@ export const TableStatusEnum = {
 };
 
 export type Table = {
-  id: string;
-  restaurantId: string;
+  id: number;
+  restaurantId: number;
   tableNumber: string;
   name?: string;
   capacity: number;
@@ -51,18 +51,18 @@ export type Table = {
 };
 
 export type Reservation = {
-  id: string;
+  id: number;
   reservationNumber: string;
-  restaurantId: string;
-  userId: string;
-  tableId?: string;
+  restaurantId: number;
+  userId: number;
+  tableId?: number;
   reservationType: ReservationType;
   reservationDate: string; // ISO date string
   reservationTime: string; // HH:MM format
   duration: number; // in minutes
   guestCount: number;
   status: ReservationStatus;
-  specialRequests?: string;
+  specialRequest?: string;
   cancellationReason?: string;
   checkedInAt?: string;
   completedAt?: string;
@@ -78,7 +78,7 @@ export type Reservation = {
 
 // Request DTOs
 export type CreateTableDto = {
-  restaurantId: string;
+  restaurantId: number;
   tableNumber: string;
   name?: string;
   capacity: number;
@@ -98,24 +98,25 @@ export type UpdateTableDto = {
 };
 
 export type CreateReservationDto = {
-  restaurantId: string;
-  userId?: string;
-  tableId?: string;
+  restaurantId: number;
+  userId: number;
+  tableId?: number;
   reservationType: ReservationType;
   reservationDate: string; // YYYY-MM-DD
   reservationTime: string; // HH:MM
   duration?: number; // default 120 minutes
   guestCount: number;
-  specialRequests?: string;
+  specialRequest?: string;
+  depositAmount?: number;
 };
 
 export type UpdateReservationDto = {
-  tableId?: string;
+  tableId?: number;
   reservationDate?: string;
   reservationTime?: string;
   duration?: number;
   guestCount?: number;
-  specialRequests?: string;
+  specialRequest?: string;
 };
 
 export type ReservationStatusDto = {
@@ -124,7 +125,7 @@ export type ReservationStatusDto = {
 };
 
 export type AvailabilityCheckDto = {
-  restaurantId: string;
+  restaurantId: number;
   reservationDate: string; // YYYY-MM-DD
   reservationTime: string; // HH:MM
   guestCount: number;
@@ -132,7 +133,7 @@ export type AvailabilityCheckDto = {
 };
 
 export type TableAvailabilityDto = {
-  restaurantId: string;
+  restaurantId: number;
   reservationDate: string; // YYYY-MM-DD
   reservationTime: string; // HH:MM
   guestCount: number;
@@ -141,7 +142,7 @@ export type TableAvailabilityDto = {
 
 // Search DTOs
 export type TableSearchDto = {
-  restaurantId?: string;
+  restaurantId?: number;
   minCapacity?: number;
   location?: string;
   status?: TableStatus;
@@ -150,9 +151,9 @@ export type TableSearchDto = {
 };
 
 export type ReservationSearchDto = {
-  restaurantId?: string;
-  userId?: string;
-  tableId?: string;
+  restaurantId?: number;
+  userId?: number;
+  tableId?: number;
   startDate?: string;
   endDate?: string;
   status?: ReservationStatus;

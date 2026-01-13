@@ -1,4 +1,5 @@
 import React from 'react';
+import { Salad, UtensilsCrossed, PartyPopper, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Recommendation {
@@ -6,7 +7,7 @@ interface Recommendation {
   type: 'restaurant' | 'dish' | 'offer';
   title: string;
   description: string;
-  image: string;
+  image: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   rating: number;
   price?: string;
   badge?: string;
@@ -20,7 +21,7 @@ export const PersonalizedRecommendations: React.FC = () => {
       type: 'restaurant',
       title: 'Mediterranean Grill',
       description: 'Based on your love for healthy options',
-      image: '🥗',
+      image: Salad,
       rating: 4.7,
       badge: 'New'
     },
@@ -29,7 +30,7 @@ export const PersonalizedRecommendations: React.FC = () => {
       type: 'dish',
       title: 'Truffle Pasta',
       description: 'Popular among customers with similar taste',
-      image: '🍝',
+      image: UtensilsCrossed,
       rating: 4.9,
       price: 'KSh 2,499'
     },
@@ -38,7 +39,7 @@ export const PersonalizedRecommendations: React.FC = () => {
       type: 'offer',
       title: 'Weekend Special',
       description: '20% off all room bookings this weekend',
-      image: '🎉',
+      image: PartyPopper,
       rating: 0,
       badge: 'Limited'
     }
@@ -62,11 +63,11 @@ export const PersonalizedRecommendations: React.FC = () => {
             className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 hover:shadow-md transition-all duration-300 hover:scale-105"
           >
             <div className="flex items-start justify-between mb-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900 rounded-lg flex items-center justify-center">
-                <span className="text-2xl">{rec.image}</span>
+              <div className="w-12 h-12 bg-linear-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900 rounded-lg flex items-center justify-center">
+                <rec.image className="h-6 w-6 text-primary-600" />
               </div>
               {rec.badge && (
-                <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                <span className="bg-linear-to-r from-yellow-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full">
                   {rec.badge}
                 </span>
               )}
@@ -81,7 +82,7 @@ export const PersonalizedRecommendations: React.FC = () => {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1">
-                <span className="text-yellow-500">⭐</span>
+                <Star className="h-4 w-4 text-yellow-500" />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   {rec.rating}
                 </span>

@@ -9,22 +9,19 @@ const SystemHealth: React.FC = () => {
       name: 'API Uptime',
       value: metrics.systemHealth.uptime,
       unit: '%',
-      status: metrics.systemHealth.uptime >= 99.9 ? 'excellent' : metrics.systemHealth.uptime >= 99 ? 'good' : 'poor',
-      icon: '🟢'
+      status: metrics.systemHealth.uptime >= 99.9 ? 'excellent' : metrics.systemHealth.uptime >= 99 ? 'good' : 'poor'
     },
     {
       name: 'Response Time',
       value: metrics.systemHealth.responseTime,
       unit: 'ms',
-      status: metrics.systemHealth.responseTime <= 100 ? 'excellent' : metrics.systemHealth.responseTime <= 200 ? 'good' : 'poor',
-      icon: '⚡'
+      status: metrics.systemHealth.responseTime <= 100 ? 'excellent' : metrics.systemHealth.responseTime <= 200 ? 'good' : 'poor'
     },
     {
       name: 'Error Rate',
       value: metrics.systemHealth.errorRate,
       unit: '%',
-      status: metrics.systemHealth.errorRate <= 0.1 ? 'excellent' : metrics.systemHealth.errorRate <= 0.5 ? 'good' : 'poor',
-      icon: '❌'
+      status: metrics.systemHealth.errorRate <= 0.1 ? 'excellent' : metrics.systemHealth.errorRate <= 0.5 ? 'good' : 'poor'
     }
   ];
 
@@ -60,7 +57,6 @@ const SystemHealth: React.FC = () => {
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
-                <span className="text-lg mr-3">{indicator.icon}</span>
                 <span className="font-medium text-gray-900 dark:text-white">
                   {indicator.name}
                 </span>

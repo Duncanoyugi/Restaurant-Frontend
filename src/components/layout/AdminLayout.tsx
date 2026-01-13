@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { logout } from '../../features/auth/authSlice';
+import { 
+  LayoutDashboard, Users, Store, Package, Calendar, Hotel, 
+  CreditCard, Truck, ClipboardList, Star, Bell, Zap, LogOut 
+} from 'lucide-react';
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -33,17 +37,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-    { name: 'User Management', href: '/dashboard/users', icon: '👥' },
-    { name: 'Restaurant Management', href: '/dashboard/restaurants', icon: '🏪' },
-    { name: 'Order Management', href: '/dashboard/orders', icon: '📦' },
-    { name: 'Reservation Management', href: '/dashboard/reservations', icon: '📅' },
-    { name: 'Room Booking Management', href: '/dashboard/room-bookings', icon: '🏨' },
-    { name: 'Payment Management', href: '/dashboard/payments', icon: '💳' },
-    { name: 'Delivery Management', href: '/dashboard/delivery', icon: '🚚' },
-    { name: 'Inventory Overview', href: '/dashboard/inventory', icon: '📋' },
-    { name: 'Review Moderation', href: '/dashboard/reviews', icon: '⭐' },
-    { name: 'Notification Center', href: '/dashboard/notifications', icon: '🔔' },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'User Management', href: '/dashboard/users', icon: Users },
+    { name: 'Restaurant Management', href: '/dashboard/restaurants', icon: Store },
+    { name: 'Order Management', href: '/dashboard/orders', icon: Package },
+    { name: 'Reservation Management', href: '/dashboard/reservations', icon: Calendar },
+    { name: 'Room Booking Management', href: '/dashboard/room-bookings', icon: Hotel },
+    { name: 'Payment Management', href: '/dashboard/payments', icon: CreditCard },
+    { name: 'Delivery Management', href: '/dashboard/delivery', icon: Truck },
+    { name: 'Inventory Overview', href: '/dashboard/inventory', icon: ClipboardList },
+    { name: 'Review Moderation', href: '/dashboard/reviews', icon: Star },
+    { name: 'Notification Center', href: '/dashboard/notifications', icon: Bell },
   ];
 
   const isActive = (path: string) => {
@@ -54,15 +58,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Sidebar for Desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-gradient-to-b from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-800 dark:via-blue-900/10 dark:to-purple-900/5 px-6 pb-4">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-linear-to-b from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-800 dark:via-blue-900/10 dark:to-purple-900/5 px-6 pb-4">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
+              <div className="w-8 h-8 bg-linear-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white text-sm font-bold">ADMIN</span>
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">
-                Admin<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Panel</span>
+                Admin<span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Panel</span>
               </span>
             </Link>
           </div>
@@ -72,27 +76,30 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        to={item.href}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${isActive(item.href)
-                          ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
-                          }`}
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {navigation.map((item) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${isActive(item.href)
+                            ? 'bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-linear-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
+                            }`}
+                        >
+                          <IconComponent className="h-5 w-5" />
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </li>
 
               {/* User Section */}
               <li className="mt-auto">
                 <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800">
-                  <div className="relative h-8 w-8 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-full flex items-center justify-center shadow-md">
+                  <div className="relative h-8 w-8 bg-linear-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-full flex items-center justify-center shadow-md">
                     <span className="text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase() || 'A'}
                     </span>
@@ -132,7 +139,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               {/* Quick Actions */}
               <div className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                <span>⚡</span>
+                <Zap className="h-4 w-4" />
                 System Status: Online
               </div>
 
@@ -141,7 +148,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 onClick={handleLogout}
                 className="flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
-                <span>🚪</span>
+                <LogOut className="h-4 w-4" />
                 Logout
               </button>
             </div>
@@ -167,14 +174,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   </button>
                 </div>
 
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gradient-to-b from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-800 dark:via-blue-900/10 dark:to-purple-900/5 px-6 pb-4">
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-linear-to-b from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-800 dark:via-blue-900/10 dark:to-purple-900/5 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
+                      <div className="w-8 h-8 bg-linear-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
                         <span className="text-white text-sm font-bold">ADMIN</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
-                        Admin<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Panel</span>
+                        Admin<span className="bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Panel</span>
                       </span>
                     </Link>
                   </div>
@@ -182,21 +189,24 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
-                          {navigation.map((item) => (
-                            <li key={item.name}>
-                              <Link
-                                to={item.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${isActive(item.href)
-                                  ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
-                                  : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
-                                  }`}
-                              >
-                                <span className="text-lg">{item.icon}</span>
-                                {item.name}
-                              </Link>
-                            </li>
-                          ))}
+                          {navigation.map((item) => {
+                            const IconComponent = item.icon;
+                            return (
+                              <li key={item.name}>
+                                <Link
+                                  to={item.href}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${isActive(item.href)
+                                    ? 'bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-2 border-blue-600 dark:border-blue-400'
+                                    : 'text-gray-700 dark:text-gray-300 hover:bg-linear-to-r hover:from-blue-50/50 hover:to-purple-50/50 dark:hover:from-blue-900/10 dark:hover:to-purple-900/10 hover:text-blue-600 dark:hover:text-blue-400'
+                                    }`}
+                                >
+                                  <IconComponent className="h-5 w-5" />
+                                  {item.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
                         </ul>
                       </li>
                     </ul>
@@ -210,12 +220,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {/* Main Content Area - Use Outlet for nested routes */}
         <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
-            {/* DEBUG BANNER */}
-            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4" role="alert">
-              <p className="font-bold">Debug Info</p>
-              <p>Current URL Path: <code className="bg-yellow-200 px-1 rounded">{location.pathname}</code></p>
-              <p>User Role: {user?.role}</p>
-            </div>
             {children || <Outlet />}
           </div>
         </main>

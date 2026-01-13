@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Calendar, Hotel } from 'lucide-react';
 
 interface Booking {
   id: string;
@@ -48,7 +49,7 @@ export const UpcomingBookings: React.FC = () => {
   ];
 
   const getTypeIcon = (type: Booking['type']) => {
-    return type === 'reservation' ? '📅' : '🏨';
+    return type === 'reservation' ? Calendar : Hotel;
   };
 
   const getStatusColor = (status: Booking['status']) => {
@@ -82,8 +83,11 @@ export const UpcomingBookings: React.FC = () => {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-start space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900 rounded-lg flex items-center justify-center">
-                  <span className="text-lg">{getTypeIcon(booking.type)}</span>
+                <div className="w-10 h-10 bg-linear-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900 rounded-lg flex items-center justify-center">
+                  {(() => {
+                    const IconComponent = getTypeIcon(booking.type);
+                    return <IconComponent className="h-5 w-5 text-primary-600" />;
+                  })()}
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">
@@ -124,7 +128,7 @@ export const UpcomingBookings: React.FC = () => {
 
       {upcomingBookings.length === 0 && (
         <div className="text-center py-8">
-          <div className="text-6xl mb-4">📅</div>
+          <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             No Upcoming Bookings
           </h3>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRestaurantMetrics } from '../../Dashboard/owner/hooks/useRestaurantMetrics';
+import { ClipboardList, Users, Package, Calendar } from 'lucide-react';
 
 const QuickActions: React.FC = () => {
   const navigate = useNavigate();
@@ -10,35 +11,35 @@ const QuickActions: React.FC = () => {
     {
       title: 'Manage Menu',
       description: 'Update menu items and prices',
-      icon: '📋',
-      action: () => navigate('/owner/menu'),
+      icon: ClipboardList,
+      action: () => navigate('/dashboard/menu'),
       color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
     },
     {
       title: 'Staff Schedule',
       description: 'Manage shifts and assignments',
-      icon: '👥',
+      icon: Users,
       count: metrics.staff.onDuty,
       countLabel: 'on duty',
-      action: () => navigate('/owner/staff'),
+      action: () => navigate('/dashboard/staff'),
       color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
     },
     {
       title: 'Inventory',
       description: 'Check stock levels',
-      icon: '📦',
+      icon: Package,
       count: metrics.inventory.lowStock,
       countLabel: 'low stock',
-      action: () => navigate('/owner/inventory'),
+      action: () => navigate('/dashboard/inventory'),
       color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
     },
     {
       title: 'Reservations',
       description: 'View today bookings',
-      icon: '📅',
+      icon: Calendar,
       count: metrics.reservations.today,
       countLabel: 'today',
-      action: () => navigate('/owner/reservations'),
+      action: () => navigate('/dashboard/reservations'),
       color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400'
     }
   ];
@@ -56,8 +57,8 @@ const QuickActions: React.FC = () => {
             onClick={action.action}
             className="flex flex-col items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all duration-200 group text-center"
           >
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl mb-3 ${action.color} group-hover:scale-110 transition-transform duration-200`}>
-              {action.icon}
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 ${action.color} group-hover:scale-110 transition-transform duration-200`}>
+              <action.icon className="h-6 w-6" />
             </div>
             
             <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors mb-1">

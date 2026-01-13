@@ -1,6 +1,16 @@
 // src/features/customer/customerApi.ts
 import { baseApi } from '../../utils/baseApi';
 
+// Types
+export interface LoyaltyInfo {
+  points?: number;
+  loyaltyPoints?: number;
+  tier?: string;
+  loyaltyTier?: string;
+  pointsToNextTier?: number;
+  nextTier?: string;
+}
+
 export const customerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get customer profile
@@ -48,7 +58,7 @@ export const customerApi = baseApi.injectEndpoints({
     }),
 
     // Get loyalty info
-    getLoyaltyInfo: builder.query<any, void>({
+    getLoyaltyInfo: builder.query<LoyaltyInfo, void>({
       query: () => 'users/me/loyalty',
       providesTags: ['CustomerLoyalty'],
     }),

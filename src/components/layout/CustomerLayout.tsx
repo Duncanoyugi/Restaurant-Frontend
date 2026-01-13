@@ -2,9 +2,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { logout } from '../../features/auth/authSlice';
+import { logout, UserRoleEnum, extractRoleName } from '../../features/auth/authSlice';
 import { useRestaurant } from '../../contexts/RestaurantContext';
 import { ThemeToggle } from '../ui/ThemeToggle';
+import { 
+  LayoutDashboard, UtensilsCrossed, Calendar, Hotel, Star, User, MapPin, LogOut 
+} from 'lucide-react';
 
 interface CustomerLayoutProps {
   children?: React.ReactNode;
@@ -24,12 +27,12 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '', icon: '📊' },
-    { name: 'Orders', href: 'orders', icon: '🍽️' },
-    { name: 'Reservations', href: 'reservations', icon: '📅' },
-    { name: 'Room Bookings', href: 'room-bookings', icon: '🏨' },
-    { name: 'Reviews', href: 'reviews', icon: '⭐' },
-    { name: 'Profile', href: 'profile', icon: '👤' },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Orders', href: '/dashboard/orders', icon: UtensilsCrossed },
+    { name: 'Reservations', href: '/dashboard/reservations', icon: Calendar },
+    { name: 'Room Bookings', href: '/dashboard/room-bookings', icon: Hotel },
+    { name: 'Reviews', href: '/dashboard/reviews', icon: Star },
+    { name: 'Profile', href: '/dashboard/profile', icon: User },
   ];
 
   const isActive = (path: string) => {
@@ -45,7 +48,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">SB</span>
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -59,28 +62,31 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        to={item.href}
-                        className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
-                          isActive(item.href)
-                            ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400'
-                        }`}
-                      >
-                        <span className="text-lg">{item.icon}</span>
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {navigation.map((item) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <li key={item.name}>
+                        <Link
+                          to={item.href}
+                          className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-all duration-200 ${
+                            isActive(item.href)
+                              ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400'
+                          }`}
+                        >
+                          <IconComponent className="h-5 w-5" />
+                          {item.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </li>
               
               {/* User Section */}
               <li className="mt-auto">
                 <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700">
-                  <div className="relative h-8 w-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center">
+                  <div className="relative h-8 w-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
@@ -124,21 +130,21 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                 to="/menu"
                 className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
-                <span>🍽️</span>
+                <UtensilsCrossed className="h-4 w-4" />
                 Order Food
               </Link>
               <Link
                 to="/reservations"
                 className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
-                <span>📅</span>
+                <Calendar className="h-4 w-4" />
                 Book Table
               </Link>
               <Link
                 to="/accommodation"
                 className="hidden sm:flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               >
-                <span>🏨</span>
+                <Hotel className="h-4 w-4" />
                 Book Room
               </Link>
               
@@ -147,7 +153,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                 onClick={handleLogout}
                 className="flex items-center gap-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
               >
-                <span>🚪</span>
+                <LogOut className="h-4 w-4" />
                 Logout
               </button>
             </div>
@@ -176,7 +182,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
                         <span className="text-white text-sm font-bold">SB</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -188,22 +194,25 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
                         <ul role="list" className="-mx-2 space-y-1">
-                          {navigation.map((item) => (
-                            <li key={item.name}>
-                              <Link
-                                to={item.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
-                                  isActive(item.href)
-                                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400'
-                                }`}
-                              >
-                                <span className="text-lg">{item.icon}</span>
-                                {item.name}
-                              </Link>
-                            </li>
-                          ))}
+                          {navigation.map((item) => {
+                            const IconComponent = item.icon;
+                            return (
+                              <li key={item.name}>
+                                <Link
+                                  to={item.href}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
+                                    isActive(item.href)
+                                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400'
+                                  }`}
+                                >
+                                  <IconComponent className="h-5 w-5" />
+                                  {item.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
                         </ul>
                       </li>
                     </ul>
@@ -218,10 +227,10 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
         <main className="py-8">
           <div className="px-4 sm:px-6 lg:px-8">
             {/* Restaurant Selection Notification for Customers */}
-            {user?.role === 'Customer' && !isRestaurantSelected && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm flex items-center justify-between">
+            {extractRoleName(user?.role) === UserRoleEnum.CUSTOMER && !isRestaurantSelected && (
+              <div className="mb-6 p-4 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm flex items-center justify-between">
                 <div className="flex items-center">
-                  <span className="text-2xl mr-3">📍</span>
+                  <MapPin className="h-6 w-6 mr-3 text-amber-600" />
                   <div>
                     <p className="font-semibold text-amber-800">Please select a restaurant</p>
                     <p className="text-sm text-amber-700">Choose your preferred restaurant to browse menu, make reservations, and place orders</p>
@@ -229,7 +238,7 @@ const CustomerLayout: React.FC<CustomerLayoutProps> = ({ children }) => {
                 </div>
                 <Link
                   to="/restaurants"
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   Browse Restaurants
                 </Link>

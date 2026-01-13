@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { UtensilsCrossed, Calendar, Hotel, Zap, Heart, MapPin } from 'lucide-react';
 
 interface QuickAction {
   title: string;
   description: string;
-  icon: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   link: string;
   color: string;
   badge?: string;
@@ -15,7 +16,7 @@ export const QuickActions: React.FC = () => {
     {
       title: 'Order Food',
       description: 'Browse menu & place order',
-      icon: '🍽️',
+      icon: UtensilsCrossed,
       link: '/menu',
       color: 'from-primary-500 to-primary-600',
       badge: 'Popular'
@@ -23,38 +24,38 @@ export const QuickActions: React.FC = () => {
     {
       title: 'Book Table',
       description: 'Reserve your dining experience',
-      icon: '📅',
+      icon: Calendar,
       link: '/reservations',
-      color: 'from-green-500 to-green-600'
+      color: 'from-primary-500 to-primary-600'
     },
     {
       title: 'Book Room',
       description: 'Luxury accommodation',
-      icon: '🏨',
+      icon: Hotel,
       link: '/accommodation',
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-primary-500 to-primary-600'
     },
     {
       title: 'Quick Reorder',
       description: 'Repeat last order',
-      icon: '⚡',
-      link: '/dashboard/orders/reorder',
-      color: 'from-orange-500 to-orange-600',
+      icon: Zap,
+      link: '/dashboard/orders', // Points to orders list as no dedicated reorder page exists
+      color: 'from-primary-500 to-primary-600',
       badge: 'Fast'
     },
     {
       title: 'Favorites',
       description: 'Your saved items',
-      icon: '❤️',
+      icon: Heart,
       link: '/dashboard/favorites',
-      color: 'from-red-500 to-red-600'
+      color: 'from-primary-500 to-primary-600'
     },
     {
       title: 'Track Order',
       description: 'Live order status',
-      icon: '📍',
+      icon: MapPin,
       link: '/dashboard/orders',
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-primary-500 to-primary-600'
     }
   ];
 
@@ -74,15 +75,15 @@ export const QuickActions: React.FC = () => {
           <Link
             key={index}
             to={action.link}
-            className="group relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 border border-gray-200 dark:border-gray-600"
+            className="group relative bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 border border-gray-200 dark:border-gray-600"
           >
             {action.badge && (
-              <span className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full">
+              <span className="absolute -top-2 -right-2 bg-linear-to-r from-yellow-500 to-orange-500 text-white text-xs px-2 py-1 rounded-full">
                 {action.badge}
               </span>
             )}
-            <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${action.color} flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}>
-              <span className="text-white text-xl">{action.icon}</span>
+            <div className={`w-12 h-12 rounded-lg bg-linear-to-r ${action.color} flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}>
+              <action.icon className="text-white h-6 w-6" />
             </div>
             <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
               {action.title}

@@ -60,11 +60,11 @@ const CustomerDashboard: React.FC = () => {
       <Routes>
         <Route index element={<DashboardOverview />} />
         <Route path="orders" element={<CustomerOrders />} />
-        <Route path="orders/:id" element={<OrderDetails />} />
-        <Route path="orders/:id/track" element={<OrderTracking />} />
-        <Route path="orders/:id/success" element={<OrderSuccess />} />
+        <Route path="orders/:orderId" element={<OrderDetails />} />
+        <Route path="orders/:orderId/track" element={<OrderTracking />} />
+        <Route path="orders/:orderId/success" element={<OrderSuccess />} />
         <Route path="reservations" element={<CustomerReservations />} />
-        <Route path="reservations/:id" element={<ReservationDetails />} />
+        <Route path="reservations/:reservationId" element={<ReservationDetails />} />
         <Route path="room-bookings" element={<RoomBookingsPage />} />
         <Route path="reviews" element={<CustomerReviews />} />
         <Route path="profile" element={<CustomerProfile />} />

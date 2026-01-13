@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { XCircle, Package, UtensilsCrossed } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGetOrdersQuery, useCancelOrderMutation } from '../../features/customer/customerApi';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import type { Order, OrderItem } from '../../types/order';
 
 const OrdersPage: React.FC = () => {
@@ -62,7 +63,7 @@ const OrdersPage: React.FC = () => {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-500 text-6xl mb-4">❌</div>
+        <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
           Error Loading Orders
         </h2>
@@ -97,7 +98,7 @@ const OrdersPage: React.FC = () => {
             to="/menu"
             className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
-            <span className="mr-2">🍽️</span>
+            <UtensilsCrossed className="h-5 w-5 mr-2" />
             Order Food
           </Link>
         </div>
@@ -136,7 +137,7 @@ const OrdersPage: React.FC = () => {
         <div className="space-y-4">
           {orders.length === 0 ? (
             <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700">
-              <div className="text-6xl mb-4">📦</div>
+              <Package className="h-16 w-16 mx-auto mb-4 text-gray-400" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 No orders found
               </h3>
@@ -149,7 +150,7 @@ const OrdersPage: React.FC = () => {
                 to="/menu"
                 className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
               >
-                <span className="mr-2">🍽️</span>
+                <UtensilsCrossed className="h-5 w-5 mr-2" />
                 Browse Menu
               </Link>
             </div>
@@ -175,7 +176,7 @@ const OrdersPage: React.FC = () => {
                           </span>
                         </div>
                         <p className="text-gray-600 dark:text-gray-400 mt-1">
-                          {order.restaurant?.name || 'Unknown Restaurant'} • {format(new Date(order.createdAt), 'MMM dd, yyyy • hh:mm a')}
+                          {order.restaurant?.name || 'Unknown Restaurant'} • {order.createdAt ? format(parseISO(order.createdAt), 'MMM dd, yyyy • hh:mm a') : 'Date N/A'}
                         </p>
                       </div>
                       <div className="mt-3 md:mt-0">

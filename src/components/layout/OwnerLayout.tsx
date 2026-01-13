@@ -46,7 +46,7 @@ const OwnerLayout: React.FC<OwnerLayoutProps> = ({ children }) => {
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm font-bold">SB</span>
               </div>
               <span className="text-xl font-bold text-gray-900 dark:text-white">
@@ -81,7 +81,7 @@ const OwnerLayout: React.FC<OwnerLayoutProps> = ({ children }) => {
               {/* User Section */}
               <li className="mt-auto">
                 <div className="flex items-center gap-x-4 px-2 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700">
-                  <div className="relative h-8 w-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center">
+                  <div className="relative h-8 w-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
@@ -150,7 +150,7 @@ const OwnerLayout: React.FC<OwnerLayoutProps> = ({ children }) => {
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-gray-800 px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-linear-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center">
                         <span className="text-white text-sm font-bold">SB</span>
                       </div>
                       <span className="text-xl font-bold text-gray-900 dark:text-white">

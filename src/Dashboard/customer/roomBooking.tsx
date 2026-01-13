@@ -7,6 +7,7 @@ import {
 import { useAppSelector } from '../../app/hooks';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import type { RoomBooking } from '../../types/room';
+import { Hotel } from 'lucide-react';
 
 const RoomBookingsPage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -15,7 +16,7 @@ const RoomBookingsPage: React.FC = () => {
   const limit = 10;
 
   const { data: bookingsData, isLoading, refetch } = useGetRoomBookingsQuery({
-    userId: user?.id, // Filter by current user
+    userId: user?.id ? String(user.id) : undefined, // Filter by current user - convert to string
     page,
     limit,
     ...(statusFilter !== 'all' && { status: statusFilter }),
@@ -95,7 +96,7 @@ const RoomBookingsPage: React.FC = () => {
             to="/accommodation"
             className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
-            <span className="mr-2">🏨</span>
+            <Hotel className="h-5 w-5 mr-2" />
             Book Room
           </Link>
         </div>
@@ -134,7 +135,7 @@ const RoomBookingsPage: React.FC = () => {
         <div className="space-y-4">
           {bookings.length === 0 ? (
             <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700">
-              <div className="text-6xl mb-4">🏨</div>
+              <Hotel className="h-16 w-16 mx-auto mb-4 text-gray-400" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 No room bookings found
               </h3>
@@ -147,7 +148,7 @@ const RoomBookingsPage: React.FC = () => {
                 to="/accommodation"
                 className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
               >
-                <span className="mr-2">🏨</span>
+                <Hotel className="h-5 w-5 mr-2" />
                 Browse Rooms
               </Link>
             </div>
@@ -226,12 +227,10 @@ const RoomBookingsPage: React.FC = () => {
 
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex space-x-3">
-                      <Link
-                        to={`/dashboard/room-bookings/${booking.id}`}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
-                      >
+                      {/* Removed broken link to non-existent details page */}
+                      <span className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-400 rounded-lg text-sm font-medium cursor-default">
                         View Details
-                      </Link>
+                      </span>
                       {['PENDING', 'CONFIRMED'].includes(booking.status) && (
                         <button
                           onClick={() => handleCancelBooking(booking.id)}

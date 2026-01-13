@@ -5,6 +5,7 @@ import DeliveryQueue from '../../components/driver/DeliveryQueue';
 import EarningsDashboard from '../../components/driver/EarningsDashboard';
 import LocationTracker from '../../components/driver/LocationTracker';
 import AvailabilityManager from '../../components/driver/AvailabilityManager';
+import { BarChart3, HelpCircle, Truck, CheckCircle2, DollarSign, Star } from 'lucide-react';
 
 // Placeholder components for driver sections
 const Deliveries: React.FC = () => (
@@ -75,7 +76,7 @@ const Performance: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">📊</div>
+      <BarChart3 className="h-16 w-16 mx-auto mb-4 text-purple-600" />
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Performance Analytics
       </h3>
@@ -97,7 +98,7 @@ const Support: React.FC = () => (
       </div>
     </div>
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-8 text-center">
-      <div className="text-6xl mb-4">🆘</div>
+      <HelpCircle className="h-16 w-16 mx-auto mb-4 text-purple-600" />
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         Support Center
       </h3>
@@ -133,7 +134,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Deliveries</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">3</p>
             </div>
-            <div className="text-2xl">🚚</div>
+            <Truck className="h-8 w-8 text-purple-600" />
           </div>
         </div>
 
@@ -143,7 +144,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed Today</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">12</p>
             </div>
-            <div className="text-2xl">✅</div>
+            <CheckCircle2 className="h-8 w-8 text-green-600" />
           </div>
         </div>
 
@@ -153,7 +154,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Today's Earnings</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">KSh 2,450</p>
             </div>
-            <div className="text-2xl">💰</div>
+            <DollarSign className="h-8 w-8 text-purple-600" />
           </div>
         </div>
 
@@ -163,7 +164,7 @@ const DashboardOverview: React.FC = () => {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Driver Rating</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">4.8</p>
             </div>
-            <div className="text-2xl">⭐</div>
+            <Star className="h-8 w-8 text-yellow-500" />
           </div>
         </div>
       </div>

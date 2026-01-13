@@ -153,7 +153,7 @@ const RevenueChart: React.FC = () => {
                 {item.label}
               </div>
               <div
-                className="w-full bg-gradient-to-t from-green-500 to-green-600 rounded-t-lg transition-all duration-300 hover:from-green-600 hover:to-green-700"
+                className="w-full bg-linear-to-t from-green-500 to-green-600 rounded-t-lg transition-all duration-300 hover:from-green-600 hover:to-green-700"
                 style={{ 
                   height: `${(item.value / maxValue) * 100}%`,
                   maxHeight: '180px'

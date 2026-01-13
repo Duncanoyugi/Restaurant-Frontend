@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRestaurantMetrics } from '../../Dashboard/owner/hooks/useRestaurantMetrics';
+import { DollarSign, Package, Calendar, Users } from 'lucide-react';
 
 const RestaurantKPIs: React.FC = () => {
   const { metrics, loading } = useRestaurantMetrics();
@@ -24,7 +25,7 @@ const RestaurantKPIs: React.FC = () => {
       value: `KSh ${metrics.revenue.today.toLocaleString()}`,
       change: metrics.revenue.growth,
       subtitle: 'vs yesterday',
-      icon: '💰',
+      icon: DollarSign,
       color: 'text-green-600'
     },
     {
@@ -32,7 +33,7 @@ const RestaurantKPIs: React.FC = () => {
       value: metrics.orders.active.toString(),
       change: metrics.orders.trend,
       subtitle: 'in kitchen',
-      icon: '📦',
+      icon: Package,
       color: 'text-blue-600'
     },
     {
@@ -40,7 +41,7 @@ const RestaurantKPIs: React.FC = () => {
       value: metrics.reservations.today.toString(),
       change: metrics.reservations.occupancy,
       subtitle: 'table occupancy',
-      icon: '📅',
+      icon: Calendar,
       color: 'text-purple-600'
     },
     {
@@ -48,7 +49,7 @@ const RestaurantKPIs: React.FC = () => {
       value: `${metrics.staff.onDuty}/${metrics.staff.total}`,
       change: metrics.staff.efficiency,
       subtitle: 'staff efficiency',
-      icon: '👥',
+      icon: Users,
       color: 'text-orange-600'
     }
   ];
@@ -61,8 +62,8 @@ const RestaurantKPIs: React.FC = () => {
           className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow duration-200"
         >
           <div className="flex items-center justify-between mb-4">
-            <div className={`text-2xl ${kpi.color}`}>
-              {kpi.icon}
+            <div className={kpi.color}>
+              <kpi.icon className="h-8 w-8" />
             </div>
             <span className={`text-sm font-medium ${
               kpi.change >= 0 ? 'text-green-600' : 'text-red-600'

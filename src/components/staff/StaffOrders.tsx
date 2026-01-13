@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useGetMyRestaurantOrdersQuery, useUpdateOrderStatusMutation } from '../../features/orders/ordersApi';
 import { useAppSelector } from '../../app/hooks';
 import { useToast } from '../../contexts/ToastContext';
+import { Square, Package, Car, ClipboardList } from 'lucide-react';
 
 interface StaffOrdersProps {
   restaurantId: string;
@@ -81,12 +82,12 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
     );
   }
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type: string): React.ComponentType<React.SVGProps<SVGSVGElement>> => {
     switch (type) {
-      case 'dine_in': return '🪑';
-      case 'takeaway': return '🥡';
-      case 'delivery': return '🚗';
-      default: return '📋';
+      case 'dine_in': return Square;
+      case 'takeaway': return Package;
+      case 'delivery': return Car;
+      default: return ClipboardList;
     }
   };
 
@@ -241,7 +242,10 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center">
-                      <span className="mr-2">{getTypeIcon(order.orderType || 'DINE_IN')}</span>
+                      {(() => {
+                        const IconComponent = getTypeIcon(order.orderType || 'DINE_IN');
+                        return <IconComponent className="h-4 w-4 mr-2" />;
+                      })()}
                       <span className="capitalize">{(order.orderType || 'DINE_IN').replace('_', ' ').toLowerCase()}</span>
                     </span>
                   </td>
@@ -298,7 +302,7 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
 
       {filteredOrders.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow">
-          <div className="text-gray-400 text-6xl mb-4">📋</div>
+          <ClipboardList className="h-16 w-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-600 mb-2">No Orders Found</h3>
           <p className="text-gray-500">No orders match your current filter</p>
         </div>
@@ -312,7 +316,7 @@ const OrderCard: React.FC<{
   order: any;
   onUpdateStatus: (id: string, order: any, status: string) => void;
   onAssign: (id: string) => void;
-  getTypeIcon: (type: string) => string;
+  getTypeIcon: (type: string) => React.ComponentType<React.SVGProps<SVGSVGElement>>;
   getStatusColor: (status: string) => string;
   calculateElapsedTime: (createdAt: string) => number;
 }> = ({ order, onUpdateStatus, getTypeIcon, getStatusColor, calculateElapsedTime }) => {
@@ -329,7 +333,10 @@ const OrderCard: React.FC<{
           <div>
             <div className="flex items-center space-x-2">
               <span className="font-bold text-lg">#{order.orderNumber || order.id}</span>
-              <span className="text-gray-600">{getTypeIcon(orderType)}</span>
+              {(() => {
+                const IconComponent = getTypeIcon(orderType);
+                return <IconComponent className="h-4 w-4 text-gray-600" />;
+              })()}
             </div>
             <div className="text-sm text-gray-600 mt-1">{customerName}</div>
             {order.table?.number && (

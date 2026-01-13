@@ -7,6 +7,7 @@ import {
 } from '../../features/customer/customerApi';
 import { format, parseISO } from 'date-fns';
 import type { Reservation } from '../../types/reservation';
+import { Calendar } from 'lucide-react';
 
 const ReservationsPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -96,7 +97,7 @@ const ReservationsPage: React.FC = () => {
             to="/reservations"
             className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
-            <span className="mr-2">📅</span>
+            <Calendar className="h-5 w-5 mr-2" />
             Book Table
           </Link>
         </div>
@@ -135,7 +136,7 @@ const ReservationsPage: React.FC = () => {
         <div className="space-y-4">
           {reservations.length === 0 ? (
             <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700">
-              <div className="text-6xl mb-4">📅</div>
+              <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 No reservations found
               </h3>
@@ -148,7 +149,7 @@ const ReservationsPage: React.FC = () => {
                 to="/reservations"
                 className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
               >
-                <span className="mr-2">📅</span>
+                <Calendar className="h-5 w-5 mr-2" />
                 Make a Reservation
               </Link>
             </div>

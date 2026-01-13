@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useUpdateProfileMutation, useGetLoyaltyInfoQuery } from '../../features/customer/customerApi';
 import { useAppSelector } from '../../app/hooks';
+import { validatePhone } from '../../utils/validators';
+import { useToast } from '../../contexts/ToastContext';
+import { Trophy } from 'lucide-react';
 
 // Define types for user profile
 interface UserProfile {
@@ -26,6 +29,7 @@ const ProfilePage: React.FC = () => {
   const [localUser, setLocalUser] = useState<UserProfile | null>(null);
   const { data: loyaltyInfo, isLoading: loyaltyLoading } = useGetLoyaltyInfoQuery();
   const [updateProfile] = useUpdateProfileMutation();
+  const { showToast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,6 +39,7 @@ const ProfilePage: React.FC = () => {
     dietaryPreferences: [] as string[],
     allergies: [] as string[],
   });
+  const [formErrors, setFormErrors] = useState<{ phone?: string }>({});
 
   // Load user from localStorage on component mount
   useEffect(() => {
@@ -114,6 +119,16 @@ const ProfilePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate phone number
+    if (formData.phone && !validatePhone(formData.phone)) {
+      setFormErrors({ phone: 'Please enter a valid phone number' });
+      showToast('Please enter a valid phone number', 'error');
+      return;
+    }
+    
+    setFormErrors({});
+    
     try {
       // If you still want to update on backend
       await updateProfile(formData).unwrap();
@@ -212,12 +227,12 @@ const ProfilePage: React.FC = () => {
         </div>
 
         {/* Loyalty Card */}
-        <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-2xl p-6 text-white">
+        <div className="bg-linear-to-r from-primary-600 to-secondary-600 rounded-2xl p-6 text-white">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <div>
               <h2 className="text-xl font-bold mb-2">Loyalty Program</h2>
               <div className="flex items-center space-x-2 mb-1">
-                <span className="text-2xl">🏆</span>
+                <Trophy className="h-6 w-6" />
                 <span className="text-lg font-semibold">{loyaltyInfo?.tier || 'Silver'} Member</span>
               </div>
               <p className="opacity-90">
@@ -278,12 +293,18 @@ const ProfilePage: React.FC = () => {
                       Phone Number
                     </label>
                     {isEditing ? (
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
+                      <>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => {
+                            setFormData({ ...formData, phone: e.target.value });
+                            if (formErrors.phone) setFormErrors({});
+                          }}
+                          className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${formErrors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                        />
+                        {formErrors.phone && <p className="mt-1 text-xs text-red-500">{formErrors.phone}</p>}
+                      </>
                     ) : (
                       <p className="text-gray-900 dark:text-white font-medium">{localUser.phone || 'Not provided'}</p>
                     )}

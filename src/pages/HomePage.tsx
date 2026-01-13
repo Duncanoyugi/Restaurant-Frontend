@@ -56,7 +56,7 @@ const RestaurantStaffDashboard: React.FC = () => (
     <p className="mt-2 text-gray-600 dark:text-gray-400">Handle orders and reservations</p>
     <div className="mt-4 p-4 bg-green-100 dark:bg-green-900 rounded-lg">
       <p className="text-green-800 dark:text-green-200">
-        👨‍🍳 Staff dashboard is under construction. Full features coming soon.
+        Staff dashboard is under construction. Full features coming soon.
       </p>
     </div>
   </div>

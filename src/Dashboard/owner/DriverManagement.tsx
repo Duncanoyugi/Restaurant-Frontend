@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRestaurant } from '../../contexts/RestaurantContext';
 import { UserRoleEnum } from '../../features/auth/authSlice';
 import { PlusCircle, Edit, Trash2, UserPlus, Users, Search, Car, Truck } from 'lucide-react';
+import { validatePhone, validateEmail } from '../../utils/validators';
 
 interface Driver {
   id: number;
@@ -30,6 +31,7 @@ const DriverManagement: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editDriver, setEditDriver] = useState<Driver | null>(null);
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
   // Form state for creating/editing drivers
   const [formData, setFormData] = useState({
@@ -73,16 +75,47 @@ const DriverManagement: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error when user types
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!formData.name.trim()) errors.name = 'Name is required';
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!validateEmail(formData.email)) {
+      errors.email = 'Invalid email format';
+    }
+    if (!editDriver && !formData.password) {
+      errors.password = 'Password is required';
+    } else if (!editDriver && formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    if (formData.phone && !validatePhone(formData.phone)) {
+      errors.phone = 'Invalid phone number format';
+    }
+    if (!formData.licenseNumber.trim()) errors.licenseNumber = 'License number is required';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
     if (!selectedRestaurant) {
       setError('No restaurant selected');
       return;
     }
-
+    
     try {
       setLoading(true);
       setError(null);
@@ -127,6 +160,7 @@ const DriverManagement: React.FC = () => {
       // Reset form
       setShowCreateForm(false);
       setEditDriver(null);
+      setFormErrors({});
       setFormData({
         name: '',
         email: '',
@@ -146,6 +180,7 @@ const DriverManagement: React.FC = () => {
 
   const handleEdit = (driver: Driver) => {
     setEditDriver(driver);
+    setFormErrors({});
     setFormData({
       name: driver.name,
       email: driver.email,
@@ -215,6 +250,7 @@ const DriverManagement: React.FC = () => {
           onClick={() => {
             setShowCreateForm(!showCreateForm);
             setEditDriver(null);
+            setFormErrors({});
             setFormData({
               name: '',
               email: '',
@@ -224,7 +260,7 @@ const DriverManagement: React.FC = () => {
               vehicleType: 'Car'
             });
           }}
-          className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+          className="bg-linear-to-r from-primary-600 to-secondary-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
         >
           <UserPlus className="w-4 h-4" />
           {showCreateForm ? 'Cancel' : 'Add Driver'}
@@ -254,8 +290,9 @@ const DriverManagement: React.FC = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white ${formErrors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
+                {formErrors.name && <p className="mt-1 text-xs text-red-500">{formErrors.name}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
@@ -265,8 +302,9 @@ const DriverManagement: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white ${formErrors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
+                {formErrors.email && <p className="mt-1 text-xs text-red-500">{formErrors.email}</p>}
               </div>
               {!editDriver && (
                 <div>
@@ -278,8 +316,9 @@ const DriverManagement: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     minLength={6}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white ${formErrors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                   />
+                  {formErrors.password && <p className="mt-1 text-xs text-red-500">{formErrors.password}</p>}
                 </div>
               )}
               <div>
@@ -289,8 +328,9 @@ const DriverManagement: React.FC = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white ${formErrors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
+                {formErrors.phone && <p className="mt-1 text-xs text-red-500">{formErrors.phone}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">License Number</label>
@@ -300,8 +340,9 @@ const DriverManagement: React.FC = () => {
                   value={formData.licenseNumber}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white ${formErrors.licenseNumber ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
+                {formErrors.licenseNumber && <p className="mt-1 text-xs text-red-500">{formErrors.licenseNumber}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Vehicle Type</label>
@@ -323,7 +364,7 @@ const DriverManagement: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-linear-to-r from-primary-600 to-secondary-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center gap-2">

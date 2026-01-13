@@ -4,6 +4,7 @@ import { AnimatedSection } from '../components/ui/AnimatedSection';
 import Input from '../components/ui/input';
 import Button from '../components/ui/Button';
 import { useToast } from '../contexts/ToastContext';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -37,25 +38,25 @@ const ContactPage: React.FC = () => {
 
   const contactInfo = [
     {
-      icon: '📍',
+      icon: MapPin,
       title: 'Visit Us',
       details: ['123 Gourmet Street', 'Food City, FC 12345'],
       description: 'Stop by for a memorable dining experience'
     },
     {
-      icon: '📞',
+      icon: Phone,
       title: 'Call Us',
       details: ['+1 (555) 123-4567', '+1 (555) 123-4568'],
       description: 'Available 24/7 for reservations and inquiries'
     },
     {
-      icon: '✉️',
+      icon: Mail,
       title: 'Email Us',
       details: ['hello@savorybites.com', 'reservations@savorybites.com'],
       description: 'We typically respond within 2 hours'
     },
     {
-      icon: '🕒',
+      icon: Clock,
       title: 'Opening Hours',
       details: ['Monday - Sunday:', '11:00 AM - 11:00 PM'],
       description: 'Kitchen closes at 10:30 PM'
@@ -89,7 +90,7 @@ const ContactPage: React.FC = () => {
     <LandingLayout>
       <div className="pt-20 min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-900">
+        <section className="relative py-20 bg-linear-to-br from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-900">
           <div className="container mx-auto px-4">
             <AnimatedSection direction="up">
               <div className="text-center max-w-4xl mx-auto">
@@ -181,7 +182,7 @@ const ContactPage: React.FC = () => {
                       className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft hover:shadow-strong transition-all duration-300"
                     >
                       <div className="flex items-start space-x-4">
-                        <div className="text-2xl">{info.icon}</div>
+                        <info.icon className="h-6 w-6 text-primary-600 mt-1" />
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                             {info.title}

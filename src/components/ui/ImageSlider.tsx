@@ -71,7 +71,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({
                   {slide.description}
                 </p>
                 {slide.ctaText && slide.ctaLink && (
-                  <button className="bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white px-8 py-4 rounded-lg text-lg font-semibold shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <button className="bg-linear-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white px-8 py-4 rounded-lg text-lg font-semibold shadow-2xl transform hover:scale-105 transition-all duration-300">
                     {slide.ctaText}
                   </button>
                 )}
