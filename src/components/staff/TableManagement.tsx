@@ -117,11 +117,10 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
             <button
               key={status}
               onClick={() => setFilter(status as any)}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                filter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium ${filter === status
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
               <span className="ml-2 px-2 py-1 text-xs rounded-full bg-white/30">
@@ -140,16 +139,16 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
             {/* Simulated restaurant floor layout */}
             <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
               {filteredTables.map((table) => (
-                <TableCard 
-                  key={table.id} 
-                  table={table} 
+                <TableCard
+                  key={table.id}
+                  table={table}
                   onUpdateStatus={updateTableStatus}
                   getStatusColor={getStatusColor}
                   getStatusIcon={getStatusIcon}
                 />
               ))}
             </div>
-            
+
             {/* Legend */}
             <div className="absolute bottom-4 right-4 bg-white p-4 rounded-lg shadow border border-gray-200">
               <h4 className="font-medium mb-2">Legend</h4>
@@ -177,9 +176,9 @@ const TableManagement: React.FC<TableManagementProps> = ({ }) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTables.map((table) => (
-            <TableCard 
-              key={table.id} 
-              table={table} 
+            <TableCard
+              key={table.id}
+              table={table}
               onUpdateStatus={updateTableStatus}
               getStatusColor={getStatusColor}
               getStatusIcon={getStatusIcon}
@@ -237,12 +236,11 @@ const TableCard: React.FC<{
   const [showActions, setShowActions] = useState(false);
 
   return (
-    <div className={`relative rounded-lg border-2 p-4 transition-all ${
-      table.status === TableStatusEnum.AVAILABLE ? 'border-green-300 bg-green-50' :
+    <div className={`relative rounded-lg border-2 p-4 transition-all ${table.status === TableStatusEnum.AVAILABLE ? 'border-green-300 bg-green-50' :
       table.status === TableStatusEnum.OCCUPIED ? 'border-red-300 bg-red-50' :
-      table.status === TableStatusEnum.RESERVED ? 'border-blue-300 bg-blue-50' :
-      'border-yellow-300 bg-yellow-50'
-    }`}>
+        table.status === TableStatusEnum.RESERVED ? 'border-blue-300 bg-blue-50' :
+          'border-yellow-300 bg-yellow-50'
+      }`}>
       <div className="flex justify-between items-start mb-3">
         <div>
           <div className="font-bold text-lg">Table {table.tableNumber}</div>
@@ -283,13 +281,13 @@ const TableCard: React.FC<{
           {table.status === TableStatusEnum.AVAILABLE && (
             <>
               <button
-                onClick={() => onUpdateStatus(table.id, TableStatusEnum.OCCUPIED, 'Customer seated')}
+                onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.OCCUPIED, 'Customer seated')}
                 className="w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm"
               >
                 Mark as Occupied
               </button>
               <button
-                onClick={() => onUpdateStatus(table.id, TableStatusEnum.RESERVED)}
+                onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.RESERVED)}
                 className="w-full px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-sm"
               >
                 Mark as Reserved
@@ -299,13 +297,13 @@ const TableCard: React.FC<{
           {table.status === TableStatusEnum.OCCUPIED && (
             <>
               <button
-                onClick={() => onUpdateStatus(table.id, TableStatusEnum.OUT_OF_SERVICE, 'Customer left')}
+                onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.OUT_OF_SERVICE, 'Customer left')}
                 className="w-full px-3 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 text-sm"
               >
                 Mark for Cleaning
               </button>
               <button
-                onClick={() => onUpdateStatus(table.id, TableStatusEnum.AVAILABLE, 'Cleared manually')}
+                onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.AVAILABLE, 'Cleared manually')}
                 className="w-full px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
               >
                 Mark as Available
@@ -315,13 +313,13 @@ const TableCard: React.FC<{
           {table.status === TableStatusEnum.RESERVED && (
             <>
               <button
-                onClick={() => onUpdateStatus(table.id, TableStatusEnum.OCCUPIED, 'Reservation arrived')}
+                onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.OCCUPIED, 'Reservation arrived')}
                 className="w-full px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm"
               >
                 Customer Arrived
               </button>
               <button
-                onClick={() => onUpdateStatus(table.id, TableStatusEnum.AVAILABLE, 'Reservation cancelled')}
+                onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.AVAILABLE, 'Reservation cancelled')}
                 className="w-full px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
               >
                 Cancel Reservation
@@ -330,7 +328,7 @@ const TableCard: React.FC<{
           )}
           {table.status === TableStatusEnum.OUT_OF_SERVICE && (
             <button
-              onClick={() => onUpdateStatus(table.id, TableStatusEnum.AVAILABLE, 'Cleaning completed')}
+              onClick={() => onUpdateStatus(String(table.id), TableStatusEnum.AVAILABLE, 'Cleaning completed')}
               className="w-full px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
             >
               Mark as Clean & Available

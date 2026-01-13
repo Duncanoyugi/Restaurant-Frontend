@@ -6,6 +6,7 @@ import { format, parseISO } from 'date-fns';
 import type { Order, OrderItem } from '../../types/order';
 import { useToast } from '../../contexts/ToastContext';
 import { XCircle } from 'lucide-react';
+import DashboardLayout from '../../components/layout/DashboardLayout';
 
 const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -105,7 +106,7 @@ const OrderDetails: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Order Information
         </h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Restaurant</p>
@@ -140,7 +141,7 @@ const OrderDetails: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Order Items
         </h2>
-        
+
         <div className="space-y-4">
           {orderData.orderItems?.map((item: OrderItem, index: number) => (
             <div key={index} className="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700 last:border-0">

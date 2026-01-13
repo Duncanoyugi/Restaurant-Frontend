@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Package, Star, Calendar, CreditCard } from 'lucide-react';
 
 interface Activity {

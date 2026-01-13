@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAppSelector } from '../../app/hooks';
 import CustomerDashboard from '../../Dashboard/customer/CustomerDashboard';
 import AdminDashboard from '../../Dashboard/admin/AdminDashboard';
@@ -23,7 +23,7 @@ const RoleBasedDashboard: React.FC = () => {
 
   // Extract and normalize role name
   const roleName = extractRoleName(user.role);
-  
+
   // Directly render the appropriate dashboard based on role
   if (roleName === UserRoleEnum.DRIVER) {
     return <DriverDashboard />;

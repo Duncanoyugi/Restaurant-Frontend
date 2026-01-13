@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  useGetReservationsQuery, 
+import {
+  useGetReservationsQuery,
   useCancelReservationMutation,
-  useUpdateReservationMutation 
+  useUpdateReservationMutation
 } from '../../features/customer/customerApi';
 import { format, parseISO } from 'date-fns';
 import type { Reservation } from '../../types/reservation';
@@ -85,169 +85,169 @@ const ReservationsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Reservations</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Manage your restaurant reservations
-            </p>
-          </div>
-          <Link
-            to="/reservations"
-            className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Reservations</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Manage your restaurant reservations
+          </p>
+        </div>
+        <Link
+          to="/reservations"
+          className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          <Calendar className="h-5 w-5 mr-2" />
+          Book Table
+        </Link>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-soft border border-gray-100 dark:border-gray-700">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'all' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
           >
-            <Calendar className="h-5 w-5 mr-2" />
-            Book Table
-          </Link>
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter('CONFIRMED')}
+            className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'CONFIRMED' ? 'bg-green-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+          >
+            Confirmed
+          </button>
+          <button
+            onClick={() => setStatusFilter('PENDING')}
+            className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'PENDING' ? 'bg-yellow-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+          >
+            Pending
+          </button>
+          <button
+            onClick={() => setStatusFilter('COMPLETED')}
+            className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'COMPLETED' ? 'bg-gray-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+          >
+            Completed
+          </button>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-soft border border-gray-100 dark:border-gray-700">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setStatusFilter('all')}
-              className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'all' ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+      {/* Reservations List */}
+      <div className="space-y-4">
+        {reservations.length === 0 ? (
+          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700">
+            <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              No reservations found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              {statusFilter === 'all'
+                ? "You haven't made any reservations yet."
+                : `No ${statusFilter.toLowerCase()} reservations found.`}
+            </p>
+            <Link
+              to="/reservations"
+              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
-              All
-            </button>
-            <button
-              onClick={() => setStatusFilter('CONFIRMED')}
-              className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'CONFIRMED' ? 'bg-green-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-            >
-              Confirmed
-            </button>
-            <button
-              onClick={() => setStatusFilter('PENDING')}
-              className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'PENDING' ? 'bg-yellow-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-            >
-              Pending
-            </button>
-            <button
-              onClick={() => setStatusFilter('COMPLETED')}
-              className={`px-4 py-2 rounded-lg font-medium ${statusFilter === 'COMPLETED' ? 'bg-gray-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
-            >
-              Completed
-            </button>
+              <Calendar className="h-5 w-5 mr-2" />
+              Make a Reservation
+            </Link>
           </div>
-        </div>
-
-        {/* Reservations List */}
-        <div className="space-y-4">
-          {reservations.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700">
-              <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                No reservations found
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {statusFilter === 'all' 
-                  ? "You haven't made any reservations yet."
-                  : `No ${statusFilter.toLowerCase()} reservations found.`}
-              </p>
-              <Link
-                to="/reservations"
-                className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-              >
-                <Calendar className="h-5 w-5 mr-2" />
-                Make a Reservation
-              </Link>
-            </div>
-          ) : (
-            reservations.map((reservation: Reservation) => (
-              <div
-                key={reservation.id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow"
-              >
-                <div className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
-                    <div>
-                      <div className="flex items-center space-x-3">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                          Reservation #{reservation.reservationNumber}
-                        </h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.status)}`}>
-                          {reservation.status}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 mt-1">
-                        {reservation.restaurant?.name || 'Restaurant'}
-                      </p>
-                    </div>
-                    <div className="mt-3 md:mt-0">
-                      <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {formatDateTime(reservation.reservationDate, reservation.reservationTime)}
+        ) : (
+          reservations.map((reservation: Reservation) => (
+            <div
+              key={reservation.id}
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow"
+            >
+              <div className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                  <div>
+                    <div className="flex items-center space-x-3">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Reservation #{reservation.reservationNumber}
+                      </h3>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.status)}`}>
+                        {reservation.status}
                       </span>
                     </div>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1">
+                      {reservation.restaurant?.name || 'Restaurant'}
+                    </p>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Guests</p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {reservation.guestCount} people
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Type</p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {reservation.reservationType?.replace('_', ' ') || 'Standard'}
-                      </p>
-                    </div>
-                    {reservation.table?.tableNumber && (
-                      <div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Table</p>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          Table #{reservation.table.tableNumber}
-                        </p>
-                      </div>
-                    )}
+                  <div className="mt-3 md:mt-0">
+                    <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {formatDateTime(reservation.reservationDate, reservation.reservationTime)}
+                    </span>
                   </div>
+                </div>
 
-                  {reservation.specialRequests && (
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Special Requests</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Guests</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {reservation.guestCount} people
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Type</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {reservation.reservationType?.replace('_', ' ') || 'Standard'}
+                    </p>
+                  </div>
+                  {reservation.table?.tableNumber && (
+                    <div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Table</p>
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {reservation.specialRequests}
+                        Table #{reservation.table.tableNumber}
                       </p>
                     </div>
                   )}
+                </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex space-x-3">
-                      <Link
-                        to={`/dashboard/reservations/${reservation.id}`}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
+                {reservation.specialRequest && (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Special Requests</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {reservation.specialRequest}
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex space-x-3">
+                    <Link
+                      to={`/dashboard/reservations/${reservation.id}`}
+                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
+                    >
+                      View Details
+                    </Link>
+                    {reservation.status === 'PENDING' && (
+                      <button
+                        onClick={() => handleModifyReservation(String(reservation.id))}
+                        className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm font-medium"
                       >
-                        View Details
-                      </Link>
-                      {reservation.status === 'PENDING' && (
-                        <button
-                          onClick={() => handleModifyReservation(reservation.id)}
-                          className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm font-medium"
-                        >
-                          Modify
-                        </button>
-                      )}
-                      {['PENDING', 'CONFIRMED'].includes(reservation.status) && (
-                        <button
-                          onClick={() => handleCancelReservation(reservation.id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
-                        >
-                          Cancel
-                        </button>
-                      )}
-                    </div>
-                    <div className="mt-3 sm:mt-0 text-sm text-gray-600 dark:text-gray-400">
-                      Booked on {format(parseISO(reservation.createdAt), 'MMM dd, yyyy')}
-                    </div>
+                        Modify
+                      </button>
+                    )}
+                    {['PENDING', 'CONFIRMED'].includes(reservation.status) && (
+                      <button
+                        onClick={() => handleCancelReservation(String(reservation.id))}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                  <div className="mt-3 sm:mt-0 text-sm text-gray-600 dark:text-gray-400">
+                    Booked on {format(parseISO(reservation.createdAt), 'MMM dd, yyyy')}
                   </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            </div>
+          ))
+        )}
       </div>
+    </div>
   );
 };
 

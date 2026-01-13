@@ -28,11 +28,11 @@ export const PaymentType = {
 export type PaymentType = typeof PaymentType[keyof typeof PaymentType];
 
 export interface Payment {
-  id: number;
-  userId: number;
-  orderId?: number;
-  reservationId?: number;
-  roomBookingId?: number;
+  id: number | string;
+  userId: number | string;
+  orderId?: number | string;
+  reservationId?: number | string;
+  roomBookingId?: number | string;
   amount: number;
   currency: string;
   status: PaymentStatus;
@@ -68,10 +68,10 @@ export interface Invoice {
 }
 
 export interface CreatePaymentRequest {
-  userId: number;
-  orderId?: number;
-  reservationId?: number;
-  roomBookingId?: number;
+  userId: number | string;
+  orderId?: number | string;
+  reservationId?: number | string;
+  roomBookingId?: number | string;
   amount: number;
   currency?: string;
   method: PaymentMethod;

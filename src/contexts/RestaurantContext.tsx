@@ -1,8 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
-import { useAppSelector } from '../app/hooks';
-import { useNavigate } from 'react-router-dom';
-import { UserRoleEnum } from '../features/auth/authSlice';
 import { useGetAllRestaurantsQuery } from '../features/restaurants/unifiedRestaurantApi';
 
 import type { Restaurant } from '../types/restaurant';
@@ -22,8 +19,6 @@ interface RestaurantContextType {
 const RestaurantContext = createContext<RestaurantContextType | undefined>(undefined);
 
 export const RestaurantProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
-  const navigate = useNavigate();
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(() => {
     const saved = localStorage.getItem('selectedRestaurant');
     return saved ? JSON.parse(saved) : null;

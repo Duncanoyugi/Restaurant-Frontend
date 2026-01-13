@@ -22,7 +22,7 @@ export const reservationsApi = baseApi.injectEndpoints({
     // =========================================================================
     // TABLE ENDPOINTS
     // =========================================================================
-    
+
     // Create a new restaurant table (Admin & Restaurant Owner only)
     createTable: builder.mutation<Table, CreateTableDto>({
       query: (data) => ({
@@ -32,19 +32,19 @@ export const reservationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Tables'],
     }),
-    
+
     // Get all tables with filtering
     getAllTables: builder.query<TablePaginatedResponse<Table>, TableSearchDto | void>({
       query: (searchDto = {}) => {
         const params = new URLSearchParams();
-        
-        if (searchDto?.restaurantId) params.append('restaurantId', searchDto.restaurantId);
+
+        if (searchDto?.restaurantId) params.append('restaurantId', String(searchDto.restaurantId));
         if (searchDto?.minCapacity !== undefined) params.append('minCapacity', searchDto.minCapacity.toString());
         if (searchDto?.location) params.append('location', searchDto.location);
         if (searchDto?.status) params.append('status', searchDto.status);
         if (searchDto?.page) params.append('page', searchDto.page.toString());
         if (searchDto?.limit) params.append('limit', searchDto.limit.toString());
-        
+
         const queryString = params.toString();
         return {
           url: `reservations/tables${queryString ? `?${queryString}` : ''}`,
@@ -53,9 +53,9 @@ export const reservationsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: 'Tables' as const, id })),
-              { type: 'Tables', id: 'LIST' },
-            ]
+            ...result.data.map(({ id }: { id: string | number }) => ({ type: 'Tables' as const, id: String(id) })),
+            { type: 'Tables', id: 'LIST' },
+          ]
           : [{ type: 'Tables', id: 'LIST' }],
       transformResponse: (response: any) => {
         if (Array.isArray(response)) {
@@ -76,13 +76,13 @@ export const reservationsApi = baseApi.injectEndpoints({
         };
       },
     }),
-    
+
     // Get table by ID
     getTableById: builder.query<Table, string>({
       query: (id) => `reservations/tables/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Tables', id }],
     }),
-    
+
     // Update table by ID (Admin & Restaurant Owner only)
     updateTable: builder.mutation<Table, { id: string; data: UpdateTableDto }>({
       query: ({ id, data }) => ({
@@ -95,7 +95,7 @@ export const reservationsApi = baseApi.injectEndpoints({
         { type: 'Tables', id: 'LIST' },
       ],
     }),
-    
+
     // Delete table by ID (Admin & Restaurant Owner only)
     deleteTable: builder.mutation<void, string>({
       query: (id) => ({
@@ -107,11 +107,11 @@ export const reservationsApi = baseApi.injectEndpoints({
         { type: 'Tables', id: 'LIST' },
       ],
     }),
-    
+
     // =========================================================================
     // RESERVATION ENDPOINTS
     // =========================================================================
-    
+
     // Create a new reservation
     createReservation: builder.mutation<Reservation, CreateReservationDto>({
       query: (data) => ({
@@ -121,21 +121,21 @@ export const reservationsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Reservations', 'MyReservations'],
     }),
-    
+
     // Get all reservations with filtering (Admin, Restaurant Owner & Staff only)
     getAllReservations: builder.query<ReservationPaginatedResponse<Reservation>, ReservationSearchDto | void>({
       query: (searchDto = {}) => {
         const params = new URLSearchParams();
-        
-        if (searchDto?.restaurantId) params.append('restaurantId', searchDto.restaurantId);
-        if (searchDto?.userId) params.append('userId', searchDto.userId);
-        if (searchDto?.tableId) params.append('tableId', searchDto.tableId);
+
+        if (searchDto?.restaurantId) params.append('restaurantId', String(searchDto.restaurantId));
+        if (searchDto?.userId) params.append('userId', String(searchDto.userId));
+        if (searchDto?.tableId) params.append('tableId', String(searchDto.tableId));
         if (searchDto?.startDate) params.append('startDate', searchDto.startDate);
         if (searchDto?.endDate) params.append('endDate', searchDto.endDate);
         if (searchDto?.status) params.append('status', searchDto.status);
         if (searchDto?.page) params.append('page', searchDto.page.toString());
         if (searchDto?.limit) params.append('limit', searchDto.limit.toString());
-        
+
         const queryString = params.toString();
         return {
           url: `reservations${queryString ? `?${queryString}` : ''}`,
@@ -144,9 +144,9 @@ export const reservationsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.data.map(({ id }: { id: string }) => ({ type: 'Reservations' as const, id })),
-              { type: 'Reservations', id: 'LIST' },
-            ]
+            ...result.data.map(({ id }: { id: string | number }) => ({ type: 'Reservations' as const, id: String(id) })),
+            { type: 'Reservations', id: 'LIST' },
+          ]
           : [{ type: 'Reservations', id: 'LIST' }],
       transformResponse: (response: any) => {
         if (Array.isArray(response)) {
@@ -167,19 +167,19 @@ export const reservationsApi = baseApi.injectEndpoints({
         };
       },
     }),
-    
+
     // Get reservation by ID
     getReservationById: builder.query<Reservation, string>({
       query: (id) => `reservations/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Reservations', id }],
     }),
-    
+
     // Get reservation by reservation number
     getReservationByNumber: builder.query<Reservation, string>({
       query: (reservationNumber) => `reservations/number/${reservationNumber}`,
       providesTags: (_result, _error, reservationNumber) => [{ type: 'Reservations', id: reservationNumber }],
     }),
-    
+
     // Update reservation by ID
     updateReservation: builder.mutation<Reservation, { id: string; data: UpdateReservationDto }>({
       query: ({ id, data }) => ({
@@ -193,7 +193,7 @@ export const reservationsApi = baseApi.injectEndpoints({
         'MyReservations',
       ],
     }),
-    
+
     // Update reservation status (Admin, Restaurant Owner & Staff only)
     updateReservationStatus: builder.mutation<Reservation, { id: string; data: ReservationStatusDto }>({
       query: ({ id, data }) => ({
@@ -207,7 +207,7 @@ export const reservationsApi = baseApi.injectEndpoints({
         'MyReservations',
       ],
     }),
-    
+
     // Cancel reservation
     cancelReservation: builder.mutation<Reservation, { id: string; performedBy?: string }>({
       query: ({ id, performedBy }) => ({
@@ -221,11 +221,11 @@ export const reservationsApi = baseApi.injectEndpoints({
         'MyReservations',
       ],
     }),
-    
+
     // =========================================================================
     // AVAILABILITY ENDPOINTS
     // =========================================================================
-    
+
     // Check table availability
     checkAvailability: builder.query<AvailabilityResponse, AvailabilityCheckDto>({
       query: (availabilityDto) => ({
@@ -234,7 +234,7 @@ export const reservationsApi = baseApi.injectEndpoints({
         body: availabilityDto,
       }),
     }),
-    
+
     // Find available tables for given criteria
     findAvailableTables: builder.query<Table[], TableAvailabilityDto>({
       query: (availabilityDto) => ({
@@ -243,18 +243,18 @@ export const reservationsApi = baseApi.injectEndpoints({
         body: availabilityDto,
       }),
     }),
-    
+
     // =========================================================================
     // ANALYTICS ENDPOINTS
     // =========================================================================
-    
+
     // Get reservation statistics for restaurant (Admin, Restaurant Owner & Staff only)
     getReservationStats: builder.query<ReservationStats, { restaurantId: string; startDate: string; endDate: string }>({
       query: ({ restaurantId, startDate, endDate }) => {
         const params = new URLSearchParams();
         params.append('startDate', startDate);
         params.append('endDate', endDate);
-        
+
         return {
           url: `reservations/restaurant/${restaurantId}/stats?${params.toString()}`,
         };
@@ -263,13 +263,13 @@ export const reservationsApi = baseApi.injectEndpoints({
         { type: 'ReservationStats', id: restaurantId },
       ],
     }),
-    
+
     // Get upcoming reservations for restaurant (Admin, Restaurant Owner & Staff only)
     getUpcomingReservations: builder.query<Reservation[], { restaurantId: string; hours?: number }>({
       query: ({ restaurantId, hours = 24 }) => {
         const params = new URLSearchParams();
         params.append('hours', hours.toString());
-        
+
         return {
           url: `reservations/restaurant/${restaurantId}/upcoming?${params.toString()}`,
         };
@@ -278,13 +278,13 @@ export const reservationsApi = baseApi.injectEndpoints({
         { type: 'UpcomingReservations', id: restaurantId },
       ],
     }),
-    
+
     // Get daily reservations for restaurant (Admin, Restaurant Owner & Staff only)
     getDailyReservations: builder.query<Reservation[], { restaurantId: string; date: string }>({
       query: ({ restaurantId, date }) => {
         const params = new URLSearchParams();
         params.append('date', date);
-        
+
         return {
           url: `reservations/restaurant/${restaurantId}/daily?${params.toString()}`,
         };
@@ -293,23 +293,23 @@ export const reservationsApi = baseApi.injectEndpoints({
         { type: 'DailyReservations', id: `${restaurantId}-${date}` },
       ],
     }),
-    
+
     // =========================================================================
     // USER-SPECIFIC ENDPOINTS
     // =========================================================================
-    
+
     // Get current user reservations
     getMyReservations: builder.query<Reservation[], void>({
       query: () => 'reservations/user/my-reservations',
       providesTags: ['MyReservations'],
     }),
-    
+
     // Get current restaurant reservations (Restaurant Owner & Staff only)
     getMyRestaurantReservations: builder.query<Reservation[], void>({
       query: () => 'reservations/restaurant/my-reservations',
       providesTags: ['MyRestaurantReservations'],
     }),
-    
+
     // Get current restaurant tables (Restaurant Owner & Staff only)
     getMyRestaurantTables: builder.query<Table[], void>({
       query: () => 'reservations/restaurant/my-tables',
@@ -326,7 +326,7 @@ export const {
   useGetTableByIdQuery,
   useUpdateTableMutation,
   useDeleteTableMutation,
-  
+
   // Reservation hooks
   useCreateReservationMutation,
   useGetAllReservationsQuery,
@@ -335,16 +335,16 @@ export const {
   useUpdateReservationMutation,
   useUpdateReservationStatusMutation,
   useCancelReservationMutation,
-  
+
   // Availability hooks
   useCheckAvailabilityQuery,
   useFindAvailableTablesQuery,
-  
+
   // Analytics hooks
   useGetReservationStatsQuery,
   useGetUpcomingReservationsQuery,
   useGetDailyReservationsQuery,
-  
+
   // User-specific hooks
   useGetMyReservationsQuery,
   useGetMyRestaurantReservationsQuery,

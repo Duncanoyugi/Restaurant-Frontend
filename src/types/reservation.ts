@@ -1,6 +1,6 @@
 export type ReservationType = 'TABLE' | 'FULL_RESTAURANT' | 'PRIVATE_EVENT';
 
-export type ReservationStatus = 
+export type ReservationStatus =
   | 'PENDING'
   | 'CONFIRMED'
   | 'COMPLETED'
@@ -43,7 +43,7 @@ export type Table = {
   features?: string[];
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   restaurant?: any;
   reservations?: Reservation[];
@@ -54,8 +54,8 @@ export type Reservation = {
   id: number;
   reservationNumber: string;
   restaurantId: number;
-  userId: number;
-  tableId?: number;
+  userId: number | string;
+  tableId?: number | string;
   reservationType: ReservationType;
   reservationDate: string; // ISO date string
   reservationTime: string; // HH:MM format
@@ -68,7 +68,7 @@ export type Reservation = {
   completedAt?: string;
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   restaurant?: any;
   user?: any;
@@ -151,9 +151,9 @@ export type TableSearchDto = {
 };
 
 export type ReservationSearchDto = {
-  restaurantId?: number;
-  userId?: number;
-  tableId?: number;
+  restaurantId?: number | string;
+  userId?: number | string;
+  tableId?: number | string;
   startDate?: string;
   endDate?: string;
   status?: ReservationStatus;

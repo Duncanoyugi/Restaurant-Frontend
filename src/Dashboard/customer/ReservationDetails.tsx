@@ -101,7 +101,7 @@ const ReservationDetails: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
           Reservation Details
         </h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Restaurant</p>
@@ -109,7 +109,7 @@ const ReservationDetails: React.FC = () => {
               {reservation.restaurant?.name || (reservation as any).restaurantName}
             </p>
           </div>
-          
+
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Date & Time</p>
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -119,21 +119,21 @@ const ReservationDetails: React.FC = () => {
               {format(reservationDateTime, 'hh:mm a')}
             </p>
           </div>
-          
+
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Number of Guests</p>
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
               {reservation.guestCount} {reservation.guestCount === 1 ? 'person' : 'people'}
             </p>
           </div>
-          
+
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Reservation Type</p>
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
               {reservation.reservationType.replace('_', ' ')}
             </p>
           </div>
-          
+
           {(reservation as any).tableNumber && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Table Number</p>
@@ -142,7 +142,7 @@ const ReservationDetails: React.FC = () => {
               </p>
             </div>
           )}
-          
+
           {(reservation as any).occasion && (
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Occasion</p>
@@ -153,11 +153,11 @@ const ReservationDetails: React.FC = () => {
           )}
         </div>
 
-        {reservation.specialRequests && (
+        {reservation.specialRequest && (
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Special Requests</p>
             <p className="text-gray-900 dark:text-white">
-              {reservation.specialRequests}
+              {reservation.specialRequest}
             </p>
           </div>
         )}
@@ -168,13 +168,13 @@ const ReservationDetails: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Restaurant Contact
         </h2>
-        
+
         <div className="space-y-3">
           <div className="flex items-center space-x-3">
             <Phone className="h-6 w-6" />
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
-              <a 
+              <a
                 href={`tel:${(reservation as any).restaurantPhone}`}
                 className="text-primary-600 dark:text-primary-400 hover:underline"
               >
@@ -182,7 +182,7 @@ const ReservationDetails: React.FC = () => {
               </a>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <MapPin className="h-6 w-6" />
             <div>
@@ -214,7 +214,7 @@ const ReservationDetails: React.FC = () => {
             </Link>
           </>
         )}
-        
+
         {reservation.status === 'COMPLETED' && (
           <Link
             to="/dashboard/reviews"

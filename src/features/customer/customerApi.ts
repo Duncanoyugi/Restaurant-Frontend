@@ -8,6 +8,7 @@ export interface LoyaltyInfo {
   tier?: string;
   loyaltyTier?: string;
   pointsToNextTier?: number;
+  pointsNeeded?: number; // Add this property
   nextTier?: string;
 }
 
