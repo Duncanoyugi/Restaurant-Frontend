@@ -38,7 +38,7 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
     return null;
   };
 
-  const updateOrderStatusHandler = async (orderId: string, order: any, statusName: string) => {
+  const updateOrderStatusHandler = async (orderId: number, order: any, statusName: string) => {
     try {
       const statusId = getStatusId(order);
       if (!statusId) {
@@ -47,7 +47,7 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
       }
       await updateOrderStatus({
         id: orderId,
-        data: { statusId, notes: `Status updated to ${statusName}` },
+        status: { statusId, notes: `Status updated to ${statusName}` },
       }).unwrap();
       showToast('Order status updated successfully', 'success');
       refetch();
@@ -314,7 +314,7 @@ const StaffOrders: React.FC<StaffOrdersProps> = ({ restaurantId: _restaurantId }
 // Reusable Order Card Component
 const OrderCard: React.FC<{
   order: any;
-  onUpdateStatus: (id: string, order: any, status: string) => void;
+  onUpdateStatus: (id: number, order: any, status: string) => void;
   onAssign: (id: string) => void;
   getTypeIcon: (type: string) => React.ComponentType<React.SVGProps<SVGSVGElement>>;
   getStatusColor: (status: string) => string;

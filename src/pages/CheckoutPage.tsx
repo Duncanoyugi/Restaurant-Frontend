@@ -256,13 +256,16 @@ const CheckoutPage: React.FC = () => {
         dispatch(clearCart());
         navigate(`/dashboard/orders/${orderResult.id}/success`);
       } else {
+        // Map frontend payment method to backend enum
+        const backendMethod = paymentMethod === 'mpesa' ? 'mobile_money' : paymentMethod;
+
         const paymentResult = await initializePayment({
           userId: user.id,
           orderId: orderResult.id,
           amount: finalTotal,
           customerEmail: user.email,
           customerName: user.name,
-          method: paymentMethod as PaymentMethod,
+          method: backendMethod as PaymentMethod,
           callbackUrl: `${window.location.origin}/payment/verify`,
         }).unwrap();
 

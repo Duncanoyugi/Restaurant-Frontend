@@ -4,6 +4,7 @@ import { useGetOrderByIdQuery } from '../../features/orders/ordersApi';
 import { useCancelOrderMutation } from '../../features/customer/customerApi';
 import { format, parseISO } from 'date-fns';
 import type { Order, OrderItem } from '../../types/order';
+import { OrderTypeEnum } from '../../types/order';
 import { useToast } from '../../contexts/ToastContext';
 import { XCircle } from 'lucide-react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
@@ -11,14 +12,14 @@ import DashboardLayout from '../../components/layout/DashboardLayout';
 const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
-  const { data: order, isLoading, error } = useGetOrderByIdQuery(orderId!);
+  const { data: order, isLoading, error } = useGetOrderByIdQuery(Number(orderId!));
   const [cancelOrder, { isLoading: cancelling }] = useCancelOrderMutation();
   const { showToast } = useToast();
 
   const handleCancelOrder = async () => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
       try {
-        await cancelOrder({ orderId: orderId!, reason: 'Customer requested cancellation' }).unwrap();
+        await cancelOrder({ orderId: Number(orderId!), reason: 'Customer requested cancellation' }).unwrap();
         showToast('Order cancelled successfully', 'success');
         navigate('/dashboard/orders');
       } catch (error: any) {
@@ -207,7 +208,7 @@ const OrderDetails: React.FC = () => {
             {cancelling ? 'Cancelling...' : 'Cancel Order'}
           </button>
         )}
-        {['CONFIRMED', 'PREPARING', 'READY', 'ON_THE_WAY'].includes(status) && orderData.orderType === 'DELIVERY' && (
+        {['CONFIRMED', 'PREPARING', 'READY', 'ON_THE_WAY'].includes(status) && orderData.orderType === OrderTypeEnum.DELIVERY && (
           <Link
             to={`/dashboard/orders/${orderData.id}/track`}
             className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-center"

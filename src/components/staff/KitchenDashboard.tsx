@@ -123,7 +123,7 @@ const KitchenDashboard: React.FC<KitchenDashboardProps> = ({ restaurantId }) => 
     return null;
   };
 
-  const handleStatusUpdate = async (orderId: string, order: any, newStatusName: string) => {
+  const handleStatusUpdate = async (orderId: number, order: any, newStatusName: string) => {
     try {
       const statusId = getStatusId(order, newStatusName);
       if (!statusId) {
@@ -132,7 +132,7 @@ const KitchenDashboard: React.FC<KitchenDashboardProps> = ({ restaurantId }) => 
       }
       await updateOrderStatus({
         id: orderId,
-        data: { statusId, notes: `Status updated to ${newStatusName}` },
+        status: { statusId, notes: `Status updated to ${newStatusName}` },
       }).unwrap();
       showToast('Order status updated successfully', 'success');
       refetch();

@@ -343,7 +343,7 @@ export const usersApi = baseApi.injectEndpoints({
     
     // Get staff profile
     getStaffProfile: builder.query<StaffProfile, string>({
-      query: (id) => `users/staff/${id}/profile`,
+      query: (id) => `restaurants/staff/${id}`,
       providesTags: (_result, _error, id) => [
         { type: 'UserProfile', id },
         { type: 'StaffShifts', id },

@@ -100,7 +100,7 @@ export const useDashboardMetrics = () => {
 
     const users = usersData?.data || [];
     const restaurants = restaurantsData?.data || [];
-    const allOrders = ordersData?.data || [];
+    const allOrders = Array.isArray(ordersData) ? ordersData : (ordersData as { data?: any[] | undefined } | undefined)?.data || [];
     const allReservations = reservationsData?.data || [];
     const allRoomBookings = roomBookingsData?.data || [];
 

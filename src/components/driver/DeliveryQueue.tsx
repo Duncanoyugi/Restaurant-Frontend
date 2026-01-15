@@ -26,7 +26,7 @@ const DeliveryQueue: React.FC = () => {
     return null;
   };
 
-  const handleAcceptDelivery = async (orderId: string, order: any) => {
+  const handleAcceptDelivery = async (orderId: number, order: any) => {
     try {
       const statusId = getStatusId(order);
       if (!statusId) {
@@ -35,7 +35,7 @@ const DeliveryQueue: React.FC = () => {
       }
       await updateOrderStatus({
         id: orderId,
-        data: { statusId, notes: 'Delivery accepted by driver' },
+        status: { statusId, notes: 'Delivery accepted by driver' },
       }).unwrap();
       showToast('Delivery accepted successfully', 'success');
       refetch();
@@ -44,7 +44,7 @@ const DeliveryQueue: React.FC = () => {
     }
   };
 
-  const handleCompleteDelivery = async (orderId: string, order: any) => {
+  const handleCompleteDelivery = async (orderId: number, order: any) => {
     try {
       const statusId = getStatusId(order);
       if (!statusId) {
@@ -53,7 +53,7 @@ const DeliveryQueue: React.FC = () => {
       }
       await updateOrderStatus({
         id: orderId,
-        data: { statusId, notes: 'Delivery completed' },
+        status: { statusId, notes: 'Delivery completed' },
       }).unwrap();
       showToast('Delivery completed successfully', 'success');
       refetch();

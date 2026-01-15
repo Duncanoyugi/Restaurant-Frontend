@@ -8,8 +8,8 @@ import { FileText, CheckCircle2, ChefHat, Package, Car, Sparkles, XCircle, Clock
 
 const OrderTracking: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
-  const { data: order, isLoading: orderLoading } = useGetOrderByIdQuery(orderId!);
-  const { data: tracking, isLoading: trackingLoading, refetch } = useGetLiveDeliveryTrackingQuery(orderId!, {
+  const { data: order, isLoading: orderLoading } = useGetOrderByIdQuery(Number(orderId));
+  const { data: tracking, isLoading: trackingLoading, refetch } = useGetLiveDeliveryTrackingQuery(orderId as string, {
     pollingInterval: 30000, // Poll every 30 seconds
   });
 

@@ -1,7 +1,7 @@
 // src/types/order.ts
 
 // Use string literal unions instead of enums for compatibility with erasableSyntaxOnly
-export type OrderType = 'DINE_IN' | 'TAKEAWAY' | 'DELIVERY';
+export type OrderType = 'dine-in' | 'takeaway' | 'delivery';
 
 export type OrderStatusName = 
   | 'Pending' 
@@ -14,9 +14,9 @@ export type OrderStatusName =
 
 // Constants for OrderType (optional, for better IntelliSense)
 export const OrderTypeEnum = {
-  DINE_IN: 'DINE_IN' as OrderType,
-  TAKEAWAY: 'TAKEAWAY' as OrderType,
-  DELIVERY: 'DELIVERY' as OrderType,
+  DINE_IN: 'dine-in' as OrderType,
+  TAKEAWAY: 'takeaway' as OrderType,
+  DELIVERY: 'delivery' as OrderType,
 };
 
 // Constants for OrderStatusName (optional, for better IntelliSense)
@@ -31,22 +31,23 @@ export const OrderStatusNameEnum = {
 };
 
 export type OrderItem = {
-  id: string;
-  orderId: string;
-  menuItemId: string;
+  id: number;
+  orderId: number;
+  menuItemId: number;
   quantity: number;
   comment?: string;
   unitPrice: number;
   totalPrice: number;
+  price: number;
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   menuItem?: any;
 };
 
 export type StatusCatalog = {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   isActive: boolean;
@@ -55,27 +56,27 @@ export type StatusCatalog = {
 };
 
 export type OrderStatus = {
-  id: string;
-  orderId: string;
-  statusCatalogId: string;
+  id: number;
+  orderId: number;
+  statusCatalogId: number;
   notes?: string;
-  updatedBy?: string;
+  updatedBy?: number;
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   statusCatalog?: StatusCatalog;
 };
 
 export type Order = {
-  id: string;
+  id: number;
   orderNumber: string;
-  restaurantId: string;
-  userId: string;
-  driverId?: string;
-  tableId?: string;
-  deliveryAddressId?: string;
-  statusId: string;
+  restaurantId: number;
+  userId: number;
+  driverId?: number;
+  tableId?: number;
+  deliveryAddressId?: number;
+  statusId: number;
   orderType: OrderType;
   totalPrice: number;
   discount: number;
@@ -88,7 +89,7 @@ export type Order = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
-  
+
   // Relations
   restaurant?: any;
   user?: any;

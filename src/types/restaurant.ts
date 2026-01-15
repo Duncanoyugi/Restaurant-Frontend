@@ -52,6 +52,7 @@ export type Restaurant = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
+  website?: string;
 
   // Relations
   city?: any;

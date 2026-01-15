@@ -159,7 +159,7 @@ const ReservationsPage: React.FC = () => {
           const createdReservation = await createReservation({
             restaurantId: Number(restaurantParam),
             userId: Number(user?.id),
-            reservationType: 'TABLE',
+            reservationType: 'table',
             reservationDate: formData.date,
             reservationTime: to24HourTime(formData.time),
             guestCount: Number(formData.guests) + Number(formData.children),
@@ -184,9 +184,10 @@ const ReservationsPage: React.FC = () => {
           } else {
             alert('Payment initialization failed. Please try again.');
           }
-        } catch (error) {
-          console.error('Payment initialization error:', error);
-          alert('Failed to initialize payment. Please try again.');
+        } catch (error: unknown) {
+          console.error('Reservation/Payment error:', error);
+          const errorMessage = (error as any)?.data?.message || (error as any)?.data || (error instanceof Error ? error.message : 'An unexpected error occurred');
+          alert(`Failed to process reservation: ${errorMessage}`);
         }
       }
     }

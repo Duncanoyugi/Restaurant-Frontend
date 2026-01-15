@@ -6,6 +6,7 @@ import DriverDashboard from '../../Dashboard/driver/DriverDashboard';
 import StaffDashboard from '../../Dashboard/staff/StaffDashboard';
 import OwnerDashboard from '../../Dashboard/owner/OwnerDashboard';
 import { UserRoleEnum, extractRoleName } from '../../features/auth/authSlice';
+import { StaffProvider } from '../../contexts/staff/StaffContext';
 
 const RoleBasedDashboard: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -32,7 +33,11 @@ const RoleBasedDashboard: React.FC = () => {
   } else if (roleName === UserRoleEnum.RESTAURANT_OWNER) {
     return <OwnerDashboard />;
   } else if (roleName === UserRoleEnum.RESTAURANT_STAFF) {
-    return <StaffDashboard />;
+    return (
+      <StaffProvider>
+        <StaffDashboard />
+      </StaffProvider>
+    );
   } else {
     return <CustomerDashboard />;
   }

@@ -1,4 +1,4 @@
-export type ReservationType = 'TABLE' | 'FULL_RESTAURANT' | 'PRIVATE_EVENT';
+export type ReservationType = 'table' | 'full_restaurant' | 'private_event';
 
 export type ReservationStatus =
   | 'PENDING'
@@ -11,9 +11,9 @@ export type TableStatus = 'AVAILABLE' | 'RESERVED' | 'OCCUPIED' | 'OUT_OF_SERVIC
 
 // Constants for better IntelliSense
 export const ReservationTypeEnum = {
-  TABLE: 'TABLE' as ReservationType,
-  FULL_RESTAURANT: 'FULL_RESTAURANT' as ReservationType,
-  PRIVATE_EVENT: 'PRIVATE_EVENT' as ReservationType,
+  TABLE: 'table' as ReservationType,
+  FULL_RESTAURANT: 'full_restaurant' as ReservationType,
+  PRIVATE_EVENT: 'private_event' as ReservationType,
 };
 
 export const ReservationStatusEnum = {

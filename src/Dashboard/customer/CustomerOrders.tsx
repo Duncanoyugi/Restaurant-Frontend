@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useGetOrdersQuery, useCancelOrderMutation } from '../../features/customer/customerApi';
 import { format, parseISO } from 'date-fns';
 import type { Order, OrderItem } from '../../types/order';
+import { OrderTypeEnum } from '../../types/order';
 
 const OrdersPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -18,7 +19,7 @@ const OrdersPage: React.FC = () => {
 
   const [cancelOrder] = useCancelOrderMutation();
 
-  const handleCancelOrder = async (orderId: string) => {
+  const handleCancelOrder = async (orderId: number) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
       try {
         await cancelOrder({ orderId, reason: 'Customer requested cancellation' }).unwrap();
@@ -214,7 +215,7 @@ const OrdersPage: React.FC = () => {
                             Cancel Order
                           </button>
                         )}
-                        {order.orderType === 'DELIVERY' && statusString === 'Preparing' && (
+                        {order.orderType === OrderTypeEnum.DELIVERY && statusString === 'Preparing' && (
                           <Link
                             to={`/dashboard/orders/${order.id}/track`}
                             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
