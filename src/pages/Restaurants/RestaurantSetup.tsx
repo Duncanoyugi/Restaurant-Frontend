@@ -62,9 +62,9 @@ const RestaurantSetup: React.FC = () => {
         ...formData,
         ownerId: typeof user.id === 'string' ? parseInt(user.id, 10) : user.id,
       };
-      const result = await createRestaurant(restaurantData).unwrap();
-      // Redirect to owner dashboard with the new restaurant ID
-      navigate(`/restaurants/${result.id}/owner`);
+      await createRestaurant(restaurantData).unwrap();
+      // Redirect to owner dashboard
+      navigate('/dashboard');
     } catch (error) {
       console.error('Failed to create restaurant:', error);
       alert('Failed to create restaurant. Please try again.');

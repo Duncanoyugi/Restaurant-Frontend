@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { useGetAllRestaurantsQuery } from '../../features/restaurants/unifiedRestaurantApi';
+import { useRestaurant } from '../../contexts/RestaurantContext';
 import type { Restaurant } from '../../types/restaurant';
 import OwnerLayout from '../../components/layout/OwnerLayout';
 import { PlusCircle, Building2, Users, Truck, Utensils, Calendar, Bed, FileText, Settings, LayoutGrid } from 'lucide-react';
@@ -159,6 +160,7 @@ const DashboardOverview: React.FC<{ firstRestaurant: Restaurant | null }> = ({ f
 const OwnerDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
+  const { selectedRestaurant, setSelectedRestaurant } = useRestaurant();
 
   // Fetch all restaurants owned by this user
   const { data: restaurantsData, isLoading, error } = useGetAllRestaurantsQuery();
@@ -167,6 +169,13 @@ const OwnerDashboard: React.FC = () => {
 
   const hasRestaurant = restaurants.length > 0;
   const firstRestaurant = hasRestaurant ? restaurants[0] : null;
+
+  // Auto-select the first restaurant if none is selected and restaurants are loaded
+  useEffect(() => {
+    if (hasRestaurant && !selectedRestaurant && firstRestaurant) {
+      setSelectedRestaurant(firstRestaurant);
+    }
+  }, [hasRestaurant, selectedRestaurant, firstRestaurant, setSelectedRestaurant]);
 
   if (isLoading) {
     return (
