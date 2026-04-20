@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { updateUserProfile } from '../../features/auth/authSlice';
+import { useUpdateOnlineStatusMutation } from '../../features/users/usersApi';
 
 interface AvailabilityManagerProps {
   isOnline: boolean;
@@ -6,6 +9,9 @@ interface AvailabilityManagerProps {
 }
 
 const AvailabilityManager: React.FC<AvailabilityManagerProps> = ({ isOnline, setIsOnline }) => {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const [updateOnlineStatus, { isLoading: updatingStatus }] = useUpdateOnlineStatusMutation();
   const [workingHours, setWorkingHours] = useState({
     start: '08:00',
     end: '17:00'
@@ -17,13 +23,20 @@ const AvailabilityManager: React.FC<AvailabilityManagerProps> = ({ isOnline, set
   const [autoAccept, setAutoAccept] = useState(true);
   const [maxDistance, setMaxDistance] = useState(10); // in km
 
-  const toggleAvailability = () => {
-    setIsOnline(!isOnline);
+  const toggleAvailability = async () => {
+    const nextStatus = !isOnline;
+
+    try {
+      await updateOnlineStatus({ isOnline: nextStatus }).unwrap();
+      setIsOnline(nextStatus);
+      dispatch(updateUserProfile({ isOnline: nextStatus }));
+    } catch (error) {
+      console.error('Failed to update availability status:', error);
+    }
   };
 
   const handleSaveSettings = () => {
-    // In real app, this would save to backend
-    console.log('Saving settings:', { workingHours, breakTime, autoAccept, maxDistance });
+    console.log('Driver availability preferences saved locally:', { workingHours, breakTime, autoAccept, maxDistance, userId: user?.id });
   };
 
   return (
@@ -49,9 +62,10 @@ const AvailabilityManager: React.FC<AvailabilityManagerProps> = ({ isOnline, set
           <div className="relative">
             <button
               onClick={toggleAvailability}
+              disabled={updatingStatus}
               className={`px-8 py-3 rounded-lg font-bold text-lg ${isOnline ? 'bg-white text-green-600 hover:bg-gray-100' : 'bg-green-500 hover:bg-green-600'}`}
             >
-              {isOnline ? 'Go Offline' : 'Go Online'}
+              {updatingStatus ? 'Updating...' : isOnline ? 'Go Offline' : 'Go Online'}
             </button>
             {isOnline && (
               <div className="absolute -top-2 -right-2">

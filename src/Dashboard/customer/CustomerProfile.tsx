@@ -130,8 +130,10 @@ const ProfilePage: React.FC = () => {
     setFormErrors({});
     
     try {
-      // If you still want to update on backend
-      await updateProfile(formData).unwrap();
+      await updateProfile({
+        name: formData.name,
+        phone: formData.phone,
+      }).unwrap();
       
       // Update local storage with new data
       if (localUser) {

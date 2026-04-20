@@ -1,54 +1,54 @@
-// src/features/customer/customerApi.ts
 import { baseApi } from '../../utils/baseApi';
 
-// Types
 export interface LoyaltyInfo {
   points?: number;
   loyaltyPoints?: number;
   tier?: string;
   loyaltyTier?: string;
   pointsToNextTier?: number;
-  pointsNeeded?: number; // Add this property
+  pointsNeeded?: number;
   nextTier?: string;
 }
 
+const normalizeCollectionResponse = (
+  response: any,
+  key: string,
+  fallbackPage = 1,
+  fallbackLimit = 10,
+) => {
+  if (Array.isArray(response)) {
+    return {
+      [key]: response,
+      total: response.length,
+      page: fallbackPage,
+      limit: fallbackLimit,
+    };
+  }
+
+  if (response?.data && Array.isArray(response.data)) {
+    return {
+      [key]: response.data,
+      total: response.total || response.data.length,
+      page: response.page || fallbackPage,
+      limit: response.limit || fallbackLimit,
+    };
+  }
+
+  return {
+    [key]: response?.[key] || [],
+    total: response?.total || 0,
+    page: response?.page || fallbackPage,
+    limit: response?.limit || fallbackLimit,
+  };
+};
+
 export const customerApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get customer profile
     getProfile: builder.query<any, void>({
-      async queryFn(_arg, _queryApi, _extraOptions, fetchWithBQ) {
-        try {
-          const result = await fetchWithBQ({
-            url: 'users/me/profile',
-          });
-          return result;
-        } catch (error) {
-          // Return mock data if backend not ready
-          console.log('🔄 Backend not ready, using mock data for profile');
-          return {
-            data: {
-              id: '1',
-              name: 'John Doe',
-              email: 'john@example.com',
-              phone: '+254712345678',
-              role: 'Customer',
-              profileImage: null,
-              emailVerified: true,
-              status: 'ACTIVE',
-              favoriteCuisines: ['Italian', 'Kenyan'],
-              dietaryPreferences: ['Vegetarian'],
-              allergies: ['Peanuts'],
-              totalOrders: 5,
-              totalSpent: 12500, // KSH
-              createdAt: new Date().toISOString()
-            }
-          };
-        }
-      },
+      query: () => 'users/me/profile',
       providesTags: ['Profile'],
     }),
 
-    // Update customer profile
     updateProfile: builder.mutation<any, any>({
       query: (data) => ({
         url: 'users/me/profile',
@@ -58,144 +58,53 @@ export const customerApi = baseApi.injectEndpoints({
       invalidatesTags: ['Profile'],
     }),
 
-    // Get loyalty info
     getLoyaltyInfo: builder.query<LoyaltyInfo, void>({
       query: () => 'users/me/loyalty',
       providesTags: ['CustomerLoyalty'],
     }),
 
-    // Get customer orders
-    getOrders: builder.query<any, any>({
-      async queryFn(params, _queryApi, _extraOptions, fetchWithBQ) {
-        try {
-          const result = await fetchWithBQ({
-            url: 'orders/user/my-orders',
-            method: 'GET',
-            params,
-          });
-
-          // Type guard to check if result has data property
-          if (result && typeof result === 'object' && 'data' in result) {
-            const typedResult = result as { data: any; total?: number };
-
-            // Handle the standard backend response format: { data: Order[], total: number }
-            if (Array.isArray(typedResult.data)) {
-              return {
-                data: {
-                  orders: typedResult.data,
-                  total: typedResult.total || typedResult.data.length,
-                  page: params?.page || 1,
-                  limit: params?.limit || 10
-                }
-              };
-            }
-
-            // Handle nested structure if it exists (for backward compatibility)
-            if (typedResult.data && typedResult.data.data) {
-              return {
-                data: {
-                  orders: typedResult.data.data,
-                  total: typedResult.data.total,
-                  page: typedResult.data.page || 1,
-                  limit: typedResult.data.limit || 10
-                }
-              };
-            }
-          }
-
-          return result;
-        } catch (error) {
-          // Return mock data if backend not ready
-          console.log('🔄 Backend not ready, using mock data for orders');
-          return {
-            data: {
-              orders: [
-                {
-                  id: '1',
-                  orderNumber: 'ORD-001',
-                  status: { name: 'Pending' },
-                  restaurant: { name: 'Savory Bites' },
-                  createdAt: new Date().toISOString(),
-                  finalPrice: 2599, // KSH instead of USD
-                  orderItems: [
-                    { menuItem: { name: 'Burger' }, quantity: 1 },
-                    { menuItem: { name: 'Fries' }, quantity: 1 }
-                  ],
-                  orderType: 'DELIVERY'
-                }
-              ],
-              total: 1,
-              page: 1,
-              limit: 10
-            }
-          };
-        }
-      },
+    getOrders: builder.query<any, { page?: number; limit?: number; status?: string } | void>({
+      query: (params) => ({
+        url: 'orders/user/my-orders',
+        method: 'GET',
+        params: params || {},
+      }),
+      transformResponse: (response: any, _meta, arg) =>
+        normalizeCollectionResponse(response, 'orders', arg?.page || 1, arg?.limit || 10),
       providesTags: ['CustomerOrders'],
     }),
 
-    // Get order by ID
     getOrderById: builder.query<any, string>({
       query: (id) => `orders/${id}`,
       providesTags: (_, __, id) => [{ type: 'Orders', id }],
     }),
 
-    // Cancel order
-    cancelOrder: builder.mutation<any, any>({
+    cancelOrder: builder.mutation<any, { orderId: string; reason?: string }>({
       query: ({ orderId, reason }) => ({
         url: `orders/user/my-orders/${orderId}/cancel`,
         method: 'POST',
         body: { reason },
       }),
-      invalidatesTags: ['CustomerOrders'],
+      invalidatesTags: ['CustomerOrders', 'Orders'],
     }),
 
-    // Get customer reservations
-    getReservations: builder.query<any, any>({
-      async queryFn(params, _queryApi, _extraOptions, fetchWithBQ) {
-        try {
-          const result = await fetchWithBQ({
-            url: 'reservations/user/my-reservations',
-            method: 'GET',
-            params,
-          });
-          return result;
-        } catch (error) {
-          // Return mock data if backend not ready
-          console.log('🔄 Backend not ready, using mock data for reservations');
-          return {
-            data: {
-              reservations: [
-                {
-                  id: '1',
-                  reservationNumber: 'RES-001',
-                  status: 'CONFIRMED',
-                  restaurant: { name: 'Savory Bites' },
-                  reservationDate: new Date().toISOString().split('T')[0],
-                  reservationTime: '19:00',
-                  guestCount: 2,
-                  reservationType: 'STANDARD',
-                  createdAt: new Date().toISOString()
-                }
-              ],
-              total: 1,
-              page: 1,
-              limit: 10
-            }
-          };
-        }
-      },
+    getReservations: builder.query<any, { page?: number; limit?: number; status?: string } | void>({
+      query: (params) => ({
+        url: 'reservations/user/my-reservations',
+        method: 'GET',
+        params: params || {},
+      }),
+      transformResponse: (response: any, _meta, arg) =>
+        normalizeCollectionResponse(response, 'reservations', arg?.page || 1, arg?.limit || 10),
       providesTags: ['MyReservations'],
     }),
 
-    // Get reservation by ID
     getReservationById: builder.query<any, string>({
       query: (id) => `reservations/${id}`,
       providesTags: (_, __, id) => [{ type: 'Reservations', id }],
     }),
 
-    // Cancel reservation
-    cancelReservation: builder.mutation<any, any>({
+    cancelReservation: builder.mutation<any, { reservationId: string; reason?: string }>({
       query: ({ reservationId, reason }) => ({
         url: `reservations/${reservationId}/cancel`,
         method: 'POST',
@@ -204,8 +113,7 @@ export const customerApi = baseApi.injectEndpoints({
       invalidatesTags: ['MyReservations'],
     }),
 
-    // Update reservation
-    updateReservation: builder.mutation<any, any>({
+    updateReservation: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
         url: `reservations/${id}`,
         method: 'PATCH',
@@ -214,88 +122,54 @@ export const customerApi = baseApi.injectEndpoints({
       invalidatesTags: ['MyReservations'],
     }),
 
-    // Get customer reviews
-    getReviews: builder.query<any, any>({
-      async queryFn(params, _queryApi, _extraOptions, fetchWithBQ) {
-        try {
-          const result = await fetchWithBQ({
-            url: 'reviews/my',
-            method: 'GET',
-            params,
-          });
-          return result;
-        } catch (error) {
-          // Return mock data if backend not ready
-          console.log('🔄 Backend not ready, using mock data for reviews');
-          return {
-            data: {
-              reviews: [
-                {
-                  id: '1',
-                  restaurant: { name: 'Savory Bites' },
-                  menuItem: { name: 'Special Burger' },
-                  rating: 5,
-                  comment: 'Amazing food and great service!',
-                  createdAt: new Date().toISOString()
-                }
-              ],
-              total: 1,
-              page: 1,
-              limit: 10
-            }
-          };
-        }
-      },
+    getReviews: builder.query<any, { page?: number; limit?: number; sortBy?: string } | void>({
+      query: (params) => ({
+        url: 'reviews/my',
+        method: 'GET',
+        params: params || {},
+      }),
+      transformResponse: (response: any, _meta, arg) =>
+        normalizeCollectionResponse(response, 'reviews', arg?.page || 1, arg?.limit || 10),
       providesTags: ['MyReviews'],
     }),
 
-    // Create review
     createReview: builder.mutation<any, any>({
       query: (data) => ({
         url: 'reviews',
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['MyReviews'],
+      invalidatesTags: ['MyReviews', 'Reviews'],
     }),
 
-    // Update review
-    updateReview: builder.mutation<any, any>({
+    updateReview: builder.mutation<any, { id: string; data: any }>({
       query: ({ id, data }) => ({
         url: `reviews/${id}`,
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: ['MyReviews'],
+      invalidatesTags: ['MyReviews', 'Reviews'],
     }),
 
-    // Delete review
     deleteReview: builder.mutation<any, string>({
       query: (id) => ({
         url: `reviews/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['MyReviews'],
+      invalidatesTags: ['MyReviews', 'Reviews'],
     }),
 
-    // Get room bookings - use correct endpoint with userId filter
     getRoomBookings: builder.query<any, { userId?: string; page?: number; limit?: number; status?: string }>({
-      query: (params = {}) => {
-        const queryParams = new URLSearchParams();
-        if (params.userId) queryParams.append('userId', params.userId);
-        if (params.page) queryParams.append('page', params.page.toString());
-        if (params.limit) queryParams.append('limit', params.limit.toString());
-        if (params.status) queryParams.append('status', params.status);
-        const queryString = queryParams.toString();
-        return {
-          url: `rooms/bookings${queryString ? `?${queryString}` : ''}`,
-        };
-      },
+      query: (params = {}) => ({
+        url: 'rooms/bookings',
+        params,
+      }),
+      transformResponse: (response: any, _meta, arg) =>
+        normalizeCollectionResponse(response, 'bookings', arg?.page || 1, arg?.limit || 10),
       providesTags: ['RoomBookings'],
     }),
 
-    // Cancel room booking
-    cancelRoomBooking: builder.mutation<any, any>({
+    cancelRoomBooking: builder.mutation<any, { bookingId: string; reason?: string }>({
       query: ({ bookingId, reason }) => ({
         url: `rooms/bookings/${bookingId}/cancel`,
         method: 'POST',
@@ -304,19 +178,16 @@ export const customerApi = baseApi.injectEndpoints({
       invalidatesTags: ['RoomBookings'],
     }),
 
-    // Get cities
     getCities: builder.query<any, void>({
       query: () => 'location/cities',
       providesTags: ['Cities'],
     }),
 
-    // Get states
     getStates: builder.query<any, void>({
       query: () => 'location/states',
       providesTags: ['States'],
     }),
 
-    // Create address
     createAddress: builder.mutation<any, any>({
       query: (data) => ({
         url: 'location/my/addresses',
@@ -326,42 +197,20 @@ export const customerApi = baseApi.injectEndpoints({
       invalidatesTags: ['Addresses'],
     }),
 
-    // Create order
     createOrder: builder.mutation<any, any>({
       query: (data) => ({
         url: 'orders',
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['CustomerOrders'],
+      invalidatesTags: ['CustomerOrders', 'Orders'],
     }),
 
-    // Get dashboard overview
-    getDashboardOverview: builder.query<any, any>({
-      async queryFn(params, _queryApi, _extraOptions, fetchWithBQ) {
-        try {
-          const result = await fetchWithBQ({
-            url: 'users/me/dashboard',
-            method: 'GET',
-            params,
-          });
-          return result;
-        } catch (error) {
-          // Return mock data if backend not ready
-          console.log('🔄 Backend not ready, using mock data for dashboard');
-          return {
-            data: {
-              period: 'LAST_30_DAYS',
-              revenue: { totalRevenue: 125000 }, // KSH
-              orders: { totalOrders: 245, averageOrderValue: 5102 },
-              reservations: { totalReservations: 89 },
-              roomBookings: { totalBookings: 12 },
-              customers: { newCustomers: 15, returningCustomers: 74 },
-              topMenuItems: []
-            }
-          };
-        }
-      },
+    getDashboardOverview: builder.query<any, void>({
+      query: () => ({
+        url: 'users/me/dashboard',
+        method: 'GET',
+      }),
       providesTags: ['DashboardAnalytics'],
     }),
   }),

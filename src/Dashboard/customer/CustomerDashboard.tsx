@@ -24,44 +24,43 @@ import RoomBookingsPage from './roomBooking';
 
 // Main Dashboard Overview Component
 const DashboardOverview: React.FC = () => {
-  const { isRestaurantSelected, restaurants } = useRestaurant();
-
-  // If no restaurant is selected, show restaurant selection prompt
-  if (!isRestaurantSelected) {
-    return (
-      <div className="space-y-8">
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-          <div className="max-w-md mx-auto">
-            <div className="mb-6">
-              <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Our Restaurant Platform!</h2>
-            <p className="text-gray-600 mb-6">
-              To book rooms, reserve tables, or order food, please choose a restaurant first. This helps us provide you with the best experience tailored to your selected restaurant.
-            </p>
-            <div className="space-y-4">
-              <button
-                onClick={() => window.location.href = '/restaurants'}
-                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
-                Browse Restaurants
-              </button>
-              {restaurants.length > 0 && (
-                <p className="text-sm text-gray-500">
-                  {restaurants.length} restaurant{restaurants.length !== 1 ? 's' : ''} available
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { selectedRestaurant, restaurants } = useRestaurant();
 
   return (
     <div className="space-y-8">
+      {/* Restaurant Selection Prompt */}
+      <div className="bg-white rounded-lg shadow-md p-8 text-center">
+        <div className="max-w-md mx-auto">
+          <div className="mb-6">
+            <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            {selectedRestaurant ? `Current Restaurant: ${selectedRestaurant.name}` : 'Welcome to Our Restaurant Platform!'}
+          </h2>
+          <p className="text-gray-600 mb-6">
+            {selectedRestaurant
+              ? 'You can change your restaurant selection or proceed with your current choice. To book rooms, reserve tables, or order food, ensure you have the right restaurant selected.'
+              : 'To book rooms, reserve tables, or order food, please choose a restaurant first. This helps us provide you with the best experience tailored to your selected restaurant.'
+            }
+          </p>
+          <div className="space-y-4">
+            <button
+              onClick={() => window.location.href = '/restaurants'}
+              className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              {selectedRestaurant ? 'Change Restaurant' : 'Browse Restaurants'}
+            </button>
+            {restaurants.length > 0 && (
+              <p className="text-sm text-gray-500">
+                {restaurants.length} restaurant{restaurants.length !== 1 ? 's' : ''} available
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Welcome Banner */}
       <WelcomeBanner />
 

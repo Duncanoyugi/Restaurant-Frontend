@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useRestaurant } from '../../contexts/RestaurantContext';
-import { Star, MessageCircle, ThumbsUp, Search, User } from 'lucide-react';
+import { Star, MessageCircle, Search, User } from 'lucide-react';
 
 interface Review {
   id: number;
   customerName: string;
-  customerEmail: string;
   rating: number;
   comment: string;
   createdAt: string;
@@ -34,15 +33,35 @@ const RestaurantReviews: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Fetch reviews from backend
-        const response = await fetch(`/api/reviews/restaurant/${selectedRestaurant.id}`);
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch(`/api/reviews/restaurant/${selectedRestaurant.id}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         
         if (!response.ok) {
           throw new Error('Failed to fetch reviews');
         }
         
         const data = await response.json();
-        setReviews(data);
+        const normalizedReviews = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.reviews)
+            ? data.reviews
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+
+        setReviews(
+          normalizedReviews.map((review: any) => ({
+            id: review.id,
+            customerName: review.user?.name || 'Customer',
+            rating: review.rating,
+            comment: review.comment || '',
+            createdAt: review.createdAt,
+            helpfulCount: 0,
+            response: review.adminResponse || undefined,
+          })),
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch reviews');
         console.error('Error fetching reviews:', err);
@@ -55,67 +74,33 @@ const RestaurantReviews: React.FC = () => {
   }, [selectedRestaurant]);
 
   const handleResponseSubmit = async (reviewId: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetch(`/api/reviews/${reviewId}/response`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ response: responseText })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to add response');
-      }
-      
-      // Refresh reviews list
-      if (selectedRestaurant) {
-        const updatedResponse = await fetch(`/api/reviews/restaurant/${selectedRestaurant.id}`);
-        const updatedData = await updatedResponse.json();
-        setReviews(updatedData);
-      }
-      
-      // Reset response form
-      setRespondingTo(null);
-      setResponseText('');
-      
+      try {
+        setLoading(true);
+        setError(null);
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch(`/api/reviews/${reviewId}/response`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({ adminResponse: responseText })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to add response');
+        }
+
+        setReviews((current) =>
+          current.map((review) =>
+            review.id === reviewId ? { ...review, response: responseText } : review,
+          ),
+        );
+        setRespondingTo(null);
+        setResponseText('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add response');
       console.error('Error adding response:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleMarkHelpful = async (reviewId: number) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetch(`/api/reviews/${reviewId}/helpful`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to mark as helpful');
-      }
-      
-      // Refresh reviews list
-      if (selectedRestaurant) {
-        const updatedResponse = await fetch(`/api/reviews/restaurant/${selectedRestaurant.id}`);
-        const updatedData = await updatedResponse.json();
-        setReviews(updatedData);
-      }
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mark as helpful');
-      console.error('Error marking as helpful:', err);
     } finally {
       setLoading(false);
     }
@@ -267,13 +252,9 @@ const RestaurantReviews: React.FC = () => {
                 </button>
               )}
               <div className="flex items-center gap-4 mb-4">
-                <button
-                  onClick={() => handleMarkHelpful(review.id)}
-                  className="flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-sm"
-                >
-                  <ThumbsUp className="w-4 h-4" />
-                  Helpful ({review.helpfulCount})
-                </button>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Customer feedback for restaurant service and menu quality
+                </span>
               </div>
               {review.response && (
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mt-4">

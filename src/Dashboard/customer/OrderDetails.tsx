@@ -19,7 +19,7 @@ const OrderDetails: React.FC = () => {
   const handleCancelOrder = async () => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
       try {
-        await cancelOrder({ orderId: Number(orderId!), reason: 'Customer requested cancellation' }).unwrap();
+        await cancelOrder({ orderId: String(orderId!), reason: 'Customer requested cancellation' }).unwrap();
         showToast('Order cancelled successfully', 'success');
         navigate('/dashboard/orders');
       } catch (error: any) {

@@ -19,7 +19,7 @@ interface StatCard {
 
 export const StatsGrid: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
-  const { data: dashboardData, isLoading } = useGetDashboardOverviewQuery({});
+  const { data: dashboardData, isLoading } = useGetDashboardOverviewQuery();
 
   // Use real dashboard data from API
   const stats: StatCard[] = [

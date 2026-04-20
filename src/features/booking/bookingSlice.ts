@@ -23,17 +23,22 @@ interface TableReservation {
 interface BookingState {
   roomBookings: RoomBooking[];
   tableReservations: TableReservation[];
+  selectedRestaurantId: number | null;
 }
 
 const initialState: BookingState = {
   roomBookings: [],
   tableReservations: [],
+  selectedRestaurantId: null,
 };
 
 const bookingSlice = createSlice({
   name: 'booking',
   initialState,
   reducers: {
+    setSelectedRestaurant: (state, action: PayloadAction<number | null>) => {
+      state.selectedRestaurantId = action.payload;
+    },
     bookRoom: (state, action: PayloadAction<Omit<RoomBooking, 'id' | 'status'>>) => {
       const newBooking: RoomBooking = {
         ...action.payload,
@@ -65,5 +70,5 @@ const bookingSlice = createSlice({
   },
 });
 
-export const { bookRoom, reserveTable, cancelRoomBooking, cancelTableReservation } = bookingSlice.actions;
+export const { setSelectedRestaurant, bookRoom, reserveTable, cancelRoomBooking, cancelTableReservation } = bookingSlice.actions;
 export default bookingSlice.reducer;

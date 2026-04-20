@@ -1,6 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetRestaurantByIdQuery } from '../../features/restaurants/unifiedRestaurantApi';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { setSelectedRestaurant } from '../../features/booking/bookingSlice';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { Building2, Users, Utensils, Calendar, Bed, Phone, Mail, MapPin, Clock, Star, Globe, Heart, Share2, Navigation, ExternalLink } from 'lucide-react';
@@ -8,10 +10,39 @@ import { Building2, Users, Utensils, Calendar, Bed, Phone, Mail, MapPin, Clock, 
 const RestaurantDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const { data: restaurant, isLoading, error } = useGetRestaurantByIdQuery(id || '', {
     skip: !id,
   });
+
+  const handleReservationClick = () => {
+    if (isAuthenticated && restaurant) {
+      dispatch(setSelectedRestaurant(Number(id)));
+      navigate('/dashboard/reservations');
+    } else {
+      navigate(`/reservations?restaurant=${id}`);
+    }
+  };
+
+  const handleRoomBookingClick = () => {
+    if (isAuthenticated && restaurant) {
+      dispatch(setSelectedRestaurant(Number(id)));
+      navigate('/dashboard/rooms');
+    } else {
+      navigate(`/accommodation?restaurant=${id}`);
+    }
+  };
+
+  const handleMenuClick = () => {
+    if (isAuthenticated && restaurant) {
+      dispatch(setSelectedRestaurant(Number(id)));
+      navigate('/dashboard/orders');
+    } else {
+      navigate(`/menu?restaurant=${id}`);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -322,13 +353,39 @@ const RestaurantDetail: React.FC = () => {
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
                 </div>
                 
-                <div className="space-y-4">
+<div className="space-y-4">
                   <Button 
-                    onClick={() => navigate(`/menu?restaurant=${restaurant.id}`)}
-                    className="w-full bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800/40 dark:hover:to-blue-700/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 justify-start px-6 py-4 rounded-xl group"
+                    onClick={handleMenuClick}
+                    className="w-full bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800/40 dark:hover:from-blue-700/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 justify-start px-6 py-4 rounded-xl group"
                   >
                     <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg mr-4 group-hover:scale-110 transition-transform">
                       <Utensils className="w-5 h-5" />
+                    </div>
+                    <div className="text-left">
+                      <div className="font-semibold">View Menu</div>
+                      <div className="text-sm text-blue-600 dark:text-blue-400">Browse our dishes</div>
+                    </div>
+                  </Button>
+
+                  <Button 
+                    onClick={handleReservationClick}
+                    className="w-full bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 hover:from-green-100 hover:to-green-200 dark:hover:from-green-800/40 dark:hover:from-green-700/40 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700 justify-start px-6 py-4 rounded-xl group"
+                  >
+                    <div className="p-2 bg-green-100 dark:bg-green-800 rounded-lg mr-4 group-hover:scale-110 transition-transform">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <div className="text-left">
+                      <div className="font-semibold">Make Reservation</div>
+                      <div className="text-sm text-green-600 dark:text-green-400">Book your table</div>
+                    </div>
+                  </Button>
+
+                  <Button 
+                    onClick={handleRoomBookingClick}
+                    className="w-full bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 hover:from-purple-100 hover:to-purple-200 dark:hover:from-purple-800/40 dark:hover:from-purple-700/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700 justify-start px-6 py-4 rounded-xl group"
+                  >
+                    <div className="p-2 bg-purple-100 dark:bg-purple-800 rounded-lg mr-4 group-hover:scale-110 transition-transform">
+                      <Bed className="w-5 h-5" />
                     </div>
                     <div className="text-left">
                       <div className="font-semibold">View Menu</div>

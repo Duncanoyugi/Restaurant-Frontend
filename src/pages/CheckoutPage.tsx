@@ -84,7 +84,7 @@ const CheckoutPage: React.FC = () => {
   // Totals
   const subtotal = total;
   const tax = subtotal * 0.08;
-  const deliveryFee = orderType === 'DELIVERY' ? 2.99 : 0;
+  const deliveryFee = orderType === 'DELIVERY' ? 299 : 0;
   const finalTotal = subtotal + tax + deliveryFee;
 
   const handleNextStep = () => {
@@ -170,9 +170,7 @@ const CheckoutPage: React.FC = () => {
         }
 
         try {
-          // Validate cityId is a valid UUID
-          const cityIdRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-          if (!safeAddress.cityId || !cityIdRegex.test(safeAddress.cityId)) {
+          if (!safeAddress.cityId || Number.isNaN(Number(safeAddress.cityId))) {
             showToast('Please select a valid city/area', 'error');
             setIsProcessing(false);
             return;
@@ -181,7 +179,7 @@ const CheckoutPage: React.FC = () => {
           const addressData: any = {
             streetAddress1: safeAddress.addressLine1,
             zipCode: safeAddress.postalCode || '00000', // Provide default if empty
-            cityId: safeAddress.cityId,
+            cityId: Number(safeAddress.cityId),
           };
 
           // Only include optional fields if they have values
@@ -259,21 +257,39 @@ const CheckoutPage: React.FC = () => {
         // Map frontend payment method to backend enum
         const backendMethod = paymentMethod === 'mpesa' ? 'mobile_money' : paymentMethod;
 
-        const paymentResult = await initializePayment({
+        console.log('Initializing payment with:', {
           userId: user.id,
           orderId: orderResult.id,
           amount: finalTotal,
           customerEmail: user.email,
           customerName: user.name,
-          method: backendMethod as PaymentMethod,
+          method: backendMethod,
           callbackUrl: `${window.location.origin}/payment/verify`,
-        }).unwrap();
+        });
 
-        if (paymentResult.success && paymentResult.data.authorizationUrl) {
-          dispatch(clearCart());
-          window.location.href = paymentResult.data.authorizationUrl;
-        } else {
-          throw new Error('Failed to get payment authorization URL');
+        try {
+          const paymentResult = await initializePayment({
+            userId: user.id,
+            orderId: orderResult.id,
+            amount: finalTotal,
+            customerEmail: user.email,
+            customerName: user.name,
+            method: backendMethod as PaymentMethod,
+            callbackUrl: `${window.location.origin}/payment/verify`,
+          }).unwrap();
+
+          console.log('Payment init result:', paymentResult);
+
+          if (paymentResult.success && paymentResult.data.authorizationUrl) {
+            dispatch(clearCart());
+            console.log('Redirecting to Paystack checkout:', paymentResult.data.authorizationUrl);
+            window.location.href = paymentResult.data.authorizationUrl;
+          } else {
+            throw new Error('Failed to get payment authorization URL');
+          }
+        } catch (paymentError: any) {
+          console.error('Payment initialization error:', paymentError);
+          throw paymentError;
         }
       }
     } catch (error: any) {
@@ -364,7 +380,7 @@ const CheckoutPage: React.FC = () => {
                     disabled={!safeAddress.stateId}
                   >
                     <option value="">Select an area/town</option>
-                    {cities?.filter((city: any) => city.stateId === safeAddress.stateId).map((city: any) => (
+                    {cities?.filter((city: any) => Number(city.stateId) === Number(safeAddress.stateId)).map((city: any) => (
                       <option key={city.id} value={city.id}>
                         {city.name}
                       </option>
@@ -470,28 +486,28 @@ const CheckoutPage: React.FC = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <span className="text-gray-700 dark:text-gray-300">{item.name} × {item.quantity}</span>
-                    <span className="font-medium">KSh {(item.price * item.quantity * 100).toFixed(0)}</span>
+                        <span className="font-medium">KSh {(item.price * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
               </div>
               <div className="border-t border-gray-300 dark:border-gray-600 mt-4 pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>KSh {(subtotal * 100).toFixed(0)}</span>
+                  <span>KSh {subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax (8%)</span>
-                  <span>KSh {(tax * 100).toFixed(0)}</span>
+                  <span>KSh {tax.toLocaleString()}</span>
                 </div>
                 {orderType === 'DELIVERY' && (
                   <div className="flex justify-between">
                     <span>Delivery Fee</span>
-                    <span>KSh {(deliveryFee * 100).toFixed(0)}</span>
+                    <span>KSh {deliveryFee.toLocaleString()}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300 dark:border-gray-600">
                   <span>Total</span>
-                  <span>KSh {(finalTotal * 100).toFixed(0)}</span>
+                  <span>KSh {finalTotal.toLocaleString()}</span>
                 </div>
               </div>
             </div>

@@ -30,7 +30,6 @@ type RegisterRequest = {
   email: string;
   phone: string;
   password: string;
-  role: string;
 };
 
 type AuthResponse = {
@@ -85,6 +84,7 @@ export const authApi = baseApi.injectEndpoints({
         return {
           ...response,
           accessToken: response.accessToken || response.access_token || response.token,
+          refreshToken: response.refreshToken || response.refresh_token,
           token: response.token || response.accessToken || response.access_token, // Keep token for backward compatibility
         };
       },
@@ -102,6 +102,7 @@ export const authApi = baseApi.injectEndpoints({
           dispatch(setCredentials({
             user: data.user,
             accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
           }));
         } catch (error) {
           console.error('Login failed:', error);
@@ -121,6 +122,7 @@ export const authApi = baseApi.injectEndpoints({
         return {
           ...response,
           accessToken: response.accessToken || response.access_token || response.token,
+          refreshToken: response.refreshToken || response.refresh_token,
           token: response.token || response.accessToken || response.access_token,
         };
       },
@@ -150,6 +152,7 @@ export const authApi = baseApi.injectEndpoints({
         return {
           ...response,
           accessToken: response.accessToken || response.access_token || response.token,
+          refreshToken: response.refreshToken || response.refresh_token,
           token: response.token || response.accessToken || response.access_token,
         };
       },
@@ -160,6 +163,7 @@ export const authApi = baseApi.injectEndpoints({
             dispatch(setCredentials({
               user: data.user,
               accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
             }));
           }
         } catch (error) {
@@ -224,8 +228,9 @@ export const authApi = baseApi.injectEndpoints({
     }),
     
     resetPassword: builder.mutation<{ message: string }, { 
-      token: string; 
-      password: string 
+      email: string;
+      otpCode: string;
+      newPassword: string;
     }>({
       query: (data) => ({
         url: 'auth/reset-password',

@@ -1,25 +1,24 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { store } from './app/store';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { RestaurantProvider } from './contexts/RestaurantContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import AppRouter from './routing/AppRouter';
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <ThemeProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <RestaurantProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <BrowserRouter>
+          <RestaurantProvider>
+            <ErrorBoundary>
               <AppRouter />
-            </RestaurantProvider>
-          </BrowserRouter>
-        </ToastProvider>
-      </ThemeProvider>
-    </Provider>
+            </ErrorBoundary>
+          </RestaurantProvider>
+        </BrowserRouter>
+      </ToastProvider>
+    </ThemeProvider>
   );
 };
 

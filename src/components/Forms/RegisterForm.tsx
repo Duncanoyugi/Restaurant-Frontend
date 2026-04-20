@@ -13,14 +13,12 @@ const RegisterForm: React.FC = () => {
     email: '',
     phone: '',
     password: '',
-    role: 'Customer',
   });
   const [errors, setErrors] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
-    role: '',
   });
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -34,7 +32,6 @@ const RegisterForm: React.FC = () => {
       email: '',
       phone: '',
       password: '',
-      role: '',
     };
 
     if (!formData.name.trim()) {
@@ -92,7 +89,7 @@ const RegisterForm: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -178,23 +175,6 @@ const RegisterForm: React.FC = () => {
           className="w-full px-4 py-3 text-base dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
         />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Role
-          </label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-base"
-          >
-            <option value="Customer">Customer</option>
-            <option value="Restaurant Owner">Restaurant Owner</option>
-            <option value="Driver">Driver</option>
-            <option value="Restaurant Staff">Restaurant Staff</option>
-          </select>
-          {errors.role && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.role}</p>}
-        </div>
       </div>
 
       <Button

@@ -1,81 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRestaurant } from '../../../contexts/RestaurantContext';
-import { UserRoleEnum } from '../../../features/auth/authSlice';
 import { PlusCircle, Edit, Trash2, Eye, Search, Users } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import Card from '../../../components/ui/Card';
+import { useGetAllStaffQuery, useDeleteStaffMutation } from '../../../features/restaurants/unifiedRestaurantApi';
 
-interface StaffMember {
-  id: number;
-  name: string;
-  email: string;
-  role: UserRoleEnum;
-  phone?: string;
-  createdAt: string;
-}
+
 
 const StaffList: React.FC = () => {
   const navigate = useNavigate();
   const { selectedRestaurant } = useRestaurant();
 
-  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch staff members for the current restaurant
-  useEffect(() => {
-    const fetchStaff = async () => {
-      if (!selectedRestaurant) return;
+  // Use RTK Query hooks
+  const { data: staffMembers = [], isLoading: loading, error: queryError } = useGetAllStaffQuery(
+    selectedRestaurant?.id || '',
+    { skip: !selectedRestaurant?.id }
+  );
 
-      try {
-        setLoading(true);
-        setError(null);
+  const [deleteStaff] = useDeleteStaffMutation();
 
-        // Fetch staff members from backend
-        const response = await fetch(`/api/restaurants/staff/restaurant/${selectedRestaurant.id}`);
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch staff members');
-        }
-
-        const data = await response.json();
-        setStaffMembers(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch staff members');
-        console.error('Error fetching staff:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStaff();
-  }, [selectedRestaurant]);
-
-  const handleDelete = async (staffId: number) => {
+  const handleDelete = async (staffId: string) => {
     if (!confirm('Are you sure you want to delete this staff member?')) return;
 
     try {
-      const response = await fetch(`/api/restaurants/staff/${staffId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete staff member');
-      }
-
-      // Remove from local state
-      setStaffMembers(prev => prev.filter(staff => staff.id !== staffId));
+      await deleteStaff(staffId).unwrap();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete staff member');
       console.error('Error deleting staff:', err);
     }
   };
 
   const filteredStaff = staffMembers.filter(staff =>
-    staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staff.email.toLowerCase().includes(searchTerm.toLowerCase())
+    staff.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    staff.user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -86,12 +45,12 @@ const StaffList: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (queryError) {
     return (
       <Card className="p-6">
         <div className="text-center text-red-600">
           <p className="text-lg font-semibold">Error</p>
-          <p>{error}</p>
+          <p>{queryError instanceof Error ? queryError.message : 'An unknown error occurred'}</p>
         </div>
       </Card>
     );
@@ -163,10 +122,10 @@ const StaffList: React.FC = () => {
               <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredStaff.map((staff) => (
                   <tr key={staff.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">{staff.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{staff.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{staff.role}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{staff.phone || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">{staff.user?.name || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{staff.user?.email || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{staff.position || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{staff.user?.phone || 'N/A'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-2">
                       <button
                         onClick={() => navigate(`/dashboard/staff/${staff.id}`)}

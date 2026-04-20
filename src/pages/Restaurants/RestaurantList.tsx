@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGetAllRestaurantsQuery } from '../../features/restaurants/unifiedRestaurantApi';
+import { useAppSelector } from '../../app/hooks';
+import { useGetAllRestaurantsQuery, useFindNearbyRestaurantsQuery } from '../../features/restaurants/unifiedRestaurantApi';
 import type { Restaurant } from '../../types/restaurant';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -9,13 +10,88 @@ import { Building2, Search, Star, MapPin, Clock, Filter, SlidersHorizontal, Chef
 
 const RestaurantList: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<'name' | 'rating' | 'newest'>('name');
   const [priceFilter, setPriceFilter] = useState<'all' | '$' | '$$' | '$$$'>('all');
+  const [locationError, setLocationError] = useState('');
+  const [locationChecked, setLocationChecked] = useState(false);
+  const [currentCoords, setCurrentCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [nearbyQueryArgs, setNearbyQueryArgs] = useState<{ lat: number; lng: number; radius?: number } | null>(null);
   
   const { data, isLoading, error } = useGetAllRestaurantsQuery();
+  const { data: nearbyRestaurants = [], isFetching: isFindingNearby } = useFindNearbyRestaurantsQuery(
+    nearbyQueryArgs || { lat: 0, lng: 0, radius: 30 },
+    { skip: !nearbyQueryArgs },
+  );
   const restaurants = data?.data || [];
+
+  const calculateDistanceInKm = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return Number((R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)))).toFixed(2));
+  };
+
+  const detectNearestRestaurant = useCallback(() => {
+    setLocationError('');
+    if (!isAuthenticated) {
+      setLocationError('Login to enable nearest restaurant suggestions.');
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported in this browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentCoords({ lat: latitude, lng: longitude });
+        setNearbyQueryArgs({ lat: latitude, lng: longitude, radius: 30 });
+        setLocationChecked(true);
+      },
+      () => {
+        setLocationError('Unable to read your location. Enable location permission and try again.');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
+    );
+  }, [isAuthenticated]);
+
+  const nearestRestaurant = useMemo(() => {
+    if (!locationChecked || nearbyRestaurants.length === 0) return null;
+
+    if (!currentCoords) return nearbyRestaurants[0];
+
+    return [...nearbyRestaurants]
+      .filter((restaurant) => restaurant.latitude !== undefined && restaurant.longitude !== undefined)
+      .sort((a, b) => {
+        const aDistance = calculateDistanceInKm(
+          Number(a.latitude),
+          Number(a.longitude),
+          currentCoords.lat,
+          currentCoords.lng,
+        );
+        const bDistance = calculateDistanceInKm(
+          Number(b.latitude),
+          Number(b.longitude),
+          currentCoords.lat,
+          currentCoords.lng,
+        );
+        return aDistance - bDistance;
+      })[0] || nearbyRestaurants[0];
+  }, [nearbyRestaurants, locationChecked, currentCoords]);
+
+  useEffect(() => {
+    if (isAuthenticated && !locationChecked) {
+      detectNearestRestaurant();
+    }
+  }, [detectNearestRestaurant, isAuthenticated, locationChecked]);
 
   // Sort and filter restaurants
   let filteredRestaurants = restaurants.filter((restaurant: Restaurant) => {
@@ -169,6 +245,24 @@ const RestaurantList: React.FC = () => {
         {/* Search and Filter Bar */}
         <div className="mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <Button
+                onClick={detectNearestRestaurant}
+                disabled={isFindingNearby}
+                variant="outline"
+                className="rounded-xl"
+              >
+                {isFindingNearby ? 'Detecting nearest...' : 'Use my location'}
+              </Button>
+              {locationError && <span className="text-sm text-red-500">{locationError}</span>}
+            </div>
+
+            {nearestRestaurant && (
+              <div className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                Nearest suggestion: <button className="font-semibold underline" onClick={() => navigate(`/restaurants/${nearestRestaurant.id}`)}>{nearestRestaurant.name}</button>
+              </div>
+            )}
+
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search Input */}
               <div className="flex-1">

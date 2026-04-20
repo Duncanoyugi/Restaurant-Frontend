@@ -2,9 +2,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../app/store';
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { logout, setTokens } from '../features/auth/authSlice';
+
+const resolvedBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/api',
+  baseUrl: resolvedBaseUrl,
   prepareHeaders: (headers, { getState }) => {
     // Get token from Redux state first, fallback to localStorage
     const state = getState() as RootState;
@@ -47,7 +50,7 @@ const baseQueryWithReauth: BaseQueryFn<
     if (refreshToken) {
       try {
         // Attempt to refresh the token
-        const refreshResult = await fetch('/api/auth/refresh', {
+        const refreshResult = await fetch(`${resolvedBaseUrl}/auth/refresh`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -59,15 +62,13 @@ const baseQueryWithReauth: BaseQueryFn<
           const refreshData = await refreshResult.json();
 
           // Store new tokens
-          localStorage.setItem('accessToken', refreshData.accessToken);
-          localStorage.setItem('refreshToken', refreshData.refreshToken);
-
-          // Update Redux state if available
-          const state = api.getState() as RootState;
-          if (state.auth) {
-            // Dispatch token update action if you have one
-            // api.dispatch(setTokens({ accessToken: refreshData.accessToken, refreshToken: refreshData.refreshToken }));
+          const nextAccessToken = refreshData.accessToken || refreshData.access_token;
+          const nextRefreshToken = refreshData.refreshToken || refreshData.refresh_token;
+          if (!nextAccessToken) {
+            api.dispatch(logout());
+            return result;
           }
+          api.dispatch(setTokens({ accessToken: nextAccessToken, refreshToken: nextRefreshToken }));
 
           console.log('Token refreshed successfully, retrying original request');
 
@@ -76,9 +77,7 @@ const baseQueryWithReauth: BaseQueryFn<
         } else {
           console.warn('Token refresh failed, redirecting to login');
           // Clear tokens and redirect to login
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
+          api.dispatch(logout());
           // Redirect after a short delay to allow the error to be returned
           setTimeout(() => {
             window.location.href = '/login';
@@ -89,9 +88,7 @@ const baseQueryWithReauth: BaseQueryFn<
       } catch (refreshError) {
         console.error('Token refresh error:', refreshError);
         // Clear tokens and redirect to login
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        api.dispatch(logout());
         // Redirect after a short delay to allow the error to be returned
         setTimeout(() => {
           window.location.href = '/login';
@@ -102,8 +99,7 @@ const baseQueryWithReauth: BaseQueryFn<
     } else {
       console.warn('No refresh token available, redirecting to login');
       // Clear tokens and redirect to login
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
+      api.dispatch(logout());
       // Redirect after a short delay to allow the error to be returned
       setTimeout(() => {
         window.location.href = '/login';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { XCircle, Package, UtensilsCrossed } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGetOrdersQuery, useCancelOrderMutation } from '../../features/customer/customerApi';
@@ -19,10 +19,14 @@ const OrdersPage: React.FC = () => {
 
   const [cancelOrder] = useCancelOrderMutation();
 
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter]);
+
   const handleCancelOrder = async (orderId: number) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
       try {
-        await cancelOrder({ orderId, reason: 'Customer requested cancellation' }).unwrap();
+        await cancelOrder({ orderId: String(orderId), reason: 'Customer requested cancellation' }).unwrap();
         refetch();
       } catch (error) {
         console.error('Failed to cancel order:', error);

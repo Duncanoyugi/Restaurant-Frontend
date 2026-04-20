@@ -60,14 +60,14 @@ const MenuManagement: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Fetch categories
-        const categoriesResponse = await fetch(`/api/menu/categories/restaurant/${selectedRestaurant.id}`);
+        // Fetch categories (public endpoint)
+        const categoriesResponse = await fetch('/api/menu/categories');
         if (!categoriesResponse.ok) throw new Error('Failed to fetch categories');
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData);
-        
-        // Fetch menu items
-        const itemsResponse = await fetch(`/api/menu/items/restaurant/${selectedRestaurant.id}`);
+
+        // Fetch menu items (public endpoint)
+        const itemsResponse = await fetch('/api/menu/items');
         if (!itemsResponse.ok) throw new Error('Failed to fetch menu items');
         const itemsData = await itemsResponse.json();
         setMenuItems(itemsData);
@@ -253,10 +253,10 @@ const MenuManagement: React.FC = () => {
     }
   };
 
-  const filteredItems = menuItems.filter(item =>
+  const filteredItems = Array.isArray(menuItems) ? menuItems.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) : [];
 
   const getCategoryIcon = (categoryName: string) => {
     const lowerName = categoryName.toLowerCase();

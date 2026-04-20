@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
+import { useAppSelector } from '../../app/hooks';
 import { useGetMyDeliveryStatsQuery } from '../../features/delivery/deliveryApi';
 import { useGetMyDeliveriesQuery } from '../../features/orders/ordersApi';
 
 const EarningsDashboard: React.FC = () => {
   const [timeRange, setTimeRange] = useState<'today' | 'week' | 'month'>('week');
+  const userId = useAppSelector((state) => state.auth.user?.id);
 
   // Calculate date ranges
   const today = new Date();
@@ -14,14 +16,16 @@ const EarningsDashboard: React.FC = () => {
 
   // Fetch delivery stats
   const { data: weekStats } = useGetMyDeliveryStatsQuery({
+    driverId: userId || '',
     startDate: weekStart.toISOString().split('T')[0],
     endDate: today.toISOString().split('T')[0],
-  });
+  }, { skip: !userId });
 
   const { data: monthStats } = useGetMyDeliveryStatsQuery({
+    driverId: userId || '',
     startDate: monthStart.toISOString().split('T')[0],
     endDate: today.toISOString().split('T')[0],
-  });
+  }, { skip: !userId });
 
   // Fetch deliveries for transactions
   const { data: deliveriesData } = useGetMyDeliveriesQuery();

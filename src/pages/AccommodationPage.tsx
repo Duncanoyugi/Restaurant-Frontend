@@ -28,13 +28,13 @@ const AccommodationPage: React.FC = () => {
   const filteredRooms = selectedCategory === 'all'
     ? rooms
     : rooms.filter(room => {
-      // Map frontend categories to backend RoomType if needed
-      const type = room.roomType.toLowerCase();
+      // Backend uses `category`; some views still expose `roomType`.
+      const type = String((room as any).category || room.roomType || '').toLowerCase();
       if (selectedCategory === 'standard' && type === 'standard') return true;
       if (selectedCategory === 'deluxe' && type === 'deluxe') return true;
-      if (selectedCategory === 'suites' && type === 'suite') return true;
+      if (selectedCategory === 'suites' && (type === 'suite' || type === 'suites')) return true;
       if (selectedCategory === 'family' && type === 'family') return true;
-      if (selectedCategory === 'premium' && type === 'executive') return true;
+      if (selectedCategory === 'premium' && (type === 'executive' || type === 'premium')) return true;
       return false;
     });
 
@@ -42,7 +42,7 @@ const AccommodationPage: React.FC = () => {
     if (!isAuthenticated) {
       navigate('/login', { state: { from: '/accommodation' } });
     } else {
-      const room = rooms.find(r => r.id === roomId);
+      const room = rooms.find(r => String(r.id) === String(roomId));
       if (room) {
         setSelectedRoom(room);
         setShowBookingForm(true);
@@ -204,7 +204,7 @@ const AccommodationPage: React.FC = () => {
                       <Button
                         variant="primary"
                         className="flex-1 py-3 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-[0.98]"
-                        onClick={() => handleBookRoom(room.id)}
+                        onClick={() => handleBookRoom(String(room.id))}
                       >
                         {isAuthenticated ? 'Book Now' : 'Login to Book'}
                       </Button>

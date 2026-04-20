@@ -31,7 +31,7 @@ const CartPage: React.FC = () => {
 
   const tax = total * 0.08;
   const delivery = 299;
-  const grandTotal = (total * 100) + (tax * 100) + delivery;
+  const grandTotal = total + tax + delivery;
 
   if (items.length === 0) {
     return (
@@ -127,7 +127,7 @@ const CartPage: React.FC = () => {
                           <div className="min-w-0 flex-1">
                             <h3 className="text-xl font-bold text-slate-900 truncate">{item.name}</h3>
                             <p className="text-amber-600 font-bold text-lg mt-1 bg-amber-50/50 px-2 py-1 rounded-md inline-block">
-                              KSh {(item.price * 100).toFixed(0)}
+                              KSh {item.price.toLocaleString()}
                             </p>
                           </div>
                           <button
@@ -161,7 +161,7 @@ const CartPage: React.FC = () => {
                           <div className="text-right">
                             <p className="text-sm text-slate-500">Item total</p>
                             <p className="text-xl font-bold text-slate-900 mt-1">
-                              KSh {((item.price * item.quantity) * 100).toFixed(0)}
+                              KSh {(item.price * item.quantity).toLocaleString()}
                             </p>
                           </div>
                         </div>
@@ -185,11 +185,11 @@ const CartPage: React.FC = () => {
                     <div className="space-y-4 mb-8">
                       <div className="flex justify-between py-3 border-b border-slate-100 last:border-t">
                         <span className="text-slate-600 font-medium">Subtotal</span>
-                        <span className="font-semibold text-slate-900">KSh {(total * 100).toFixed(0)}</span>
+                        <span className="font-semibold text-slate-900">KSh {total.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between py-3 border-b border-slate-100">
                         <span className="text-slate-600 font-medium">Tax (8%)</span>
-                        <span className="font-semibold text-slate-900">KSh {(tax * 100).toFixed(0)}</span>
+                        <span className="font-semibold text-slate-900">KSh {tax.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between py-3 border-b border-slate-100">
                         <span className="text-slate-600 font-medium">Delivery</span>
@@ -197,7 +197,7 @@ const CartPage: React.FC = () => {
                       </div>
                       <div className="flex justify-between py-4 border-t border-slate-200 pt-6 bg-linear-to-r from-amber-50 to-orange-50/50 rounded-xl p-4">
                         <span className="text-xl font-bold text-slate-900">Total Amount</span>
-                        <span className="text-2xl font-bold text-amber-600">KSh {grandTotal.toFixed(0)}</span>
+                        <span className="text-2xl font-bold text-amber-600">KSh {grandTotal.toLocaleString()}</span>
                       </div>
                     </div>
 

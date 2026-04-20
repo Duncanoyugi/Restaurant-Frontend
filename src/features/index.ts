@@ -56,7 +56,6 @@ export {
   useUpdateMyProfileMutation,
   // Rename conflicting change password hook
   useChangePasswordMutation as useChangeUserPasswordMutation,
-  useUploadProfileImageMutation,
   useUpdateOnlineStatusMutation,
   
   // Admin management hooks
@@ -66,38 +65,9 @@ export {
   useUpdateUserMutation,
   useDeleteUserMutation,
   
-  // Customer hooks
-  useGetCustomerProfileQuery,
-  useUpdateCustomerMutation,
-  useGetCustomerOrdersQuery,
-  useGetCustomerReviewsQuery,
-  useGetCustomerFavoritesQuery,
-  
-  // Driver hooks
-  useGetDriverProfileQuery,
-  useUpdateDriverMutation,
-  useGetAvailableDriversQuery,
-  useSearchDriversQuery,
-  useUpdateDriverVehicleInfoMutation,
-  // Rename conflicting location update hook
-  useUpdateDriverLocationMutation as useUpdateUserDriverLocationMutation,
-  useGetDriverEarningsQuery,
-  
-  // Staff hooks
-  useGetStaffProfileQuery,
-  // Rename conflicting staff update hook
-  useUpdateStaffMutation as useUpdateUserStaffMutation,
-  useGetStaffByRestaurantQuery,
-  useGetStaffShiftsQuery,
-  useUpdateStaffShiftMutation,
-  
   // Admin hooks
-  useGetAdminProfileQuery,
   useGetUserStatisticsQuery,
   useGetOnlineUsersQuery,
-  useChangeUserStatusMutation,
-  useChangeUserRoleMutation,
-  useVerifyUserEmailMutation,
   useSearchUsersQuery,
   
   // Utility hooks

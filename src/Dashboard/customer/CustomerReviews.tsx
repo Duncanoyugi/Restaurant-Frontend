@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  useGetMyReviewsQuery 
+  useGetMyReviewsQuery,
+  useUpdateReviewMutation,
+  useDeleteReviewMutation,
 } from '../../features/reviews/reviewsApi';
 import { 
-  useCreateReviewMutation, 
-  useUpdateReviewMutation,
-  useDeleteReviewMutation 
+  useCreateReviewMutation
 } from '../../features/customer/customerApi';
 import { format } from 'date-fns';
 import type { Review } from '../../types/reviews';
@@ -35,14 +35,32 @@ const ReviewsPage: React.FC = () => {
     images: [] as string[],
   });
 
+  const buildReviewPayload = () => {
+    const payload: Record<string, any> = {
+      rating: Number(reviewForm.rating),
+      comment: reviewForm.comment?.trim() || undefined,
+      images: reviewForm.images,
+    };
+
+    if (reviewForm.restaurantId && !Number.isNaN(Number(reviewForm.restaurantId))) {
+      payload.restaurantId = Number(reviewForm.restaurantId);
+    }
+    if (reviewForm.menuItemId && !Number.isNaN(Number(reviewForm.menuItemId))) {
+      payload.menuItemId = Number(reviewForm.menuItemId);
+    }
+
+    return payload;
+  };
+
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = buildReviewPayload();
       if (editingReview) {
-        await updateReview({ id: editingReview, data: reviewForm }).unwrap();
+        await updateReview({ id: editingReview, data: payload }).unwrap();
         setEditingReview(null);
       } else {
-        await createReview(reviewForm).unwrap();
+        await createReview(payload).unwrap();
       }
       setShowReviewForm(false);
       setReviewForm({

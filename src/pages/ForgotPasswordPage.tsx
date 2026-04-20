@@ -4,12 +4,13 @@ import AuthLayout from '../components/layout/AuthLayout';
 import Input from '../components/ui/input';
 import Button from '../components/ui/Button';
 import { useToast } from '../contexts/ToastContext';
+import { useForgotPasswordMutation } from '../features/auth/authApi';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,14 +20,13 @@ const ForgotPasswordPage: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await forgotPassword({ email }).unwrap();
       setIsSubmitted(true);
       showToast('Password reset instructions sent to your email!', 'success');
-    }, 2000);
+    } catch (error: any) {
+      showToast(error?.data?.message || 'Failed to send reset instructions', 'error');
+    }
   };
 
   if (isSubmitted) {

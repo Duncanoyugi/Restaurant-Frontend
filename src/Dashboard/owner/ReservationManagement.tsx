@@ -47,13 +47,13 @@ const ReservationManagement: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Fetch reservations from backend
-        const response = await fetch(`/api/reservations/restaurant/${selectedRestaurant.id}`);
-        
+        // Fetch reservations from backend (restaurant owner's reservations)
+        const response = await fetch('/api/reservations/restaurant/my-reservations');
+
         if (!response.ok) {
           throw new Error('Failed to fetch reservations');
         }
-        
+
         const data = await response.json();
         setReservations(data);
       } catch (err) {
@@ -173,7 +173,7 @@ const ReservationManagement: React.FC = () => {
       
       // Refresh reservations list
       if (selectedRestaurant) {
-        const updatedResponse = await fetch(`/api/reservations/restaurant/${selectedRestaurant.id}`);
+        const updatedResponse = await fetch('/api/reservations/restaurant/my-reservations');
         const updatedData = await updatedResponse.json();
         setReservations(updatedData);
       }

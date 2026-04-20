@@ -1,4 +1,3 @@
-// src/features/delivery/deliveryApi.ts
 import { baseApi } from '../../utils/baseApi';
 import type {
   VehicleInfo,
@@ -24,7 +23,7 @@ export const deliveryApi = baseApi.injectEndpoints({
     // Vehicle Info endpoints
     createVehicleInfo: builder.mutation<VehicleInfo, CreateVehicleInfoRequest>({
       query: (data) => ({
-        url: 'delivery/vehicles',
+        url: 'delivery/vehicle-info',
         method: 'POST',
         body: data,
       }),
@@ -33,7 +32,7 @@ export const deliveryApi = baseApi.injectEndpoints({
 
     getVehicleInfoByUserId: builder.query<VehicleInfo, string>({
       query: (userId) => ({
-        url: `delivery/vehicles/user/${userId}`,
+        url: `delivery/vehicle-info/user/${userId}`,
         method: 'GET',
       }),
       providesTags: (_, __, userId) => [{ type: 'VehicleInfo', id: userId }],
@@ -41,8 +40,8 @@ export const deliveryApi = baseApi.injectEndpoints({
 
     updateVehicleInfo: builder.mutation<VehicleInfo, { userId: string; data: UpdateVehicleInfoRequest }>({
       query: ({ userId, data }) => ({
-        url: `delivery/vehicles/user/${userId}`,
-        method: 'PATCH',
+        url: `delivery/vehicle-info/user/${userId}`,
+        method: 'PUT',
         body: data,
       }),
       invalidatesTags: (_, __, { userId }) => [
@@ -53,7 +52,7 @@ export const deliveryApi = baseApi.injectEndpoints({
 
     deleteVehicleInfo: builder.mutation<void, string>({
       query: (userId) => ({
-        url: `delivery/vehicles/user/${userId}`,
+        url: `delivery/vehicle-info/user/${userId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['VehicleInfo'],
@@ -72,7 +71,7 @@ export const deliveryApi = baseApi.injectEndpoints({
     updateDriverLocation: builder.mutation<DeliveryTracking, DriverLocationRequest>({
       query: (data) => ({
         url: 'delivery/tracking/location',
-        method: 'POST',
+        method: 'PUT',
         body: data,
       }),
       invalidatesTags: ['DeliveryTracking', 'OrderTracking'],
@@ -126,7 +125,7 @@ export const deliveryApi = baseApi.injectEndpoints({
       { driverId: string; startDate: string; endDate: string }
     >({
       query: ({ driverId, startDate, endDate }) => ({
-        url: `delivery/analytics/driver/${driverId}`,
+        url: `delivery/driver/${driverId}/stats`,
         method: 'GET',
         params: { startDate, endDate },
       }),
@@ -138,26 +137,26 @@ export const deliveryApi = baseApi.injectEndpoints({
       { restaurantId: string; days?: number }
     >({
       query: ({ restaurantId, days = 7 }) => ({
-        url: `delivery/analytics/restaurant/${restaurantId}`,
+        url: 'delivery/analytics/performance',
         method: 'GET',
-        params: { days },
+        params: { restaurantId, days },
       }),
       providesTags: ['DeliveryPerformance'],
     }),
 
     // Driver-specific endpoints
-    getMyDeliveryStats: builder.query<DriverDeliveryStats, { startDate: string; endDate: string }>({
-      query: ({ startDate, endDate }) => ({
-        url: 'delivery/my/stats',
+    getMyDeliveryStats: builder.query<DriverDeliveryStats, { driverId: string; startDate: string; endDate: string }>({
+      query: ({ driverId, startDate, endDate }) => ({
+        url: `delivery/driver/${driverId}/stats`,
         method: 'GET',
         params: { startDate, endDate },
       }),
       providesTags: ['MyDriverStats'],
     }),
 
-    getMyActiveDeliveries: builder.query<ActiveDelivery[], void>({
-      query: () => ({
-        url: 'delivery/my/active-deliveries',
+    getMyActiveDeliveries: builder.query<ActiveDelivery[], string>({
+      query: (driverId) => ({
+        url: `delivery/driver/${driverId}/active-deliveries`,
         method: 'GET',
       }),
       providesTags: ['MyActiveDeliveries'],
@@ -166,7 +165,7 @@ export const deliveryApi = baseApi.injectEndpoints({
     // Helper method to get active delivery tracking for real-time updates
     getActiveDeliveryTracking: builder.query<DeliveryTracking | null, string>({
       query: (orderId) => ({
-        url: `delivery/tracking/order/${orderId}/active`,
+        url: `delivery/tracking/order/${orderId}/live`,
         method: 'GET',
       }),
       providesTags: ['ActiveTracking'],
@@ -175,7 +174,7 @@ export const deliveryApi = baseApi.injectEndpoints({
     // Get all deliveries for a driver (including history)
     getDriverDeliveries: builder.query<DeliveryTracking[], string>({
       query: (driverId) => ({
-        url: `delivery/driver/${driverId}/deliveries`,
+        url: `delivery/driver/${driverId}/active-deliveries`,
         method: 'GET',
       }),
       providesTags: ['DriverDeliveries'],
