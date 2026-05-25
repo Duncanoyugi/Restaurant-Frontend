@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAppSelector } from '../app/hooks';
-import { UserRoleEnum, extractRoleName } from '../features/auth/authSlice';
+import { useAppSelector } from '@/app/hooks';
+import { UserRoleEnum, extractRoleName } from '@/modules/auth/api/authSlice';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
