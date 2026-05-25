@@ -47,13 +47,12 @@ const LandingFooter: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-10 py-16 border-b border-gray-800/60">
           {/* Brand column — spans 2 on md+ */}
           <div className="col-span-2">
-            <Link to="/" className="inline-flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/15">
-                <span className="text-white text-sm font-bold tracking-tight">SB</span>
-              </div>
-              <span className="text-lg font-bold text-white">
-                Savory<span className="text-amber-400">Bites</span>
-              </span>
+            <Link to="/" className="inline-block mb-5">
+              <img
+                src="/logo.png"
+                alt="Savory Bites"
+                className="h-28 w-auto"
+              />
             </Link>
 
             <p className="text-sm leading-relaxed mb-6 max-w-xs">

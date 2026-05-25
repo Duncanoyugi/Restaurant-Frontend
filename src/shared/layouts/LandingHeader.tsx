@@ -51,20 +51,12 @@ const LandingHeader: React.FC = () => {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-18">
           {/* Logo */}
-          <Link 
-            to="/" 
-            className="flex items-center space-x-2.5 text-xl font-bold group"
-          >
-            <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-secondary-600 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow duration-300">
-              <span className="text-white text-sm font-bold tracking-tight">SB</span>
-            </div>
-            <span className={`transition-colors duration-300 ${
-              isScrolled 
-                ? 'text-gray-900 dark:text-white' 
-                : 'text-white'
-            }`}>
-              Savory<span className="text-primary-500">Bites</span>
-            </span>
+          <Link to="/" className="flex items-center">
+            <img
+              src="/logo.png"
+              alt="Savory Bites"
+              className="h-25 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
