@@ -37,10 +37,11 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (!id.includes('node_modules')) return;
 
-            if (id.includes('react') || id.includes('scheduler')) return 'react-vendor';
+            if (id.includes('lucide-react')) return 'ui-vendor';
+            if (id.includes('framer-motion') || id.includes('react-icons')) return 'ui-vendor';
             if (id.includes('@reduxjs/toolkit') || id.includes('react-redux')) return 'state-vendor';
             if (id.includes('react-router')) return 'router-vendor';
-            if (id.includes('framer-motion') || id.includes('lucide-react') || id.includes('react-icons')) return 'ui-vendor';
+            if (id.includes('/react') || id.includes('/react-dom') || id.includes('scheduler')) return 'react-vendor';
 
             return 'vendor';
           },
