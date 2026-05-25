@@ -177,7 +177,7 @@ const LandingPage: React.FC = () => {
           </AnimatedSection>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredMenuItems.map((item, i) => (
+            {featuredMenuItems.map((item) => (
               <div key={item.id} className="group bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-all duration-300">
                 <div className="relative h-52 overflow-hidden">
                   <img
