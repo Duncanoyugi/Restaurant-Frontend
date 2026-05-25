@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { baseApi } from '../utils/baseApi';
-import authReducer from '../features/auth/authSlice';
-import cartReducer from '../features/cart/cartSlice';
-import bookingReducer from '../features/booking/bookingSlice';
-import customerReducer from '../features/customer/customerSlice';
-import notificationsReducer from '../features/notifications/notificationsSlice';
-import ordersReducer from '../features/orders/ordersSlice';
+import { baseApi } from '@/shared/utils/baseApi';
+import authReducer from '@/modules/auth/api/authSlice';
+import cartReducer from '@/modules/cart/api/cartSlice';
+import bookingReducer from '@/modules/rooms/api/bookingSlice';
+import customerReducer from '@/modules/customer/api/customerSlice';
+import notificationsReducer from '@/modules/notifications/api/notificationsSlice';
+import ordersReducer from '@/modules/orders/api/ordersSlice';
 
 export const store = configureStore({
   reducer: {
